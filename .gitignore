@@ -1,6 +1,5 @@
 # Godot 4+ specific ignores
 .godot/
-<<<<<<< Updated upstream
 *.translation
 
 # Ignoră fișierul de configurare a exporturilor (dacă are căi absolute locale)
@@ -22,6 +21,3 @@ ehthumbs.db
 ehthumbs_vista.db
 *.cab
 *.lnk
-=======
-/android/
->>>>>>> Stashed changes

@@ -1,4 +1,4 @@
-# 🛠️ Contributing to Papas Shaormeria
+# Contributing to Papas Shaormeria
 
 Welcome to the development team! (Amelia, Bianca, Maia, and Razvan). 
 This document outlines the standard workflow we will use to build our game for the Software Development Methods (MDS) lab. Please read this carefully to ensure our environments match and we avoid Git merge conflicts.
@@ -47,4 +47,4 @@ To meet the lab requirements (branch creation, PRs, minimum 5 commits per studen
 * **Scene Organization:** Do not build the entire game in a single scene. Each User Story (like the Cutting Station or the Wrap Area) should be its own `.tscn` file, which we will later instance into the main game level.
 * **AI Tooling:** Remember our *AI-first* rule. If you use ChatGPT, Copilot, or Cursor to generate a GDScript, save the prompt and add it to our `./docs/AI_USAGE_REPORT.md` file before you open your PR.
 
-Happy coding! 🌯
+Happy coding! 

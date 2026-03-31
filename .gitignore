@@ -1,16 +1,23 @@
 # Godot 4+ specific ignores
 .godot/
-.nomedia
-
-# Godot-specific ignores
-.import/
-export.cfg
-export_credentials.cfg
-
-# Imported translations (automatically generated from CSV files)
 *.translation
 
-# Mono-specific ignores
-.mono/
-data_*/
-mono_crash.*.json
+# Ignoră fișierul de configurare a exporturilor (dacă are căi absolute locale)
+export_presets.cfg
+
+# Ignoră folderele unde veți exporta jocul final (.exe, .html)
+/build/
+/exports/
+/bin/
+
+# OS generated files (macOS & Windows)
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+Thumbs.db
+ehthumbs.db
+ehthumbs_vista.db
+*.cab
+*.lnk

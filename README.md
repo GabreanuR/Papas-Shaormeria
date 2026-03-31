@@ -12,8 +12,8 @@ This project is a fast-food simulator developed in **Godot Engine**, created for
 
 ## Component A: Implementation (Live & Demo)
 
-* **Screencast / Offline Demo:** [Insert YouTube Link Here]
-* **Live Demo:** The project can be run from the source using Godot 4.x or by downloading the latest release from the [Releases](#) section.
+* **Screencast / Offline Demo:** [Link Screencast YouTube](https://youtube.com/link-ul-vostru-aici)
+* **Live Demo:** The project can be run from the source using Godot 4.x or by downloading the latest release from the [Releases](../../releases) section.
 
 ### AI Agents Integration (Core Gameplay)
 The game utilizes a local LLM to power two distinct agents that directly influence the gameplay loop:
@@ -60,26 +60,26 @@ We used AI tools to generate the system architecture.
 The project uses Git with a branch-based workflow (e.g., `feature/cutting-station`, `bugfix/llm-timeout`).
 * Each team member has a minimum of 5 commits.
 * All features were integrated via reviewed **Pull Requests**.
-* [Link to Pull Requests list](#)
+* [Link to Pull Requests list](../../pulls)
 
 ### 4. Automated Tests & AI Evals
 We integrated the GUT (Godot Unit Test) framework for core mechanics and specific evaluation scripts for the AI agents.
 * **Unit Tests:** Validation of the score calculation logic and upgrade system math.
 * **AI Evals:** Automated tests sending mock prompts to the LLM to verify if the JSON returned by the "Influencer" matches the schema, and if the memory agent correctly detects a negative history array.
-* [Link to tests folder](#)
+* [Link to tests folder](./tests/)
 
 ### 5. Bug Reporting and Resolution
 We simulated a professional QA flow:
-* **Reported Issue:** [Link to Bug Issue - ex: "Game crashes when LLM returns invalid JSON"]
-* **Resolution (PR):** [Link to PR that fixed the bug - ex: "Added fallback logic and safe JSON parsing for AI output"]
+* **Reported Issue:** [Bug #1: Game crashes on invalid JSON](../../issues/1)
+* **Resolution (PR):** [PR #2: Added fallback logic for AI output](../../pulls/2)
 
 ### 6. CI/CD Pipeline
 We configured **GitHub Actions** for process automation:
 * On every push to the `main` branch, the pipeline automatically runs the test suite (GUT).
 * If tests pass, it automatically exports the game for Windows/Web and uploads it as an artifact.
-* [Link to Actions tab](#)
+* [Link to Actions tab](../../actions)
 
 ### 7. AI Usage Report
 This project was developed applying an *AI-first* principle. A comprehensive report on the tools used can be read here:
-* [Read the Full AI Usage Report](link-to-ai-report.md)
+* [Read the Full AI Usage Report](./docs/AI_USAGE_REPORT.md)
 *(Briefly: We used [Local LLM Name] for the in-game agents, GitHub Copilot / Cursor for implementing GDScript files, ChatGPT for recipe brainstorming and Mermaid diagram generation, and AI image generators for 2D assets).*

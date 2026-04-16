@@ -1,0 +1,83 @@
+[gd_scene format=3 uid="uid://o6og3fkmw0hs"]
+
+[ext_resource type="Script" uid="uid://xj5euc8ciy82" path="res://scripts/menus/main_menu.gd" id="1_ovrgc"]
+[ext_resource type="Texture2D" uid="uid://cpbd7ri4o6oj6" path="res://assets/graphics/backgrounds/Layer1_Sky.png" id="2_2o76q"]
+[ext_resource type="Texture2D" uid="uid://bev7qroljp42v" path="res://assets/graphics/backgrounds/Layer2_City.png" id="3_6bivr"]
+[ext_resource type="Texture2D" uid="uid://dnu2756guxsde" path="res://assets/graphics/backgrounds/Layer3_Shop.png" id="4_6bivr"]
+
+[node name="MainMenu" type="Control" unique_id=446913851]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ovrgc")
+
+[node name="ParallaxBackground" type="Control" parent="." unique_id=1149619674]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Layer1_Sky" type="TextureRect" parent="ParallaxBackground" unique_id=627869065]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("2_2o76q")
+
+[node name="Layer2_City" type="TextureRect" parent="ParallaxBackground" unique_id=1899724518]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("3_6bivr")
+
+[node name="Layer3_Shop" type="TextureRect" parent="ParallaxBackground" unique_id=265598559]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("4_6bivr")
+
+[node name="Layer4_CounterTop" type="TextureRect" parent="ParallaxBackground" unique_id=1509767598]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Layer5_Shaorma" type="TextureRect" parent="ParallaxBackground" unique_id=751672458]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="GameTitle" type="Label" parent="." unique_id=2074644262]
+layout_mode = 0
+offset_left = 273.0
+offset_top = 358.0
+offset_right = 674.0
+offset_bottom = 417.0
+text = "Papa's Shaormeria"
+
+[node name="ButtonsContainer" type="VBoxContainer" parent="." unique_id=534786271]
+layout_mode = 0
+offset_left = 275.0
+offset_top = 553.0
+offset_right = 407.04007
+offset_bottom = 724.0
+
+[node name="NewGameButton" type="Button" parent="ButtonsContainer" unique_id=424180175]
+layout_mode = 2
+text = "New Game"
+
+[node name="LoadGameButton" type="Button" parent="ButtonsContainer" unique_id=114471143]
+layout_mode = 2
+text = "Load Game"
+
+[node name="SettingsButton" type="Button" parent="ButtonsContainer" unique_id=837420310]
+layout_mode = 2
+text = "Settings"
+
+[node name="CreditsButton" type="Button" parent="ButtonsContainer" unique_id=1978940891]
+layout_mode = 2
+text = "Credits"
+
+[node name="QuitButton" type="Button" parent="ButtonsContainer" unique_id=2020720914]
+layout_mode = 2
+text = "Quit"

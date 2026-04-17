@@ -1,4 +1,4 @@
-# Contributing to Papas Shaormeria
+# 🛠️ Contributing to Papas Shaormeria
 
 Welcome to the development team! (Amelia, Bianca, Maia, and Razvan). 
 This document outlines the standard workflow we will use to build our game for the Software Development Methods (MDS) lab. Please read this carefully to ensure our environments match and we avoid Git merge conflicts.
@@ -7,20 +7,13 @@ This document outlines the standard workflow we will use to build our game for t
 
 ## 1. Local Environment Setup
 
-To run the project and the AI features correctly, you must have the following installed:
+To run the project correctly, you must have the following installed:
 
 ### A. Godot Engine
 * **Version:** Godot 4.x **Standard** (Do NOT download the .NET version).
 * **Setup:** Download the executable from [godotengine.org](https://godotengine.org/download/), extract it, and open `project.godot` from this repository.
 
-### NU FACEM B (INCA)
-
-### B. Local AI (LLM) Setup
-Since our game relies on local AI Agents, your machine needs to run a local server during gameplay.
-* **Tool:** Install **Ollama** (or LM Studio).
-* **Model:** We are standardizing on `llama3` (or specify another model here, e.g., `mistral`). 
-* **Command:** Open your terminal and run `ollama run llama3` before hitting "Play" in Godot.
-* **Port:** Ensure your local AI server is running on the default port `localhost:11434`, as the Godot `HTTPRequest` nodes are hardcoded to hit this endpoint.
+*(Note: The Local AI setup instructions will be added here later once we integrate the local LLM agents).*
 
 ---
 
@@ -41,10 +34,26 @@ To meet the lab requirements (branch creation, PRs, minimum 5 commits per studen
 
 ---
 
-## 3. Godot Best Practices
+## 3. Godot & Art Best Practices
 
+To keep our project clean and scalable, please adhere to the following rules:
+
+### A. Project Structure
+Do not drop files randomly in the `res://` root. Use the designated folders:
+* `assets/graphics/` - For all images (UI, backgrounds, ingredients).
+* `scenes/` - For all `.tscn` files (grouped by `menus`, `minigames`, `entities`).
+* `scripts/` - For all `.gd` code files (matching the scenes structure).
+
+### B. Art & Canvas Rules (Canva/Assets)
+* **Base Resolution:** Our game runs at **1920x1080**.
+* **Parallax Assets:** If you are designing layers for a Parallax background, the images MUST be slightly larger than the screen (e.g., 2050x1150) to prevent borders from showing during camera movement.
+* **Transparency:** Always export game assets as `.png` with **Transparent Backgrounds**. White backgrounds will break the 2.5D illusion.
+
+### C. Scene Organization & Architecture
 * **.gitignore:** Never remove or modify the `.gitignore` file. It prevents the `.godot/` cache folder from being uploaded, which would cause massive merge conflicts.
-* **Scene Organization:** Do not build the entire game in a single scene. Each User Story (like the Cutting Station or the Wrap Area) should be its own `.tscn` file, which we will later instance into the main game level.
-* **AI Tooling:** Remember our *AI-first* rule. If you use ChatGPT, Copilot, or Cursor to generate a GDScript, save the prompt and add it to our `./docs/AI_USAGE_REPORT.md` file before you open your PR.
+* **Modularity:** Do not build the entire game in a single scene. Each User Story (like the Cutting Station or the Wrap Area) should be its own `.tscn` file, which we will later instance into the main game level.
 
-Happy coding! 
+### D. AI Tooling
+* Remember our *AI-first* rule. If you use ChatGPT, Copilot, or Cursor to generate a GDScript or a GLSL Shader, save the prompt and add it to our `./docs/AI_USAGE_REPORT.md` file before you open your PR.
+
+Happy coding! 🌯

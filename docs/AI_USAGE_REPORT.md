@@ -1,59 +1,55 @@
-# AI Usage Report: Papas Shaormeria
+# 🤖 AI Usage Report: Papas Shaormeria
 
 This document outlines the extensive use of Artificial Intelligence tools throughout the Software Development Life Cycle (SDLC) of the "Papas Shaormeria" project. We adopted an **AI-first approach** to meet the requirements of the MDS laboratory.
 
 ---
 
 ## 1. Project Planning & Backlog Creation
-**Tools Used:** [e.g., ChatGPT (GPT-4), Gemini Advanced, Claude 3]
+**Tools Used:** Gemini / ChatGPT
 
 We used LLMs to brainstorm game mechanics and translate them into professional agile artifacts.
 * **Process:** We provided the AI with the core concept ("a shaorma shop simulator in Godot with AI agents") and asked it to generate atomic, actionable User Stories.
-* **Result:** The AI successfully generated the 13 core User Stories, complete with Acceptance Criteria and Technical Tasks, which we then imported into our GitHub Projects Kanban board.
-* **Example Prompt:** *"Create a user story for a drag-and-drop assembly station in a Godot 2D game. Include acceptance criteria and technical Godot nodes required."*
+* **Result:** The AI successfully generated the 13 core User Stories, complete with Acceptance Criteria and Technical Tasks, which we then imported into our GitHub Projects Kanban board. We also used AI to structure our `CONTRIBUTING.md` and define our Git branching strategy.
+* **Example Prompt:** *"Create 13 user stories for a shaorma shop simulator in Godot. Include acceptance criteria and technical Godot nodes required for mechanics like cutting meat, drag-and-drop assembly, and interacting with AI customers."*
 
 ## 2. System Architecture & Diagrams
-**Tools Used:** [e.g., ChatGPT for Mermaid.js, Eraser.io, Draw.io AI]
+**Tools Used:** Gemini / AI Diagramming Tools
 
-To design a scalable architecture before coding, we used AI to generate UML and Workflow diagrams.
-* **Process:** We described the interaction between the Godot client and the local LLM endpoint to the AI and requested a sequence diagram.
-* **Result:** The AI generated Mermaid.js code which we compiled into the visual diagrams stored in the `./docs/diagrams/` folder.
-* **Example Prompt:** *"Write a Mermaid sequence diagram showing how the Godot HTTPRequest node sends game state data to a local Python LLM server and parses the JSON response for the Influencer Agent."*
+To design a scalable architecture before coding, we used AI to generate our Godot project structure and workflow diagrams.
+* **Process:** We asked the AI for the best practices regarding Godot 4.x folder structures (separating `assets`, `scenes`, `scripts`, and `data`).
+* **Result:** A clean, modular architecture that prevents cyclic dependencies and merge conflicts. 
+* *(Note: Mermaid diagrams for LLM communication will be added here as we implement the HTTPRequests).*
 
-## 3. Code Generation (Godot & GDScript)
-**Tools Used:** [e.g., GitHub Copilot, Cursor IDE, ChatGPT]
+## 3. Code Generation (Godot 4.x & GDScript)
+**Tools Used:** Gemini
 
-A significant portion of the boilerplate code and complex GDScript logic was written with AI assistance.
+A significant portion of the boilerplate code, UI logic, and complex GDScript math was written with AI assistance.
 * **Implementation Examples:**
-  * **Drag & Drop Mechanic (US3):** AI generated the `_get_drag_data`, `_can_drop_data`, and `_drop_data` override functions.
-  * **Swipe Gesture Math (US5):** We used AI to calculate the normalized vector between mouse click and release to determine the swipe direction.
-  * **JSON Parsing:** AI wrote the safe parsing logic for handling LLM responses to avoid game crashes if the AI hallucinates bad formatting.
+  * **Dynamic Parallax Menu:** AI generated the mathematical logic to create a 2.5D depth effect using mouse coordinates, applying `lerp()` for smooth layer movement and dynamically recalculating the screen center on window resize.
+  * **Cinematic Camera Transitions:** Instead of basic scene loading, we used AI to write a parallel Tweening script (`create_tween().set_parallel(true)`) that smoothly moves and zooms a `Camera2D` into the shop counter before loading the first level.
+  * **UI Juice (Hover Effects):** AI provided the code to dynamically scale buttons on `mouse_entered` and `mouse_exited` using `Tween.TRANS_QUAD`.
+  * **Display Management:** AI generated the input handling logic to toggle Fullscreen mode using `DisplayServer` via the F11 key.
 
-## 4. In-Game AI Agents (Core Mechanics)
-**Tools Used:** [e.g., Ollama running Llama 3 8B locally, LM Studio]
+## 4. Visuals, Shaders, and "Juice"
+**Tools Used:** Gemini for GLSL Shaders, AI Image Generators (Canva/Midjourney)
 
-The core differentiator of our game is the integration of live AI agents.
+To achieve a polished "2D that looks 3D" aesthetic without heavy performance costs, we utilized AI for advanced visual effects.
+* **Glass Distortion Shader:** We prompted the AI to write a custom Godot CanvasItem Shader to simulate looking through a distorted shop window. 
+  * **AI Output snippet used:** The AI provided the math to manipulate `SCREEN_UV` using sine/cosine waves (`uv.x += sin(UV.y * wave_frequency) * distortion_strength;`) to deform the background dynamically.
+* **2D Lighting Systems:** AI guided us in setting up `PointLight2D` with custom radial gradients and adding random subtle flicker effects in `_process(delta)` to simulate neon shop lights.
+* **Asset Generation:** Background layers (Sky, City, Shop, Counter) were generated and separated with transparent backgrounds to be compatible with our Parallax script.
+
+## 5. In-Game AI Agents (Core Mechanics)
+**Tools Used:** Ollama running Llama 3 locally
+
+*(Work in Progress)* The core differentiator of our game is the integration of live AI agents.
 * **Agent 1: The Loyal Customer (Contextual Memory)**
-  * **Implementation:** We pass a JSON array of the last 3 days' interactions into the system prompt.
-  * **System Prompt Used:** *"[Insert your exact prompt here, e.g., 'You are a recurring customer at a fast food shop. Here is your history: {history}. React to today's service.']"*
+  * **Implementation:** We will pass a JSON array of the last 3 days' interactions into the system prompt.
 * **Agent 2: The Influencer (JSON Structured Output)**
-  * **Implementation:** We used strict prompting to force the local LLM to output only valid JSON.
-  * **System Prompt Used:** *"[Insert your exact prompt here, e.g., 'Review this shaorma recipe: {ingredients}. Output strictly in JSON format: {"review": "...", "trend_ingredient": "..."}']"*
+  * **Implementation:** We will use strict prompting to force the local LLM to output only valid JSON containing a review and a `trend_ingredient`.
 
-## 5. Automated Testing & AI Evals
-**Tools Used:** [e.g., ChatGPT, Copilot]
+## 6. DevOps & CI/CD Pipeline
+**Tools Used:** Gemini
 
-* **Godot Unit Tests (GUT):** We used Copilot to quickly generate unit tests for our scoring logic and shop math (US8).
-* **AI Evals:** We created an automated script that sends 10 mock requests to our local LLM to test if it consistently returns the correct JSON structure for the Influencer Agent, achieving a [X]% success rate during testing.
-
-## 6. Asset Generation (Art & Audio)
-**Tools Used:** [e.g., Midjourney, DALL-E 3, ElevenLabs, Suno]
-
-* **2D Graphics:** The sprites for the ingredients, the wrap, and the UI elements were generated using AI image generators, ensuring a cohesive art style without needing a dedicated 2D artist.
-* **Audio:** SFX like the sizzling meat and UI clicks were sourced or synthesized using AI audio tools.
-
-## 7. DevOps & CI/CD Pipeline
-**Tools Used:** [e.g., ChatGPT]
-
-* **Process:** We needed a GitHub Actions pipeline to automatically build the Godot project for Windows and Web. We used AI to write the `.yml` workflow file.
-* **Result:** A fully functional CI/CD pipeline that runs tests and creates artifacts on every push to the `main` branch.
+* **Version Control Setup:** AI generated our Godot 4 specific `.gitignore` file, ensuring massive cache folders (`.godot/`) are excluded from our repository.
+* **CI/CD *(Upcoming)***: We will use AI to write the GitHub Actions `.yml` workflow file to automate testing and build generation on every push to the `main` branch.

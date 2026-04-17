@@ -16,6 +16,13 @@ var screen_center: Vector2
 var base_positions: Array[Vector2] = [] # Reținem punctul perfect centrat pentru fiecare strat
 
 func _ready():
+	# 1. Calculăm centrul și pozițiile de bază pentru parallax (codul tău existent)
+	_update_screen_data()
+	get_viewport().size_changed.connect(_update_screen_data)
+
+	# 2. REPARARE CAMERĂ: Punem camera în centrul ecranului la început
+	# Altfel, camera la (0,0) va centra colțul stânga-sus al meniului
+	$Camera2D.position = screen_center
 	# Calculăm centrele corecte la pornire
 	_update_screen_data()
 	
@@ -84,8 +91,20 @@ const GAME_SCENE = "res://scenes/day_transition.tscn"
 const LOAD_MENU = "res://scenes/load_menu.tscn"
 
 func _on_new_game_pressed():
-	print("Starting a new adventure at Papas Shaormeria!")
-	# get_tree().change_scene_to_file(GAME_SCENE)
+	print("Tranziție cinematică...")
+	$ButtonsContainer.hide()
+	
+	var tween = create_tween()
+	tween.set_parallel(true)
+	
+	# 3. TRANZIȚIE RELATIVĂ: 
+	# Deoarece camera e deja la screen_center, trebuie să adunăm offset-ul de mișcare
+	var target_cam_pos = screen_center + Vector2(0, 300) 
+	
+	tween.tween_property($Camera2D, "position", target_cam_pos, 1.5).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+	tween.tween_property($Camera2D, "zoom", Vector2(3.0, 3.0), 1.5).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+	
+	tween.chain().tween_callback(func(): get_tree().change_scene_to_file(GAME_SCENE))
 
 func _on_load_game_pressed():
 	print("Opening save slots...")

@@ -5,6 +5,11 @@
 [ext_resource type="Texture2D" uid="uid://bev7qroljp42v" path="res://assets/graphics/backgrounds/Layer2_City.png" id="3_6bivr"]
 [ext_resource type="Texture2D" uid="uid://dnu2756guxsde" path="res://assets/graphics/backgrounds/Layer3_Shop.png" id="4_6bivr"]
 [ext_resource type="Shader" uid="uid://d0lbcjxfx0vv" path="res://assets/graphics/shaders/main_menu.gdshader" id="5_imvie"]
+[ext_resource type="Script" uid="uid://bxa5j4y2b4rut" path="res://scripts/managers/light-flicker.gd" id="5_ng0o5"]
+[ext_resource type="Texture2D" uid="uid://bp7uatab3fcg" path="res://assets/graphics/backgrounds/Layer4_Name.png" id="7_8r73w"]
+[ext_resource type="Texture2D" uid="uid://j5emefsjrhx6" path="res://assets/graphics/vfx/SteamParticle.png" id="8_1hnlc"]
+[ext_resource type="Texture2D" uid="uid://dlf71u02lvcie" path="res://assets/graphics/backgrounds/ShaormaBase.png" id="9_50h1w"]
+[ext_resource type="Texture2D" uid="uid://c4mewwoqcjx72" path="res://assets/graphics/backgrounds/ShaormaButton.png" id="10_euy4r"]
 
 [sub_resource type="Gradient" id="Gradient_6bivr"]
 offsets = PackedFloat32Array(0.117788464, 0.20432693, 0.6418269)
@@ -20,6 +25,14 @@ shader = ExtResource("5_imvie")
 shader_parameter/distortion_strength = 0.0050000002375
 shader_parameter/wave_frequency = 1.50000002375
 shader_parameter/glass_color = Color(0.8, 0.9, 1, 0.2)
+
+[sub_resource type="Curve" id="Curve_50h1w"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.3644068, 0.50909716), 0.0, 0.0, 0, 0, Vector2(0.63135594, 0.99107444), 0.0, 0.0, 0, 0, Vector2(0.9491526, 0.99107444), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Gradient" id="Gradient_euy4r"]
+offsets = PackedFloat32Array(0.35714287, 0.6970443, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1.104735, 1.104735, 1.104735, 0.6784314, 1, 1, 1, 0)
 
 [node name="MainMenu" type="Control" unique_id=446913851]
 layout_mode = 3
@@ -53,28 +66,37 @@ offset_right = 40.0
 offset_bottom = 40.0
 texture = ExtResource("4_6bivr")
 
-[node name="PointLight2D2" type="PointLight2D" parent="ParallaxBackground/Layer3_Shop" unique_id=712742780]
+[node name="CeilingLight" type="PointLight2D" parent="ParallaxBackground/Layer3_Shop" unique_id=712742780]
 position = Vector2(1002.99994, 360)
 scale = Vector2(4.812501, 4.779296)
 color = Color(1, 0.7254902, 0.32941177, 1)
 energy = 0.46
 texture = SubResource("GradientTexture2D_imvie")
+script = ExtResource("5_ng0o5")
+flicker_speed = 0.6
+flicker_strength = 0.13
 
-[node name="PointLight2D3" type="PointLight2D" parent="ParallaxBackground/Layer3_Shop" unique_id=1065567462]
+[node name="CeilingLight2" type="PointLight2D" parent="ParallaxBackground/Layer3_Shop" unique_id=1065567462]
 position = Vector2(1670, 365)
 scale = Vector2(4.812501, 4.779296)
 color = Color(1, 0.7254902, 0.32941177, 1)
 energy = 0.46
 texture = SubResource("GradientTexture2D_imvie")
+script = ExtResource("5_ng0o5")
+flicker_speed = 0.8
+flicker_strength = 0.13
 
-[node name="PointLight2D4" type="PointLight2D" parent="ParallaxBackground/Layer3_Shop" unique_id=867574386]
+[node name="CeilingLight3" type="PointLight2D" parent="ParallaxBackground/Layer3_Shop" unique_id=867574386]
 position = Vector2(324, 365)
 scale = Vector2(4.812501, 4.779296)
 color = Color(1, 0.7254902, 0.32941177, 1)
 energy = 0.46
 texture = SubResource("GradientTexture2D_imvie")
+script = ExtResource("5_ng0o5")
+flicker_speed = 0.7
+flicker_strength = 0.12
 
-[node name="ColorRect" type="ColorRect" parent="ParallaxBackground/Layer3_Shop" unique_id=709718355]
+[node name="WindowPane" type="ColorRect" parent="ParallaxBackground/Layer3_Shop" unique_id=709718355]
 material = SubResource("ShaderMaterial_ng0o5")
 layout_mode = 0
 offset_left = 826.0
@@ -82,7 +104,7 @@ offset_top = 434.0
 offset_right = 1152.0
 offset_bottom = 955.0
 
-[node name="ColorRect2" type="ColorRect" parent="ParallaxBackground/Layer3_Shop" unique_id=1286804459]
+[node name="WindowPane2" type="ColorRect" parent="ParallaxBackground/Layer3_Shop" unique_id=1286804459]
 material = SubResource("ShaderMaterial_ng0o5")
 layout_mode = 0
 offset_left = 1172.0
@@ -90,7 +112,7 @@ offset_top = 434.0
 offset_right = 1499.0
 offset_bottom = 957.0
 
-[node name="ColorRect3" type="ColorRect" parent="ParallaxBackground/Layer3_Shop" unique_id=350563840]
+[node name="WindowPane3" type="ColorRect" parent="ParallaxBackground/Layer3_Shop" unique_id=350563840]
 material = SubResource("ShaderMaterial_ng0o5")
 layout_mode = 0
 offset_left = 1513.0
@@ -98,7 +120,7 @@ offset_top = 432.0
 offset_right = 1839.0
 offset_bottom = 953.0
 
-[node name="ColorRect4" type="ColorRect" parent="ParallaxBackground/Layer3_Shop" unique_id=292916290]
+[node name="WindowPane4" type="ColorRect" parent="ParallaxBackground/Layer3_Shop" unique_id=292916290]
 material = SubResource("ShaderMaterial_ng0o5")
 layout_mode = 0
 offset_left = 827.0
@@ -106,7 +128,7 @@ offset_top = 240.0
 offset_right = 1149.0
 offset_bottom = 417.0
 
-[node name="ColorRect5" type="ColorRect" parent="ParallaxBackground/Layer3_Shop" unique_id=753752084]
+[node name="WindowPane5" type="ColorRect" parent="ParallaxBackground/Layer3_Shop" unique_id=753752084]
 material = SubResource("ShaderMaterial_ng0o5")
 layout_mode = 0
 offset_left = 1514.0
@@ -114,7 +136,7 @@ offset_top = 238.0
 offset_right = 1836.0
 offset_bottom = 415.0
 
-[node name="ColorRect6" type="ColorRect" parent="ParallaxBackground/Layer3_Shop" unique_id=103649781]
+[node name="WindowPane6" type="ColorRect" parent="ParallaxBackground/Layer3_Shop" unique_id=103649781]
 material = SubResource("ShaderMaterial_ng0o5")
 layout_mode = 0
 offset_left = 1173.0
@@ -122,48 +144,119 @@ offset_top = 197.0
 offset_right = 1495.0
 offset_bottom = 416.0
 
-[node name="Layer4_CounterTop" type="TextureRect" parent="ParallaxBackground" unique_id=1509767598]
+[node name="KebabLight" type="PointLight2D" parent="ParallaxBackground/Layer3_Shop" unique_id=59415725]
+position = Vector2(507, 550.00006)
+scale = Vector2(1.609375, 2.921875)
+color = Color(0.93785685, 0.09683535, 5.7756904e-07, 1)
+texture = SubResource("GradientTexture2D_imvie")
+script = ExtResource("5_ng0o5")
+flicker_speed = 1.0
+flicker_strength = 1.0
+
+[node name="KebabLight2" type="PointLight2D" parent="ParallaxBackground/Layer3_Shop" unique_id=807918382]
+position = Vector2(507, 670)
+scale = Vector2(1.609375, 2.921875)
+color = Color(0.93785685, 0.09683535, 5.7756904e-07, 1)
+texture = SubResource("GradientTexture2D_imvie")
+script = ExtResource("5_ng0o5")
+flicker_speed = 1.0
+flicker_strength = 1.0
+
+[node name="KebabLight3" type="PointLight2D" parent="ParallaxBackground/Layer3_Shop" unique_id=61463020]
+position = Vector2(506.00003, 786.00006)
+scale = Vector2(1.609375, 2.921875)
+color = Color(0.93785685, 0.09683535, 5.7756904e-07, 1)
+texture = SubResource("GradientTexture2D_imvie")
+script = ExtResource("5_ng0o5")
+flicker_speed = 1.0
+flicker_strength = 1.0
+
+[node name="KebabLight4" type="PointLight2D" parent="ParallaxBackground/Layer3_Shop" unique_id=44357994]
+position = Vector2(331.99997, 785)
+scale = Vector2(1.609375, 2.921875)
+color = Color(0.93785685, 0.09683535, 5.7756904e-07, 1)
+texture = SubResource("GradientTexture2D_imvie")
+script = ExtResource("5_ng0o5")
+flicker_speed = 1.0
+flicker_strength = 1.0
+
+[node name="KebabLight5" type="PointLight2D" parent="ParallaxBackground/Layer3_Shop" unique_id=115378413]
+position = Vector2(333.99997, 665)
+scale = Vector2(1.609375, 2.921875)
+color = Color(0.93785685, 0.09683535, 5.7756904e-07, 1)
+texture = SubResource("GradientTexture2D_imvie")
+script = ExtResource("5_ng0o5")
+flicker_speed = 1.0
+flicker_strength = 1.0
+
+[node name="KebabLight6" type="PointLight2D" parent="ParallaxBackground/Layer3_Shop" unique_id=1914158342]
+position = Vector2(332.99997, 553)
+scale = Vector2(1.609375, 2.921875)
+color = Color(0.93785685, 0.09683535, 5.7756904e-07, 1)
+texture = SubResource("GradientTexture2D_imvie")
+script = ExtResource("5_ng0o5")
+flicker_speed = 1.0
+flicker_strength = 1.0
+
+[node name="Layer4_Name" type="TextureRect" parent="ParallaxBackground" unique_id=1509767598]
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
+texture = ExtResource("7_8r73w")
 
-[node name="Layer5_Shaorma" type="TextureRect" parent="ParallaxBackground" unique_id=751672458]
+[node name="Layer5_Shaorma" type="Control" parent="ParallaxBackground" unique_id=649131781]
+anchors_preset = 0
+offset_right = 2000.0
+offset_bottom = 1150.0
+
+[node name="SteamParticles" type="CPUParticles2D" parent="ParallaxBackground/Layer5_Shaorma" unique_id=2014671080]
+position = Vector2(423, 411)
+amount = 30
+texture = ExtResource("8_1hnlc")
+lifetime = 5.0
+speed_scale = 0.5
+randomness = 1.0
+emission_shape = 3
+emission_rect_extents = Vector2(100, 100)
+direction = Vector2(1, -1)
+spread = 25.0
+gravity = Vector2(0, -20)
+angular_velocity_min = -5.71
+angular_velocity_max = 85.71
+scale_amount_curve = SubResource("Curve_50h1w")
+color_ramp = SubResource("Gradient_euy4r")
+
+[node name="ShaormaBase" type="TextureRect" parent="ParallaxBackground/Layer5_Shaorma" unique_id=1944642054]
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
+texture = ExtResource("9_50h1w")
 
-[node name="GameTitle" type="Label" parent="." unique_id=2074644262]
+[node name="ButtonsContainer" type="VBoxContainer" parent="ParallaxBackground/Layer5_Shaorma" unique_id=534786271]
 layout_mode = 0
-offset_left = 273.0
-offset_top = 358.0
-offset_right = 674.0
-offset_bottom = 417.0
-text = "Papa's Shaormeria"
+offset_left = 630.0
+offset_top = 538.0
+offset_right = 762.04004
+offset_bottom = 709.0
+tooltip_text = "New Game"
 
-[node name="ButtonsContainer" type="VBoxContainer" parent="." unique_id=534786271]
-layout_mode = 0
-offset_left = 275.0
-offset_top = 553.0
-offset_right = 407.04007
-offset_bottom = 724.0
-
-[node name="NewGameButton" type="Button" parent="ButtonsContainer" unique_id=424180175]
+[node name="NewGameButton" type="TextureButton" parent="ParallaxBackground/Layer5_Shaorma/ButtonsContainer" unique_id=562661934]
 layout_mode = 2
-text = "New Game"
+texture_normal = ExtResource("10_euy4r")
 
-[node name="LoadGameButton" type="Button" parent="ButtonsContainer" unique_id=114471143]
+[node name="LoadGameButton" type="Button" parent="ParallaxBackground/Layer5_Shaorma/ButtonsContainer" unique_id=114471143]
 layout_mode = 2
 text = "Load Game"
 
-[node name="SettingsButton" type="Button" parent="ButtonsContainer" unique_id=837420310]
+[node name="SettingsButton" type="Button" parent="ParallaxBackground/Layer5_Shaorma/ButtonsContainer" unique_id=837420310]
 layout_mode = 2
 text = "Settings"
 
-[node name="CreditsButton" type="Button" parent="ButtonsContainer" unique_id=1978940891]
+[node name="CreditsButton" type="Button" parent="ParallaxBackground/Layer5_Shaorma/ButtonsContainer" unique_id=1978940891]
 layout_mode = 2
 text = "Credits"
 
-[node name="QuitButton" type="Button" parent="ButtonsContainer" unique_id=2020720914]
+[node name="QuitButton" type="Button" parent="ParallaxBackground/Layer5_Shaorma/ButtonsContainer" unique_id=2020720914]
 layout_mode = 2
 text = "Quit"
 

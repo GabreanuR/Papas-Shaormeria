@@ -8,7 +8,7 @@ var parallax_multipliers = [0.005, 0.01, 0.015, 0.02, 0.03]
 	$ParallaxBackground/Layer1_Sky,
 	$ParallaxBackground/Layer2_City,
 	$ParallaxBackground/Layer3_Shop,
-	$ParallaxBackground/Layer4_CounterTop,
+	$ParallaxBackground/Layer4_Name,
 	$ParallaxBackground/Layer5_Shaorma
 ]
 
@@ -26,8 +26,9 @@ func _ready():
 	# Calculăm centrele corecte la pornire
 	_update_screen_data()
 	
-	# Dacă jucătorul apasă F11 sau lărgește fereastra, recalculam totul
-	get_viewport().size_changed.connect(_update_screen_data)
+	# Verificăm dacă legătura există deja pentru a evita eroarea din consolă
+	if not get_viewport().size_changed.is_connected(_update_screen_data):
+		get_viewport().size_changed.connect(_update_screen_data)
 		
 	# Conectăm semnalele butoanelor principale
 	$ButtonsContainer/NewGameButton.pressed.connect(_on_new_game_pressed)

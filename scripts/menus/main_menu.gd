@@ -1,8 +1,7 @@
 extends Control
 
 # --- SETĂRI PARALLAX SOFT ---
-# Am redus valorile. Cerul se mișcă abia insesizabil (0.005), shaorma din față se mișcă decent (0.03).
-var parallax_multipliers = [0.005, 0.01, 0.015, 0.02, 0.03]
+var parallax_multipliers = [0.005, 0.01, 0.015, 0.02, 0.015]
 
 @onready var layers = [
 	$ParallaxBackground/Layer1_Sky,
@@ -12,35 +11,37 @@ var parallax_multipliers = [0.005, 0.01, 0.015, 0.02, 0.03]
 	$ParallaxBackground/Layer5_Shaorma
 ]
 
+# Referință către noul loc unde stau butoanele
+@onready var button_container = $ParallaxBackground/Layer5_Shaorma/ShaormaButtons
+
 var screen_center: Vector2
 var base_positions: Array[Vector2] = [] # Reținem punctul perfect centrat pentru fiecare strat
 
 func _ready():
-	# 1. Calculăm centrul și pozițiile de bază pentru parallax (codul tău existent)
-	_update_screen_data()
-	get_viewport().size_changed.connect(_update_screen_data)
-
-	# 2. REPARARE CAMERĂ: Punem camera în centrul ecranului la început
-	# Altfel, camera la (0,0) va centra colțul stânga-sus al meniului
-	$Camera2D.position = screen_center
-	# Calculăm centrele corecte la pornire
+	# 1. Calculăm centrele corecte la pornire
 	_update_screen_data()
 	
-	# Verificăm dacă legătura există deja pentru a evita eroarea din consolă
+	# 2. Verificăm dacă legătura există deja pentru a evita eroarea din consolă
 	if not get_viewport().size_changed.is_connected(_update_screen_data):
 		get_viewport().size_changed.connect(_update_screen_data)
-		
-	# Conectăm semnalele butoanelor principale
-	$ButtonsContainer/NewGameButton.pressed.connect(_on_new_game_pressed)
-	$ButtonsContainer/LoadGameButton.pressed.connect(_on_load_game_pressed)
-	$ButtonsContainer/SettingsButton.pressed.connect(_on_settings_pressed)
-	$ButtonsContainer/CreditsButton.pressed.connect(_on_credits_pressed)
-	$ButtonsContainer/QuitButton.pressed.connect(_on_quit_pressed)
+
+	# 3. Punem camera în centrul ecranului la început
+	$Camera2D.position = screen_center
 	
-	# Adăugăm efectul de "Juice" (Animație la hover) pentru toate butoanele
-	for button in $ButtonsContainer.get_children():
-		if button is Button:
-			button.pivot_offset = button.size / 2.0
+	# 4. Conectăm semnalele butoanelor din noul container
+	# Atenție: Asigură-te că numele de mai jos se potrivesc EXACT cu ce ai în Scene!
+	button_container.get_node("NewGameButton").pressed.connect(_on_new_game_pressed)
+	button_container.get_node("LoadGameButton").pressed.connect(_on_load_game_pressed)
+	button_container.get_node("SettingsButton").pressed.connect(_on_settings_pressed)
+	button_container.get_node("CreditsButton").pressed.connect(_on_credits_pressed)
+	button_container.get_node("QuitButton").pressed.connect(_on_quit_pressed)
+	
+	# 5. Adăugăm efectul de "Juice" (Animație la hover) pentru toate butoanele
+	for button in button_container.get_children():
+		# BaseButton acoperă atât butoanele de text cât și TextureButton (cele grafice)
+		if button is BaseButton: 
+			# Am scos linia care forța pivot_offset. 
+			# Dacă le-ai înclinat tu vizual în editor, Godot va folosi pivotul tău!
 			button.mouse_entered.connect(_on_button_hover.bind(button))
 			button.mouse_exited.connect(_on_button_unhover.bind(button))
 
@@ -68,11 +69,15 @@ func _process(delta):
 
 
 # --- Animații pentru Butoane ---
-func _on_button_hover(btn: Button):
+# Notă: Dacă ai micșorat butoanele din Inspector (ex: scale 0.5), 
+# va trebui să modifici (1.1, 1.1) în (0.6, 0.6) și (1.0, 1.0) în (0.5, 0.5) 
+# pentru ca ele să nu se facă brusc uriașe când pui mouse-ul pe ele.
+
+func _on_button_hover(btn: BaseButton):
 	var tween = create_tween()
 	tween.tween_property(btn, "scale", Vector2(1.1, 1.1), 0.1).set_trans(Tween.TRANS_QUAD)
 
-func _on_button_unhover(btn: Button):
+func _on_button_unhover(btn: BaseButton):
 	var tween = create_tween()
 	tween.tween_property(btn, "scale", Vector2(1.0, 1.0), 0.1).set_trans(Tween.TRANS_QUAD)
 
@@ -93,13 +98,17 @@ const LOAD_MENU = "res://scenes/load_menu.tscn"
 
 func _on_new_game_pressed():
 	print("Tranziție cinematică...")
-	$ButtonsContainer.hide()
+	
+	# Ascundem grupul de butoane să nu mai apară la zoom
+	button_container.hide()
 	
 	var tween = create_tween()
 	tween.set_parallel(true)
 	
-	# 3. TRANZIȚIE RELATIVĂ: 
-	# Deoarece camera e deja la screen_center, trebuie să adunăm offset-ul de mișcare
+	# Efect de "Fade Out" pentru Titlu (Layer4) ca să dispară încet
+	tween.tween_property(layers[3], "modulate:a", 0.0, 1.0)
+	
+	# Tranziția relativă a camerei (Adunăm offset-ul de mișcare la poziția curentă)
 	var target_cam_pos = screen_center + Vector2(0, 300) 
 	
 	tween.tween_property($Camera2D, "position", target_cam_pos, 1.5).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)

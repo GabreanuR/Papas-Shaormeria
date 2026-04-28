@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://bpv4mtpna68gx"]
+
+[ext_resource type="Texture2D" uid="uid://b3vjfwyvipdh" path="res://assets/graphics/ingredients/pata_sos.png" id="1_bo5bu"]
+
+[node name="Pata_sos" type="Sprite2D" unique_id=341115232]
+position = Vector2(966, 517)
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("1_bo5bu")

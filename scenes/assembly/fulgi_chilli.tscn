@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://dnfy0wsrdivko"]
+
+[ext_resource type="Texture2D" uid="uid://b54gs8me2kp3w" path="res://assets/graphics/ingredients/fulgi_chilli.png" id="1_rxge5"]
+
+[node name="fulgi_chilli" type="Sprite2D" unique_id=366838680]
+position = Vector2(1007, 547)
+scale = Vector2(0.45, 0.45)
+texture = ExtResource("1_rxge5")

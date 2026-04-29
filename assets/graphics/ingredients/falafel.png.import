@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://djb547pqvw2el"
-path="res://.godot/imported/varza.png-f9936134bb49384e8b632e2dbceb2213.ctex"
+uid="uid://jnoe6umaq2yo"
+path="res://.godot/imported/falafel.png-94ded240c94bf98881152c4954eab2d0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/graphics/ingredients/varza.png"
-dest_files=["res://.godot/imported/varza.png-f9936134bb49384e8b632e2dbceb2213.ctex"]
+source_file="res://assets/graphics/ingredients/falafel.png"
+dest_files=["res://.godot/imported/falafel.png-94ded240c94bf98881152c4954eab2d0.ctex"]
 
 [params]
 

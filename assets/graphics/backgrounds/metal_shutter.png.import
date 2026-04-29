@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://djb547pqvw2el"
-path="res://.godot/imported/varza.png-f9936134bb49384e8b632e2dbceb2213.ctex"
+uid="uid://d2wxw14py3xdl"
+path="res://.godot/imported/metal_shutter.png-185dde98064366f0445c3a0f08bd7fc1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/graphics/ingredients/varza.png"
-dest_files=["res://.godot/imported/varza.png-f9936134bb49384e8b632e2dbceb2213.ctex"]
+source_file="res://assets/graphics/backgrounds/metal_shutter.png"
+dest_files=["res://.godot/imported/metal_shutter.png-185dde98064366f0445c3a0f08bd7fc1.ctex"]
 
 [params]
 

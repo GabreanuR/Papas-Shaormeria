@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://djb547pqvw2el"
-path="res://.godot/imported/varza.png-f9936134bb49384e8b632e2dbceb2213.ctex"
+uid="uid://bdxiiekl82p4o"
+path="res://.godot/imported/jalapenos_tava.png-eb4332c1e7f3e352743c82bba774c4ac.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/graphics/ingredients/varza.png"
-dest_files=["res://.godot/imported/varza.png-f9936134bb49384e8b632e2dbceb2213.ctex"]
+source_file="res://assets/graphics/ingredients/jalapenos_tava.png"
+dest_files=["res://.godot/imported/jalapenos_tava.png-eb4332c1e7f3e352743c82bba774c4ac.ctex"]
 
 [params]
 

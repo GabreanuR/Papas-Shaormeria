@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://djb547pqvw2el"
-path="res://.godot/imported/varza.png-f9936134bb49384e8b632e2dbceb2213.ctex"
+uid="uid://b73mike5hi03"
+path="res://.godot/imported/CloseCredits.png-761f822493f6a4b3ab0b955bdb5d63dc.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/graphics/ingredients/varza.png"
-dest_files=["res://.godot/imported/varza.png-f9936134bb49384e8b632e2dbceb2213.ctex"]
+source_file="res://assets/graphics/backgrounds/CloseCredits.png"
+dest_files=["res://.godot/imported/CloseCredits.png-761f822493f6a4b3ab0b955bdb5d63dc.ctex"]
 
 [params]
 

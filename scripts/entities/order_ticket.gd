@@ -5,6 +5,8 @@ signal comanda_gata
 # Legam codul de containerul tau vizual (ca sa stim unde sa bagam pozele)
 @onready var container_ingrediente = $VBoxContainer 
 
+@onready var label_numar = $Number
+
 # Variabile pentru Drag & Drop
 var e_pe_sfoara: bool = false
 var se_trage: bool = false
@@ -29,11 +31,17 @@ var imagini_ingrediente = {
 	"maioneza_usturoi": preload("res://assets/graphics/ingredients/maioneza_usturoi.png"),
 	"rosii": preload("res://assets/graphics/ingredients/rosii.png"),
 	"salata": preload("res://assets/graphics/ingredients/salata.png"),
-	"varza": preload("res://assets/graphics/ingredients/varza.png")
+	"varza": preload("res://assets/graphics/ingredients/varza.png"),
+	"falafel": preload("res://assets/graphics/ingredients/falafel.png"),
+	"jalapenos": preload("res://assets/graphics/ingredients/jalapenos.png")
 }
 
 # 2. Funcția care va fi apelata cand clientul striga comanda
-func primeste_comanda(lista_ingrediente: Array):
+func primeste_comanda(lista_ingrediente: Array, numar_client: int):
+	# Setăm textul biletului. 
+	# Funcția pad_zeros(2) este un truc genial din Godot: transformă automat numărul 1 în "01", 2 în "02", dar pe 10 îl lasă "10".
+	label_numar.text = str(numar_client).pad_zeros(2)
+	
 	# Biletul devine vizibil
 	show()
 	
@@ -67,8 +75,6 @@ func primeste_comanda(lista_ingrediente: Array):
 	# Strigăm către scenă că am terminat!
 	comanda_gata.emit()
 
-# Această funcție citește click-urile direct pe bilet
-# Această funcție citește click-urile direct pe bilet
 # Această funcție citește click-urile direct pe bilet
 func _gui_input(event):
 	if not e_pe_sfoara:
@@ -111,4 +117,4 @@ func elibereaza_bilet():
 		position = Vector2(1202, 124) 
 	else:
 		scale = Vector2(0.4, 0.4) 
-		global_position.y = 20
+		global_position.y = 55

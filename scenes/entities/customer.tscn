@@ -16,10 +16,10 @@ scale = Vector2(1.2235277, 1.1094708)
 texture = ExtResource("2_481yl")
 
 [node name="TextureButton" type="TextureButton" parent="." unique_id=743995191]
-offset_left = 60.0
-offset_top = -207.0
-offset_right = 160.0
-offset_bottom = -107.0
+offset_left = 25.0
+offset_top = -147.0
+offset_right = 225.0
+offset_bottom = 53.0
 texture_normal = SubResource("CompressedTexture2D_prj4p")
 stretch_mode = 5
 

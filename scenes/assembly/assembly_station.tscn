@@ -4,10 +4,10 @@
 [ext_resource type="Texture2D" uid="uid://bqukyy6kw40wd" path="res://assets/graphics/ingredients/cartofi.png" id="2_u0vx2"]
 [ext_resource type="Script" uid="uid://i70srojsbyfp" path="res://scripts/assemble_ingredients/mizerie.gd" id="2_usfly"]
 [ext_resource type="Script" uid="uid://crxojmb1wpqmk" path="res://scripts/assemble_ingredients/ingredient.gd" id="3_i3sft"]
+[ext_resource type="Texture2D" uid="uid://duko2a4vwbnc5" path="res://assets/graphics/ingredients/fundal_sosuri.png" id="3_yrmt1"]
 [ext_resource type="Texture2D" uid="uid://dqjjengbmiot3" path="res://assets/graphics/ingredients/maioneza_picanta.png" id="4_4l1o5"]
 [ext_resource type="Script" uid="uid://citcuryn5c0kn" path="res://scripts/assemble_ingredients/stcila_sos.gd" id="5_4l1o5"]
 [ext_resource type="Texture2D" uid="uid://b8xt31oo1afe7" path="res://assets/graphics/ingredients/maioneza_usturoi.png" id="5_usfly"]
-[ext_resource type="PackedScene" uid="uid://bpv4mtpna68gx" path="res://scenes/assembly/pata_sos.tscn" id="6_usfly"]
 [ext_resource type="Texture2D" uid="uid://djtis7wbfbxvg" path="res://assets/graphics/ingredients/ketchup_dulce.png" id="6_yovan"]
 [ext_resource type="Texture2D" uid="uid://b54gs8me2kp3w" path="res://assets/graphics/ingredients/fulgi_chilli.png" id="6_yrmt1"]
 [ext_resource type="Texture2D" uid="uid://dmhlhhhk6cxyf" path="res://assets/graphics/ingredients/ketchup_picant.png" id="7_vaud5"]
@@ -50,6 +50,14 @@ offset_bottom = 1414.0
 texture = ExtResource("1_4l1o5")
 script = ExtResource("2_usfly")
 metadata/_edit_use_anchors_ = true
+
+[node name="FundalSosuri" type="TextureRect" parent="all_items" unique_id=979363872]
+offset_left = 2385.0
+offset_top = 298.00003
+offset_right = 4433.0
+offset_bottom = 1414.0
+texture = ExtResource("3_yrmt1")
+expand_mode = 1
 
 [node name="MizerieMasa" type="Node2D" parent="all_items" unique_id=1982838300]
 position = Vector2(-67.36841, 54.736847)
@@ -160,7 +168,7 @@ script = ExtResource("3_i3sft")
 nume_ingredient = "Rosii"
 
 [node name="SaucesStation" type="Node2D" parent="all_items" unique_id=264826598]
-position = Vector2(1920, 0)
+position = Vector2(1414.7368, -352.6316)
 
 [node name="Maioneza Picanta" type="TextureRect" parent="all_items/SaucesStation" unique_id=56911007]
 offset_left = 1840.0001
@@ -170,9 +178,7 @@ offset_bottom = 1073.0
 texture = ExtResource("4_4l1o5")
 expand_mode = 1
 script = ExtResource("5_4l1o5")
-scena_pata_sos = ExtResource("6_usfly")
-culoare_sos = Color(1, 0.7019608, 0.2784314, 1)
-nume_ingredient = "Maioneza picanta"
+culoare_sos = Color(1, 0.54901963, 0.24705882, 1)
 
 [node name="Maioneza Usturoi" type="TextureRect" parent="all_items/SaucesStation" unique_id=2029653113]
 offset_left = 1968.0001
@@ -182,9 +188,7 @@ offset_bottom = 1073.0
 texture = ExtResource("5_usfly")
 expand_mode = 1
 script = ExtResource("5_4l1o5")
-scena_pata_sos = ExtResource("6_usfly")
-culoare_sos = Color(0.9411765, 0.9607843, 0.9607843, 1)
-nume_ingredient = "Maioneza cu usturoi"
+culoare_sos = Color(1, 0.9490196, 0.8, 1)
 
 [node name="Ketchup Dulce" type="TextureRect" parent="all_items/SaucesStation" unique_id=511835954]
 offset_left = 2096.0
@@ -194,9 +198,7 @@ offset_bottom = 1073.0
 texture = ExtResource("6_yovan")
 expand_mode = 1
 script = ExtResource("5_4l1o5")
-scena_pata_sos = ExtResource("6_usfly")
-culoare_sos = Color(0.70980394, 0.101960786, 0, 1)
-nume_ingredient = "Ketchup dulce"
+culoare_sos = Color(0.69803923, 0, 0, 1)
 
 [node name="Ketchup Picant" type="TextureRect" parent="all_items/SaucesStation" unique_id=73236650]
 offset_left = 2224.0
@@ -206,9 +208,7 @@ offset_bottom = 1073.0
 texture = ExtResource("7_vaud5")
 expand_mode = 1
 script = ExtResource("5_4l1o5")
-scena_pata_sos = ExtResource("6_usfly")
-culoare_sos = Color(0.9098039, 0.3647059, 0.015686275, 1)
-nume_ingredient = "Ketchup picant"
+culoare_sos = Color(0.5019608, 0, 0, 1)
 
 [node name="Maioneza" type="TextureRect" parent="all_items/SaucesStation" unique_id=676601657]
 offset_left = 1712.0002
@@ -218,16 +218,14 @@ offset_bottom = 1073.0
 texture = ExtResource("17_tx4av")
 expand_mode = 1
 script = ExtResource("5_4l1o5")
-scena_pata_sos = ExtResource("6_usfly")
-culoare_sos = Color(1, 0.9764706, 0.8901961, 1)
-nume_ingredient = "Maioneza"
+culoare_sos = Color(0.9490196, 0.9490196, 0.9490196, 1)
 
 [node name="LipieContainer" type="Node2D" parent="all_items" unique_id=2052091160]
 
 [node name="Lipie" type="TextureRect" parent="all_items/LipieContainer" unique_id=2083735286]
-offset_left = 1108.0
+offset_left = 3180.0
 offset_top = 872.0
-offset_right = 1637.0
+offset_right = 3709.0
 offset_bottom = 1286.0
 texture = ExtResource("18_go02i")
 script = ExtResource("19_nanqk")
@@ -242,5 +240,5 @@ texture = ExtResource("18_go02i")
 scale = Vector2(0.6558187, 0.45273423)
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1001936062]
-position = Vector2(380, 230)
+position = Vector2(2340, 230)
 anchor_mode = 0

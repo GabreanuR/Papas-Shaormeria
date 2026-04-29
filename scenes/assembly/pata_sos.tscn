@@ -1,8 +1,13 @@
-[gd_scene format=3 uid="uid://bpv4mtpna68gx"]
+[gd_scene format=3 uid="uid://ihbdasxpe0oe"]
 
-[ext_resource type="Texture2D" uid="uid://b3vjfwyvipdh" path="res://assets/graphics/ingredients/pata_sos.png" id="1_bo5bu"]
+[ext_resource type="Script" uid="uid://d3hgxtxxgp3ns" path="res://scripts/assemble_ingredients/pata_sos.gd" id="1_nwfdc"]
 
-[node name="Pata_sos" type="Sprite2D" unique_id=341115232]
-position = Vector2(966, 517)
-scale = Vector2(0.6, 0.6)
-texture = ExtResource("1_bo5bu")
+[node name="PataSos" type="Line2D" unique_id=1292032136]
+top_level = true
+z_index = 100
+width = 25.0
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+script = ExtResource("1_nwfdc")

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b3vjfwyvipdh"
-path="res://.godot/imported/pata_sos.png-32229820f4e161aeacd0e7893eac5770.ctex"
+uid="uid://duko2a4vwbnc5"
+path="res://.godot/imported/fundal_sosuri.png-869d7462db18601d91de06dfa5f04b46.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/graphics/ingredients/pata_sos.png"
-dest_files=["res://.godot/imported/pata_sos.png-32229820f4e161aeacd0e7893eac5770.ctex"]
+source_file="res://assets/graphics/ingredients/fundal_sosuri.png"
+dest_files=["res://.godot/imported/fundal_sosuri.png-869d7462db18601d91de06dfa5f04b46.ctex"]
 
 [params]
 

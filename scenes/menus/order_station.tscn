@@ -1,0 +1,50 @@
+[gd_scene format=3 uid="uid://cme5sxwqrlgnq"]
+
+[ext_resource type="Script" uid="uid://b2eufuo13ev6c" path="res://scripts/menus/order_station.gd" id="1_2hbr3"]
+[ext_resource type="Texture2D" uid="uid://bw5sl5cfg160u" path="res://assets/graphics/backgrounds/tejghea.png" id="1_uca3d"]
+[ext_resource type="Texture2D" uid="uid://bajlki8g8ql1s" path="res://assets/graphics/backgrounds/main_frame_bun.png" id="2_8kqrv"]
+[ext_resource type="PackedScene" uid="uid://fd4aj0bemigw" path="res://scenes/entities/customer.tscn" id="2_u8rcb"]
+[ext_resource type="PackedScene" uid="uid://wdtlxc2q14j6" path="res://scenes/menus/order_ticket.tscn" id="3_2hbr3"]
+
+[node name="OrderStation" type="Node2D" unique_id=805942768]
+script = ExtResource("1_2hbr3")
+
+[node name="LobbyFrame" type="TextureRect" parent="." unique_id=1584637644]
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+texture = ExtResource("2_8kqrv")
+expand_mode = 1
+
+[node name="OrderFrame" type="TextureRect" parent="." unique_id=1812318764]
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+texture = ExtResource("1_uca3d")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Customer" parent="." unique_id=295277394 instance=ExtResource("2_u8rcb")]
+position = Vector2(793, 205)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=2059760556]
+
+[node name="OrderTicket" parent="CanvasLayer" unique_id=1253955845 instance=ExtResource("3_2hbr3")]
+visible = false
+offset_left = 1202.0
+offset_top = 124.0
+offset_right = 1352.0
+offset_bottom = 324.0
+scale = Vector2(1.2, 1.2)
+
+[node name="OrderRope" type="HBoxContainer" parent="CanvasLayer" unique_id=111483483]
+offset_left = 179.0
+offset_top = 16.0
+offset_right = 1679.0
+offset_bottom = 36.0
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1111382505]
+position = Vector2(960, 540)
+
+[connection signal="a_fost_apasat" from="Customer" to="." method="_on_customer_a_fost_apasat"]
+[connection signal="comanda_gata" from="CanvasLayer/OrderTicket" to="." method="_on_order_ticket_comanda_gata"]

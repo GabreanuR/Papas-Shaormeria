@@ -14,6 +14,11 @@
 [ext_resource type="Texture2D" uid="uid://5lcutndmdlev" path="res://assets/graphics/backgrounds/Btn-Settings.png" id="12_3w8rc"]
 [ext_resource type="Texture2D" uid="uid://c03qupodydqlv" path="res://assets/graphics/backgrounds/Btn-Credits.png" id="13_uxao6"]
 [ext_resource type="Texture2D" uid="uid://c5l7bei2u1goe" path="res://assets/graphics/backgrounds/Btn-Quit.png" id="14_3w8rc"]
+[ext_resource type="Texture2D" uid="uid://dfc63jlmpo066" path="res://assets/graphics/backgrounds/CreditsReceipt.png" id="15_nkawv"]
+[ext_resource type="Texture2D" uid="uid://d2wxw14py3xdl" path="res://assets/graphics/backgrounds/metal_shutter.png" id="15_uxao6"]
+[ext_resource type="AudioStream" uid="uid://c8hgt5u57celp" path="res://assets/audio/music/LobbyMusicMainMenu.mp3" id="16_a3hrp"]
+[ext_resource type="Texture2D" uid="uid://b73mike5hi03" path="res://assets/graphics/backgrounds/CloseCredits.png" id="16_w32d4"]
+[ext_resource type="AudioStream" uid="uid://c13ptfyyodlxi" path="res://assets/audio/sfx/MetalShutter.wav" id="17_25m6f"]
 
 [sub_resource type="Gradient" id="Gradient_6bivr"]
 offsets = PackedFloat32Array(0.117788464, 0.20432693, 0.6418269)
@@ -70,7 +75,7 @@ offset_right = 40.0
 offset_bottom = 40.0
 texture = ExtResource("4_6bivr")
 
-[node name="CeilingLight" type="PointLight2D" parent="ParallaxBackground/Layer3_Shop" unique_id=712742780]
+[node name="CeilingLight" type="PointLight2D" parent="ParallaxBackground/Layer3_Shop" unique_id=712742780 groups=["shop_lights"]]
 position = Vector2(1002.99994, 360)
 scale = Vector2(4.812501, 4.779296)
 color = Color(1, 0.7254902, 0.32941177, 1)
@@ -80,7 +85,7 @@ script = ExtResource("5_ng0o5")
 flicker_speed = 0.6
 flicker_strength = 0.13
 
-[node name="CeilingLight2" type="PointLight2D" parent="ParallaxBackground/Layer3_Shop" unique_id=1065567462]
+[node name="CeilingLight2" type="PointLight2D" parent="ParallaxBackground/Layer3_Shop" unique_id=1065567462 groups=["shop_lights"]]
 position = Vector2(1670, 365)
 scale = Vector2(4.812501, 4.779296)
 color = Color(1, 0.7254902, 0.32941177, 1)
@@ -90,7 +95,7 @@ script = ExtResource("5_ng0o5")
 flicker_speed = 0.8
 flicker_strength = 0.13
 
-[node name="CeilingLight3" type="PointLight2D" parent="ParallaxBackground/Layer3_Shop" unique_id=867574386]
+[node name="CeilingLight3" type="PointLight2D" parent="ParallaxBackground/Layer3_Shop" unique_id=867574386 groups=["shop_lights"]]
 position = Vector2(324, 365)
 scale = Vector2(4.812501, 4.779296)
 color = Color(1, 0.7254902, 0.32941177, 1)
@@ -148,7 +153,7 @@ offset_top = 197.0
 offset_right = 1495.0
 offset_bottom = 416.0
 
-[node name="KebabLight" type="PointLight2D" parent="ParallaxBackground/Layer3_Shop" unique_id=59415725]
+[node name="KebabLight" type="PointLight2D" parent="ParallaxBackground/Layer3_Shop" unique_id=59415725 groups=["shop_lights"]]
 position = Vector2(507, 550.00006)
 scale = Vector2(1.609375, 2.921875)
 color = Color(0.93785685, 0.09683535, 5.7756904e-07, 1)
@@ -157,7 +162,7 @@ script = ExtResource("5_ng0o5")
 flicker_speed = 1.0
 flicker_strength = 1.0
 
-[node name="KebabLight2" type="PointLight2D" parent="ParallaxBackground/Layer3_Shop" unique_id=807918382]
+[node name="KebabLight2" type="PointLight2D" parent="ParallaxBackground/Layer3_Shop" unique_id=807918382 groups=["shop_lights"]]
 position = Vector2(507, 670)
 scale = Vector2(1.609375, 2.921875)
 color = Color(0.93785685, 0.09683535, 5.7756904e-07, 1)
@@ -166,7 +171,7 @@ script = ExtResource("5_ng0o5")
 flicker_speed = 1.0
 flicker_strength = 1.0
 
-[node name="KebabLight3" type="PointLight2D" parent="ParallaxBackground/Layer3_Shop" unique_id=61463020]
+[node name="KebabLight3" type="PointLight2D" parent="ParallaxBackground/Layer3_Shop" unique_id=61463020 groups=["shop_lights"]]
 position = Vector2(506.00003, 786.00006)
 scale = Vector2(1.609375, 2.921875)
 color = Color(0.93785685, 0.09683535, 5.7756904e-07, 1)
@@ -175,7 +180,7 @@ script = ExtResource("5_ng0o5")
 flicker_speed = 1.0
 flicker_strength = 1.0
 
-[node name="KebabLight4" type="PointLight2D" parent="ParallaxBackground/Layer3_Shop" unique_id=44357994]
+[node name="KebabLight4" type="PointLight2D" parent="ParallaxBackground/Layer3_Shop" unique_id=44357994 groups=["shop_lights"]]
 position = Vector2(331.99997, 785)
 scale = Vector2(1.609375, 2.921875)
 color = Color(0.93785685, 0.09683535, 5.7756904e-07, 1)
@@ -184,7 +189,7 @@ script = ExtResource("5_ng0o5")
 flicker_speed = 1.0
 flicker_strength = 1.0
 
-[node name="KebabLight5" type="PointLight2D" parent="ParallaxBackground/Layer3_Shop" unique_id=115378413]
+[node name="KebabLight5" type="PointLight2D" parent="ParallaxBackground/Layer3_Shop" unique_id=115378413 groups=["shop_lights"]]
 position = Vector2(333.99997, 665)
 scale = Vector2(1.609375, 2.921875)
 color = Color(0.93785685, 0.09683535, 5.7756904e-07, 1)
@@ -193,7 +198,7 @@ script = ExtResource("5_ng0o5")
 flicker_speed = 1.0
 flicker_strength = 1.0
 
-[node name="KebabLight6" type="PointLight2D" parent="ParallaxBackground/Layer3_Shop" unique_id=1914158342]
+[node name="KebabLight6" type="PointLight2D" parent="ParallaxBackground/Layer3_Shop" unique_id=1914158342 groups=["shop_lights"]]
 position = Vector2(332.99997, 553)
 scale = Vector2(1.609375, 2.921875)
 color = Color(0.93785685, 0.09683535, 5.7756904e-07, 1)
@@ -237,7 +242,7 @@ offset_right = 40.0
 offset_bottom = 40.0
 texture = ExtResource("9_50h1w")
 
-[node name="ShaormaButtons" type="Control" parent="ParallaxBackground/Layer5_Shaorma" unique_id=1495612082]
+[node name="MainGroup" type="Control" parent="ParallaxBackground/Layer5_Shaorma" unique_id=1495612082]
 anchors_preset = 0
 offset_left = 630.0
 offset_top = 538.0
@@ -245,7 +250,7 @@ offset_right = 956.0
 offset_bottom = 1108.0
 tooltip_text = "New Game"
 
-[node name="NewGameButton" type="TextureButton" parent="ParallaxBackground/Layer5_Shaorma/ShaormaButtons" unique_id=562661934]
+[node name="NewGameButton" type="TextureButton" parent="ParallaxBackground/Layer5_Shaorma/MainGroup" unique_id=562661934]
 layout_mode = 0
 offset_left = -299.0
 offset_top = -66.99999
@@ -257,7 +262,7 @@ texture_normal = ExtResource("10_euy4r")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="LoadGameButton" type="TextureButton" parent="ParallaxBackground/Layer5_Shaorma/ShaormaButtons" unique_id=1911385492]
+[node name="LoadGameButton" type="TextureButton" parent="ParallaxBackground/Layer5_Shaorma/MainGroup" unique_id=1911385492]
 layout_mode = 0
 offset_left = -295.00003
 offset_top = 13.000001
@@ -269,7 +274,7 @@ texture_normal = ExtResource("11_bh4e2")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="SettingsButton" type="TextureButton" parent="ParallaxBackground/Layer5_Shaorma/ShaormaButtons" unique_id=1252206924]
+[node name="SettingsButton" type="TextureButton" parent="ParallaxBackground/Layer5_Shaorma/MainGroup" unique_id=1252206924]
 layout_mode = 0
 offset_left = -327.0
 offset_top = 86.0
@@ -281,7 +286,7 @@ texture_normal = ExtResource("12_3w8rc")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="CreditsButton" type="TextureButton" parent="ParallaxBackground/Layer5_Shaorma/ShaormaButtons" unique_id=85335887]
+[node name="CreditsButton" type="TextureButton" parent="ParallaxBackground/Layer5_Shaorma/MainGroup" unique_id=85335887]
 layout_mode = 0
 offset_left = -296.0
 offset_top = 164.99998
@@ -293,7 +298,7 @@ texture_normal = ExtResource("13_uxao6")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="QuitButton" type="TextureButton" parent="ParallaxBackground/Layer5_Shaorma/ShaormaButtons" unique_id=870987513]
+[node name="QuitButton" type="TextureButton" parent="ParallaxBackground/Layer5_Shaorma/MainGroup" unique_id=870987513]
 layout_mode = 0
 offset_left = -311.0
 offset_top = 242.0
@@ -305,4 +310,42 @@ texture_normal = ExtResource("14_3w8rc")
 ignore_texture_size = true
 stretch_mode = 5
 
+[node name="DarkOverlay" type="ColorRect" parent="." unique_id=561861130]
+layout_mode = 0
+offset_right = 2000.0
+offset_bottom = 1150.0
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="ReceiptNode" type="TextureRect" parent="." unique_id=665522368]
+layout_mode = 0
+offset_left = 450.0
+offset_top = 1200.0
+offset_right = 1600.0
+offset_bottom = 3200.0
+texture = ExtResource("15_nkawv")
+
+[node name="BtnCloseCredits" type="TextureButton" parent="ReceiptNode" unique_id=516303407]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 270.0
+offset_right = 497.0
+offset_bottom = 783.0
+texture_normal = ExtResource("16_w32d4")
+
+[node name="MetalShutter" type="TextureRect" parent="." unique_id=1282979315]
+layout_mode = 0
+offset_left = -20.0
+offset_top = -1150.0
+offset_right = 1980.0
+texture = ExtResource("15_uxao6")
+
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1407775336]
+
+[node name="BGMPlayer" type="AudioStreamPlayer" parent="." unique_id=2084616155]
+stream = ExtResource("16_a3hrp")
+autoplay = true
+parameters/looping = true
+
+[node name="ShutterSFX" type="AudioStreamPlayer" parent="." unique_id=413597981]
+stream = ExtResource("17_25m6f")

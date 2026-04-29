@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://fd4aj0bemigw"]
+
+[ext_resource type="Script" uid="uid://y5fv76dabu2i" path="res://scripts/entities/customer.gd" id="1_prj4p"]
+[ext_resource type="Texture2D" uid="uid://ct3gbjn8h7ww6" path="res://assets/graphics/characters/papalouie.png" id="2_481yl"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_prj4p"]
+load_path = "res://.godot/imported/order_btn.png-fda4889deae7c443a7f0cc535ec05536.ctex"
+
+[node name="Customer" type="Node2D" unique_id=1721532171]
+position = Vector2(15, 19)
+script = ExtResource("1_prj4p")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1386146347]
+position = Vector2(141.44727, 309.8008)
+scale = Vector2(1.2235277, 1.1094708)
+texture = ExtResource("2_481yl")
+
+[node name="TextureButton" type="TextureButton" parent="." unique_id=743995191]
+offset_left = 60.0
+offset_top = -207.0
+offset_right = 160.0
+offset_bottom = -107.0
+texture_normal = SubResource("CompressedTexture2D_prj4p")
+stretch_mode = 5
+
+[connection signal="pressed" from="TextureButton" to="." method="_on_texture_button_pressed"]

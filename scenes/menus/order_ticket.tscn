@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://wdtlxc2q14j6"]
+
+[ext_resource type="Texture2D" uid="uid://rcu20gwhcftn" path="res://assets/graphics/ui/order_ticket.png" id="1_csjjt"]
+[ext_resource type="Script" uid="uid://bfrowrat2ok17" path="res://scripts/entities/order_ticket.gd" id="1_ta5e0"]
+
+[node name="OrderTicket" type="Control" unique_id=1253955845]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 600.0
+offset_bottom = 600.0
+script = ExtResource("1_ta5e0")
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=1241074478]
+layout_mode = 0
+offset_right = 600.0
+offset_bottom = 600.0
+texture = ExtResource("1_csjjt")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=645770943]
+layout_mode = 0
+offset_top = -7.0
+offset_right = 600.0
+offset_bottom = 593.0
+alignment = 2

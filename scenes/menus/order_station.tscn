@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://cme5sxwqrlgnq"]
 
 [ext_resource type="Script" uid="uid://b2eufuo13ev6c" path="res://scripts/menus/order_station.gd" id="1_2hbr3"]
-[ext_resource type="Texture2D" uid="uid://bw5sl5cfg160u" path="res://assets/graphics/backgrounds/tejghea.png" id="1_uca3d"]
-[ext_resource type="Texture2D" uid="uid://bajlki8g8ql1s" path="res://assets/graphics/backgrounds/main_frame_bun.png" id="2_8kqrv"]
+[ext_resource type="Texture2D" uid="uid://67r64wpmq4a2" path="res://assets/graphics/backgrounds/tejghea.png" id="1_uca3d"]
+[ext_resource type="Texture2D" uid="uid://4aqj2u4jvasp" path="res://assets/graphics/backgrounds/main_frame.png" id="2_8kqrv"]
 [ext_resource type="PackedScene" uid="uid://fd4aj0bemigw" path="res://scenes/entities/customer.tscn" id="2_u8rcb"]
 [ext_resource type="PackedScene" uid="uid://wdtlxc2q14j6" path="res://scenes/menus/order_ticket.tscn" id="3_2hbr3"]
 
@@ -38,10 +38,9 @@ offset_bottom = 324.0
 scale = Vector2(1.2, 1.2)
 
 [node name="OrderRope" type="HBoxContainer" parent="CanvasLayer" unique_id=111483483]
-offset_left = 179.0
-offset_top = 16.0
-offset_right = 1679.0
-offset_bottom = 36.0
+offset_top = 46.0
+offset_right = 1920.0
+offset_bottom = 66.0
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1111382505]
 position = Vector2(960, 540)

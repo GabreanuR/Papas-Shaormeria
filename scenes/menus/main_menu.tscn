@@ -19,6 +19,8 @@
 [ext_resource type="AudioStream" uid="uid://c8hgt5u57celp" path="res://assets/audio/music/LobbyMusicMainMenu.mp3" id="16_a3hrp"]
 [ext_resource type="Texture2D" uid="uid://b73mike5hi03" path="res://assets/graphics/backgrounds/CloseCredits.png" id="16_w32d4"]
 [ext_resource type="AudioStream" uid="uid://c13ptfyyodlxi" path="res://assets/audio/sfx/MetalShutter.wav" id="17_25m6f"]
+[ext_resource type="Theme" uid="uid://c30gjc6imkwcf" path="res://assets/theme/main_theme.tres" id="20_w32d4"]
+[ext_resource type="FontFile" uid="uid://bpu1j3ggtme57" path="res://assets/fonts/Oswald-Bold.ttf" id="21_287l7"]
 
 [sub_resource type="Gradient" id="Gradient_6bivr"]
 offsets = PackedFloat32Array(0.117788464, 0.20432693, 0.6418269)
@@ -42,6 +44,31 @@ point_count = 4
 [sub_resource type="Gradient" id="Gradient_euy4r"]
 offsets = PackedFloat32Array(0.35714287, 0.6970443, 1)
 colors = PackedColorArray(1, 1, 1, 1, 1.104735, 1.104735, 1.104735, 0.6784314, 1, 1, 1, 0)
+
+[sub_resource type="LabelSettings" id="LabelSettings_8hoqd"]
+font = ExtResource("21_287l7")
+font_size = 40
+shadow_size = 5
+shadow_color = Color(0, 0, 0, 0.14901961)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_w32d4"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_287l7"]
+font = ExtResource("21_287l7")
+font_size = 28
+font_color = Color(0, 0, 0, 1)
+shadow_size = 2
+shadow_color = Color(1, 1, 1, 0.48235294)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_287l7"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_awvna"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_8hoqd"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jygr6"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_555wk"]
 
 [node name="MainMenu" type="Control" unique_id=446913851]
 layout_mode = 3
@@ -336,8 +363,8 @@ texture_normal = ExtResource("16_w32d4")
 [node name="MetalShutter" type="TextureRect" parent="." unique_id=1282979315]
 layout_mode = 0
 offset_left = -20.0
-offset_top = -1150.0
-offset_right = 1980.0
+offset_top = -1250.0
+offset_right = 2030.0
 texture = ExtResource("15_uxao6")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1407775336]
@@ -349,3 +376,108 @@ parameters/looping = true
 
 [node name="ShutterSFX" type="AudioStreamPlayer" parent="." unique_id=413597981]
 stream = ExtResource("17_25m6f")
+
+[node name="SettingsPanel" type="Panel" parent="." unique_id=1589173730]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -300.0
+offset_right = 1300.0
+offset_bottom = 600.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("20_w32d4")
+
+[node name="MarginContainer" type="MarginContainer" parent="SettingsPanel" unique_id=2011636248]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 350
+theme_override_constants/margin_top = 80
+theme_override_constants/margin_right = 350
+theme_override_constants/margin_bottom = 100
+
+[node name="VBoxContainer" type="VBoxContainer" parent="SettingsPanel/MarginContainer" unique_id=1220428921]
+layout_mode = 2
+alignment = 1
+
+[node name="SettingsLabel" type="Label" parent="SettingsPanel/MarginContainer/VBoxContainer" unique_id=1351510391]
+layout_mode = 2
+text = "Settings"
+label_settings = SubResource("LabelSettings_8hoqd")
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="SettingsPanel/MarginContainer/VBoxContainer" unique_id=421518442]
+layout_mode = 2
+theme_override_constants/separation = 200
+theme_override_styles/separator = SubResource("StyleBoxEmpty_w32d4")
+
+[node name="MasterVolume" type="HBoxContainer" parent="SettingsPanel/MarginContainer/VBoxContainer" unique_id=1149201698]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="SettingsPanel/MarginContainer/VBoxContainer/MasterVolume" unique_id=521149415]
+layout_mode = 2
+text = "Master Volume"
+label_settings = SubResource("LabelSettings_287l7")
+
+[node name="Control" type="Control" parent="SettingsPanel/MarginContainer/VBoxContainer/MasterVolume" unique_id=1026629814]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="SettingsPanel/MarginContainer/VBoxContainer/MasterVolume" unique_id=940783186]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+size_flags_stretch_ratio = 5.0
+ticks_position = 3
+
+[node name="FullscreenToggleControl" type="HBoxContainer" parent="SettingsPanel/MarginContainer/VBoxContainer" unique_id=1249122117]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="SettingsPanel/MarginContainer/VBoxContainer/FullscreenToggleControl" unique_id=157089927]
+layout_mode = 2
+text = "Toggle Fullscreen"
+label_settings = SubResource("LabelSettings_287l7")
+
+[node name="Control" type="Control" parent="SettingsPanel/MarginContainer/VBoxContainer/FullscreenToggleControl" unique_id=15933581]
+layout_mode = 2
+
+[node name="FullscreenToggle" type="CheckButton" parent="SettingsPanel/MarginContainer/VBoxContainer/FullscreenToggleControl" unique_id=1497293280]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 0.69803923)
+theme_override_styles/normal = SubResource("StyleBoxEmpty_287l7")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_awvna")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_8hoqd")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_jygr6")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_555wk")
+icon_alignment = 1
+expand_icon = true
+
+[node name="Control" type="Control" parent="SettingsPanel/MarginContainer/VBoxContainer" unique_id=527171751]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BtnCloseSettings" type="Button" parent="SettingsPanel/MarginContainer/VBoxContainer" unique_id=2106642584]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 1)
+text = "Back"

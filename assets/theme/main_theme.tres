@@ -3,6 +3,8 @@
 [ext_resource type="Texture2D" uid="uid://dokm5nu4gjfiq" path="res://assets/graphics/ui/panel_bg.png" id="1_4001u"]
 [ext_resource type="FontFile" uid="uid://crfo7nlure7a2" path="res://assets/fonts/Oswald-Regular.ttf" id="1_e04sg"]
 [ext_resource type="Texture2D" uid="uid://cvls4bvivfjfx" path="res://assets/graphics/ui/btn_UI.png" id="1_thknt"]
+[ext_resource type="Texture2D" uid="uid://dbo4dxi3va267" path="res://assets/graphics/ui/toggle_on.png" id="2_b85mk"]
+[ext_resource type="Texture2D" uid="uid://fasjy7xwxfdh" path="res://assets/graphics/ui/toggle_off.png" id="3_0vr3v"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_thknt"]
 
@@ -26,6 +28,8 @@ texture = SubResource("CompressedTexture2D_b85mk")
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_tnish"]
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ryqvi"]
+
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_thknt"]
 texture = ExtResource("1_4001u")
 
@@ -36,4 +40,7 @@ Button/styles/focus = SubResource("StyleBoxEmpty_thknt")
 Button/styles/hover = SubResource("StyleBoxTexture_tnish")
 Button/styles/normal = SubResource("StyleBoxTexture_b85mk")
 Button/styles/pressed = SubResource("StyleBoxEmpty_tnish")
+CheckButton/icons/checked = ExtResource("2_b85mk")
+CheckButton/icons/unchecked = ExtResource("3_0vr3v")
+CheckButton/styles/focus = SubResource("StyleBoxEmpty_ryqvi")
 Panel/styles/panel = SubResource("StyleBoxTexture_thknt")

@@ -1,10 +1,25 @@
 extends Control
 
-# --- CONFIGURATION & CONSTANTS ---
+# ---------------------------------------------------------
+# 1. SIGNALS (What does this script shout to other scenes?)
+# ---------------------------------------------------------
+
+# ---------------------------------------------------------
+# 2. ENUMS AND CONSTANTS (Fixed values)
+# ---------------------------------------------------------
 const SAVE_FILE_TEMPLATE = "user://save_slot_%d.json"
 const PARALLAX_MULTIPLIERS = [0.005, 0.01, 0.015, 0.02, 0.015]
+const LOADING_SCENE = "res://scenes/menus/loading_screen.tscn"
 
-# --- STATE VARIABLES ---
+# ---------------------------------------------------------
+# 3. EXPORTED VARIABLES (Those that appear in the right-side Editor Inspector)
+# ---------------------------------------------------------
+@export var menu_music: AudioStream
+@export var shutter_sfx: AudioStream
+
+# ---------------------------------------------------------
+# 4. PUBLIC VARIABLES (Can be read/modified by other scripts)
+# ---------------------------------------------------------
 var menu_mode: String = "" # Expected values: "new" or "load"
 var screen_center: Vector2
 var base_positions: Array[Vector2] = []
@@ -12,7 +27,20 @@ var base_positions: Array[Vector2] = []
 var current_slot_id: int = -1
 var is_overwriting: bool = false
 
-# --- PARALLAX REFERENCES ---
+var tex_empty_normal = preload("res://assets/graphics/ui/slot_normal.png")
+var tex_empty_hover = preload("res://assets/graphics/ui/slot_hover.png")
+var tex_filled_normal = preload("res://assets/graphics/ui/slot_filled_normal.png")
+var tex_filled_hover = preload("res://assets/graphics/ui/slot_filled_hover.png")
+
+var is_deleting: bool = false # Stare nouă pentru pop-up
+
+# ---------------------------------------------------------
+# 5. PRIVATE VARIABLES (Prefixed with "_"; used only inside this script)
+# ---------------------------------------------------------
+
+# ---------------------------------------------------------
+# 6. ONREADY VARIABLES (Links to the UI / Node Tree)
+# ---------------------------------------------------------
 @onready var parallax_layers = [
 	$ParallaxBackground/Layer1_Sky,
 	$ParallaxBackground/Layer2_City,
@@ -21,7 +49,6 @@ var is_overwriting: bool = false
 	$ParallaxBackground/Layer5_Shaorma
 ]
 
-# --- MAIN UI REFERENCES ---
 @onready var dark_overlay = $DarkOverlay
 @onready var receipt_node = $ReceiptNode
 @onready var btn_close_credits = $ReceiptNode/BtnCloseCredits
@@ -29,13 +56,11 @@ var is_overwriting: bool = false
 @onready var shutter = $MetalShutter
 @onready var button_container = $ParallaxBackground/Layer5_Shaorma/MainGroup
 
-# --- SETTINGS MENU REFERENCES ---
 @onready var settings_panel = $SettingsPanel
 @onready var btn_close_settings = $SettingsPanel/MarginContainer/VBoxContainer/BtnCloseSettings
 @onready var fullscreen_toggle = $SettingsPanel/MarginContainer/VBoxContainer/FullscreenToggleControl/FullscreenToggle
 @onready var volume_slider = $SettingsPanel/MarginContainer/VBoxContainer/MasterVolume/HSlider
 
-# --- SAVE SLOTS MENU REFERENCES ---
 @onready var saves_panel = $SaveSlotsPanel
 @onready var btn_close_saves = $SaveSlotsPanel/MarginContainer/VBoxContainer/BtnCloseSaves
 @onready var saves_title = $SaveSlotsPanel/MarginContainer/VBoxContainer/SaveSlotsLabel
@@ -46,18 +71,11 @@ var is_overwriting: bool = false
 	$SaveSlotsPanel/MarginContainer/VBoxContainer/HBoxContainer/Slot3
 ]
 
-# --- ACTION POP-UP REFERENCES ---
 @onready var action_popup = $ActionPopup
 @onready var popup_title = $ActionPopup/Panel/MarginContainer/VBoxContainer/PopupTitle
 @onready var popup_input = $ActionPopup/Panel/MarginContainer/VBoxContainer/PopupInput
 @onready var btn_confirm = $ActionPopup/Panel/MarginContainer/VBoxContainer/HBoxContainer/BtnConfirm
 @onready var btn_cancel = $ActionPopup/Panel/MarginContainer/VBoxContainer/HBoxContainer/BtnCancel
-
-# --- TEXTURE RESOURCES ---
-var tex_empty_normal = preload("res://assets/graphics/ui/slot_normal.png")
-var tex_empty_hover = preload("res://assets/graphics/ui/slot_hover.png")
-var tex_filled_normal = preload("res://assets/graphics/ui/slot_filled_normal.png")
-var tex_filled_hover = preload("res://assets/graphics/ui/slot_filled_hover.png")
 
 @onready var delete_btns = [
 	$SaveSlotsPanel/MarginContainer/VBoxContainer/HBoxContainer/Slot1/DeleteBtn1,
@@ -71,9 +89,42 @@ var tex_filled_hover = preload("res://assets/graphics/ui/slot_filled_hover.png")
 	$SaveSlotsPanel/MarginContainer/VBoxContainer/HBoxContainer/Slot3/SlotLabel3
 ]
 
-var is_deleting: bool = false # Stare nouă pentru pop-up
+# ---------------------------------------------------------
+# 7. GODOT ENGINE FUNCTIONS (The built-in ones)
+# ---------------------------------------------------------
+func _ready() -> void:
+	if menu_music:
+		AudioManager.play_music(menu_music, 1.5)
+		
+	_update_screen_data()
+	
+	if not get_viewport().size_changed.is_connected(_update_screen_data):
+		get_viewport().size_changed.connect(_update_screen_data)
 
-# --- UI LOGIC ---
+	$Camera2D.position = screen_center
+	
+	_connect_signals()
+	_initialize_ui_state()
+
+func _process(delta: float) -> void:
+	var mouse_pos := get_global_mouse_position()
+	var offset := mouse_pos - screen_center
+	
+	for i in range(parallax_layers.size()):
+		var target_position: Vector2 = base_positions[i] - (offset * PARALLAX_MULTIPLIERS[i])
+		parallax_layers[i].position = parallax_layers[i].position.lerp(target_position, 5.0 * delta)
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and event.keycode == KEY_F11:
+		_toggle_fullscreen()
+
+# ---------------------------------------------------------
+# 8. PUBLIC FUNCTIONS (Called by you from other scripts)
+# ---------------------------------------------------------
+
+# ---------------------------------------------------------
+# 9. PRIVATE FUNCTIONS (Prefixed with "_", used only internally here)
+# ---------------------------------------------------------
 func _refresh_slots() -> void:
 	for i in range(slots.size()):
 		var slot_btn: Button = slots[i]
@@ -131,17 +182,6 @@ func _refresh_slots() -> void:
 		
 		if not del_btn.pressed.is_connected(_on_delete_request):
 			del_btn.pressed.connect(_on_delete_request.bind(slot_id))
-	
-func _ready() -> void:
-	_update_screen_data()
-	
-	if not get_viewport().size_changed.is_connected(_update_screen_data):
-		get_viewport().size_changed.connect(_update_screen_data)
-
-	$Camera2D.position = screen_center
-	
-	_connect_signals()
-	_initialize_ui_state()
 
 func _connect_signals() -> void:
 	# Main Menu Buttons
@@ -201,39 +241,6 @@ func _update_screen_data() -> void:
 		base_positions.append(base_pos)
 		layer.position = base_pos
 
-func _process(delta: float) -> void:
-	var mouse_pos := get_global_mouse_position()
-	var offset := mouse_pos - screen_center
-	
-	for i in range(parallax_layers.size()):
-		var target_position: Vector2 = base_positions[i] - (offset * PARALLAX_MULTIPLIERS[i])
-		parallax_layers[i].position = parallax_layers[i].position.lerp(target_position, 5.0 * delta)
-
-# --- UI ANIMATIONS ---
-
-func _on_button_hover(btn: BaseButton) -> void:
-	var tween := create_tween()
-	tween.set_parallel(true)
-	
-	btn.pivot_offset = btn.size / 2.0
-	
-	# Scale up by 5% and slightly darken
-	tween.tween_property(btn, "scale", Vector2(1.05, 1.05), 0.1).set_trans(Tween.TRANS_QUAD)
-	tween.tween_property(btn, "modulate", Color(0.8, 0.8, 0.8, 1.0), 0.1)
-
-func _on_button_unhover(btn: BaseButton) -> void:
-	var tween := create_tween()
-	tween.set_parallel(true)
-	
-	# Restore original scale and brightness
-	tween.tween_property(btn, "scale", Vector2.ONE, 0.1).set_trans(Tween.TRANS_QUAD)
-	tween.tween_property(btn, "modulate", Color.WHITE, 0.1)
-# --- FULLSCREEN & DISPLAY LOGIC ---
-
-func _input(event: InputEvent) -> void:
-	if event is InputEventKey and event.pressed and event.keycode == KEY_F11:
-		_toggle_fullscreen()
-
 func _toggle_fullscreen() -> void:
 	var current_mode := DisplayServer.window_get_mode()
 	var is_full := current_mode == DisplayServer.WINDOW_MODE_FULLSCREEN
@@ -244,12 +251,6 @@ func _toggle_fullscreen() -> void:
 	else:
 		DisplayServer.call_deferred("window_set_mode", DisplayServer.WINDOW_MODE_FULLSCREEN)
 		fullscreen_toggle.set_pressed_no_signal(true)
-
-func _on_fullscreen_toggled(button_pressed: bool) -> void:
-	if button_pressed:
-		DisplayServer.call_deferred("window_set_mode", DisplayServer.WINDOW_MODE_FULLSCREEN)
-	else:
-		_apply_windowed_mode()
 
 # Helper function to prevent code duplication when exiting fullscreen
 func _apply_windowed_mode() -> void:
@@ -267,7 +268,141 @@ func _apply_windowed_mode() -> void:
 	
 	DisplayServer.call_deferred("window_set_position", window_pos)
 
-# --- AUDIO SYSTEM ---
+func _fade_shop_lights(tween: Tween, turning_off: bool) -> void:
+	var all_lights: Array[Node] = get_tree().get_nodes_in_group("shop_lights")
+	
+	for light in all_lights:
+		# Safety check: ne asigurăm că lumina are scriptul nostru atașat
+		if light.has_method("fade_out"):
+			if turning_off:
+				light.fade_out(tween, 0.4)
+			else:
+				light.fade_in(tween, 0.6)
+
+func _resume_lights_processing() -> void:
+	var all_lights: Array[Node] = get_tree().get_nodes_in_group("shop_lights")
+	
+	for light in all_lights:
+		if light.has_method("resume_flicker"):
+			light.resume_flicker()
+
+func _open_saves_panel() -> void:
+	# Update slot visuals based on existing save files
+	_refresh_slots()
+	
+	button_container.hide()
+	var tween := create_tween()
+	tween.set_parallel(true)
+	
+	# Turn off shop lights using the helper function
+	_fade_shop_lights(tween, true)
+	
+	tween.tween_property(dark_overlay, "modulate:a", 0.85, 0.5)
+	
+	# Explicit Vector2 typing to prevent inference errors
+	var target_pos: Vector2 = screen_center - (saves_panel.size / 2.0)
+	tween.tween_property(saves_panel, "position", target_pos, 0.7)\
+		.set_trans(Tween.TRANS_BACK)\
+		.set_ease(Tween.EASE_OUT)
+
+func _get_default_save_data(shop_name: String) -> Dictionary:
+	return {
+		"day": 1,
+		"money": 150.0,
+		"reputation": 0,
+		"inventory": { "meat_kg": 10.0, "pita_bread": 20, "garlic_sauce": 15, "spicy_sauce": 15 },
+		"unlocked_upgrades": [],
+		"shop_name": shop_name 
+	}
+
+func _start_new_game(save_path: String, shop_name: String) -> void:
+	var data := _get_default_save_data(shop_name)
+	var file := FileAccess.open(save_path, FileAccess.WRITE)
+	
+	if file:
+		var json_string := JSON.stringify(data, "\t")
+		file.store_string(json_string)
+		file.close()
+		_transition_to_game()
+	else:
+		push_error("Critical Error: Could not create save file at ", save_path)
+
+func _load_game(save_path: String) -> void:
+	if FileAccess.file_exists(save_path):
+		print("File found. Starting transition...")
+		_transition_to_game()
+	else:
+		push_error("Error: Attempted to load a non-existent file!")
+
+func _transition_to_game() -> void:
+	saves_panel.hide()
+	button_container.hide()
+	
+	AudioManager.stop_music(1.0)
+		
+	var tween := create_tween()
+	
+	tween.tween_property(dark_overlay, "modulate:a", 1.0, 1.0)\
+		.set_trans(Tween.TRANS_SINE)\
+		.set_ease(Tween.EASE_IN_OUT)
+	
+	tween.finished.connect(_on_transition_done)
+
+func _get_shop_name_from_file(path: String) -> String:
+	var file := FileAccess.open(path, FileAccess.READ)
+	if not file:
+		return "Error Reading"
+		
+	var content := file.get_as_text()
+	file.close()
+	
+	var data = JSON.parse_string(content)
+	
+	# Verificăm dacă data este un dicționar valid și are cheia salvată anterior
+	if data is Dictionary and data.has("shop_name"):
+		return str(data["shop_name"])
+			
+	return "No Name Found"
+	
+func _is_name_duplicate(new_name: String, ignore_slot_id: int) -> bool:
+	for i in range(1, 4):
+		if i == ignore_slot_id:
+			continue 
+			
+		var path: String = SAVE_FILE_TEMPLATE % i
+		if FileAccess.file_exists(path):
+			var existing_name: String = _get_shop_name_from_file(path)
+			if existing_name.to_lower() == new_name.to_lower():
+				return true
+				
+	return false
+
+# ---------------------------------------------------------
+# 10. SIGNAL CALLBACKS (What happens when buttons/timers trigger)
+# ---------------------------------------------------------
+func _on_button_hover(btn: BaseButton) -> void:
+	var tween := create_tween()
+	tween.set_parallel(true)
+	
+	btn.pivot_offset = btn.size / 2.0
+	
+	# Scale up by 5% and slightly darken
+	tween.tween_property(btn, "scale", Vector2(1.05, 1.05), 0.1).set_trans(Tween.TRANS_QUAD)
+	tween.tween_property(btn, "modulate", Color(0.8, 0.8, 0.8, 1.0), 0.1)
+
+func _on_button_unhover(btn: BaseButton) -> void:
+	var tween := create_tween()
+	tween.set_parallel(true)
+	
+	# Restore original scale and brightness
+	tween.tween_property(btn, "scale", Vector2.ONE, 0.1).set_trans(Tween.TRANS_QUAD)
+	tween.tween_property(btn, "modulate", Color.WHITE, 0.1)
+
+func _on_fullscreen_toggled(button_pressed: bool) -> void:
+	if button_pressed:
+		DisplayServer.call_deferred("window_set_mode", DisplayServer.WINDOW_MODE_FULLSCREEN)
+	else:
+		_apply_windowed_mode()
 
 func _on_volume_changed(value: float) -> void:
 	var master_bus_index := AudioServer.get_bus_index("Master")
@@ -279,8 +414,6 @@ func _on_volume_changed(value: float) -> void:
 		AudioServer.set_bus_mute(master_bus_index, false)
 		# Convert linear UI scale (0.0 - 1.0) to logarithmic Audio dB
 		AudioServer.set_bus_volume_db(master_bus_index, linear_to_db(value))
-
-# --- SETTINGS MENU ---
 
 func _on_settings_pressed() -> void:
 	print("Opening Settings...")
@@ -315,8 +448,6 @@ func _on_close_settings_pressed() -> void:
 		_resume_lights_processing()
 	)
 
-# --- CREDITS MENU ---
-
 func _on_credits_pressed() -> void:
 	print("Printing credits receipt...")
 	button_container.hide()
@@ -347,15 +478,15 @@ func _on_close_credits_pressed() -> void:
 		_resume_lights_processing()
 	)
 
-# --- QUIT ---
-
 func _on_quit_pressed() -> void:
 	print("Closing shop. Zooming out and pulling shutters...")
 	
 	# Prevent clicking anything else while quitting
 	button_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	$BGMPlayer.stop()
-	$ShutterSFX.play()
+	
+	AudioManager.stop_music(0.5)
+	if shutter_sfx:
+		AudioManager.play_sfx(shutter_sfx)
 	
 	var tween := create_tween()
 	tween.set_parallel(true)
@@ -372,31 +503,6 @@ func _on_quit_pressed() -> void:
 		
 	tween.chain().tween_callback(func(): get_tree().quit())
 
-# --- HELPER FUNCTIONS ---
-
-func _fade_shop_lights(tween: Tween, turning_off: bool) -> void:
-	var all_lights: Array[Node] = get_tree().get_nodes_in_group("shop_lights")
-	
-	for light in all_lights:
-		if turning_off:
-			light.set_process(false) 
-			tween.tween_property(light, "energy", 0.0, 0.4)\
-				.set_trans(Tween.TRANS_SINE)\
-				.set_ease(Tween.EASE_OUT)
-		else:
-			tween.tween_property(light, "energy", light.base_energy, 0.6)\
-				.set_trans(Tween.TRANS_SINE)\
-				.set_ease(Tween.EASE_OUT)
-
-func _resume_lights_processing() -> void:
-	var all_lights: Array[Node] = get_tree().get_nodes_in_group("shop_lights")
-	for light in all_lights:
-		light.set_process(true)
-
-# --- MENU NAVIGATION LOGIC ---
-
-const LOADING_SCENE = "res://scenes/menus/loading_screen.tscn"
-
 func _on_new_game_pressed() -> void:
 	menu_mode = "new"
 	saves_title.text = "New Game - Pick a slot"
@@ -406,25 +512,6 @@ func _on_load_game_pressed() -> void:
 	menu_mode = "load"
 	saves_title.text = "Load Game - Choose a save"
 	_open_saves_panel()
-
-func _open_saves_panel() -> void:
-	# Update slot visuals based on existing save files
-	_refresh_slots()
-	
-	button_container.hide()
-	var tween := create_tween()
-	tween.set_parallel(true)
-	
-	# Turn off shop lights using the helper function
-	_fade_shop_lights(tween, true)
-	
-	tween.tween_property(dark_overlay, "modulate:a", 0.85, 0.5)
-	
-	# Explicit Vector2 typing to prevent inference errors
-	var target_pos: Vector2 = screen_center - (saves_panel.size / 2.0)
-	tween.tween_property(saves_panel, "position", target_pos, 0.7)\
-		.set_trans(Tween.TRANS_BACK)\
-		.set_ease(Tween.EASE_OUT)
 
 func _on_close_saves_pressed() -> void:
 	var tween := create_tween()
@@ -444,8 +531,6 @@ func _on_close_saves_pressed() -> void:
 		button_container.show()
 		_resume_lights_processing()
 	)
-
-# --- SAVE / LOAD & POP-UP LOGIC ---
 
 func _on_slot_clicked(slot_id: int, is_filled: bool) -> void:
 	current_slot_id = slot_id
@@ -514,52 +599,6 @@ func _on_popup_confirm_pressed() -> void:
 	popup_title.remove_theme_color_override("font_color") # Curățăm roșul pentru data viitoare
 	action_popup.hide()
 	_start_new_game(save_path, shop_name)
-	
-# --- SAVE / LOAD DATA HANDLING ---
-
-func _get_default_save_data(shop_name: String) -> Dictionary:
-	return {
-		"day": 1,
-		"money": 150.0,
-		"reputation": 0,
-		"inventory": { "meat_kg": 10.0, "pita_bread": 20, "garlic_sauce": 15, "spicy_sauce": 15 },
-		"unlocked_upgrades": [],
-		"shop_name": shop_name 
-	}
-
-func _start_new_game(save_path: String, shop_name: String) -> void:
-	var data := _get_default_save_data(shop_name)
-	var file := FileAccess.open(save_path, FileAccess.WRITE)
-	
-	if file:
-		var json_string := JSON.stringify(data, "\t")
-		file.store_string(json_string)
-		file.close()
-		_transition_to_game()
-	else:
-		push_error("Critical Error: Could not create save file at ", save_path)
-
-func _load_game(save_path: String) -> void:
-	if FileAccess.file_exists(save_path):
-		print("File found. Starting transition...")
-		_transition_to_game()
-	else:
-		push_error("Error: Attempted to load a non-existent file!")
-
-func _transition_to_game() -> void:
-	saves_panel.hide()
-	button_container.hide()
-	
-	if $BGMPlayer.playing:
-		$BGMPlayer.stop()
-		
-	var tween := create_tween()
-	
-	tween.tween_property(dark_overlay, "modulate:a", 1.0, 1.0)\
-		.set_trans(Tween.TRANS_SINE)\
-		.set_ease(Tween.EASE_IN_OUT)
-	
-	tween.finished.connect(_on_transition_done)
 
 func _on_transition_done() -> void:
 	print("Animation finished. Attempting to load scene: ", LOADING_SCENE)
@@ -580,32 +619,3 @@ func _on_delete_request(slot_id: int) -> void:
 	popup_title.text = "Are you sure?"
 	popup_input.hide()
 	btn_confirm.text = "Yes, delete"
-
-func _get_shop_name_from_file(path: String) -> String:
-	var file := FileAccess.open(path, FileAccess.READ)
-	if not file:
-		return "Error Reading"
-		
-	var content := file.get_as_text()
-	file.close()
-	
-	var data = JSON.parse_string(content)
-	
-	# Verificăm dacă data este un dicționar valid și are cheia salvată anterior
-	if data is Dictionary and data.has("shop_name"):
-		return str(data["shop_name"])
-			
-	return "No Name Found"
-	
-func _is_name_duplicate(new_name: String, ignore_slot_id: int) -> bool:
-	for i in range(1, 4):
-		if i == ignore_slot_id:
-			continue 
-			
-		var path: String = SAVE_FILE_TEMPLATE % i
-		if FileAccess.file_exists(path):
-			var existing_name: String = _get_shop_name_from_file(path)
-			if existing_name.to_lower() == new_name.to_lower():
-				return true
-				
-	return false

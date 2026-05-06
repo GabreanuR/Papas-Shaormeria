@@ -18,6 +18,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 Global="*uid://chhhvxlc01ri7"
+AudioManager="*uid://dwd4ufqycllrj"
 
 [display]
 
@@ -25,6 +26,10 @@ window/size/viewport_width=1920
 window/size/viewport_height=1080
 window/size/mode=2
 window/stretch/mode="canvas_items"
+
+[global_group]
+
+shop_lights=""
 
 [physics]
 

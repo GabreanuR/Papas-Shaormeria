@@ -23,8 +23,12 @@ To design a scalable architecture before coding, we used AI to generate our Godo
 ## 3. Code Generation (Godot 4.x & GDScript)
 **Tools Used:** Gemini
 
-A significant portion of the boilerplate code, UI logic, and complex GDScript math was written with AI assistance.
+A significant portion of the boilerplate code, UI logic, and complex GDScript scripting was written with AI assistance.
 * **Implementation Examples:**
+  * **Save/Load System & Data Persistence:** AI assisted in architecting a robust 3-slot save system using Godot's `FileAccess` and `DirAccess`. This included serializing/deserializing default game state (day, money, inventory, upgrades) into local `.json` files.
+  * **Complex UI State Management:** We utilized AI to consolidate multiple UI flows (New Game, Overwrite Save, Delete Save) into a single, dynamically updating pop-up module, maximizing code reuse (DRY principle) via state flags (`is_deleting`, `is_overwriting`).
+  * **Input Validation & UX:** AI generated logic to validate user input for save file names, enforcing character limits and creating algorithms to scan existing `.json` files to prevent duplicate save names across slots.
+  * **Algorithmic UI Debugging:** When encountering visual layout bugs (overlapping text labels in the Main Menu), we prompted the AI to write a custom node-tree scanning script ("Ghost Detector") that traversed the Godot UI hierarchy to identify hidden nodes, debug output states, and fix incorrect `Anchors Presets`.
   * **Dynamic Parallax Menu:** AI generated the mathematical logic to create a 2.5D depth effect using mouse coordinates, applying `lerp()` for smooth layer movement and dynamically recalculating the screen center on window resize.
   * **Cinematic Camera Transitions:** Instead of basic scene loading, we used AI to write a parallel Tweening script (`create_tween().set_parallel(true)`) that smoothly moves and zooms a `Camera2D` into the shop counter before loading the first level.
   * **UI Juice (Hover Effects):** AI provided the code to dynamically scale buttons on `mouse_entered` and `mouse_exited` using `Tween.TRANS_QUAD`.

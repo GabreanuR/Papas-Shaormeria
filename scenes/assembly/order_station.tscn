@@ -1,10 +1,10 @@
 [gd_scene format=3 uid="uid://cme5sxwqrlgnq"]
 
-[ext_resource type="Script" uid="uid://b2eufuo13ev6c" path="res://scripts/menus/order_station.gd" id="1_2hbr3"]
+[ext_resource type="Script" uid="uid://b2eufuo13ev6c" path="res://scripts/assemble_ingredients/order_station.gd" id="1_2hbr3"]
 [ext_resource type="Texture2D" uid="uid://67r64wpmq4a2" path="res://assets/graphics/backgrounds/tejghea.png" id="1_uca3d"]
 [ext_resource type="Texture2D" uid="uid://4aqj2u4jvasp" path="res://assets/graphics/backgrounds/main_frame.png" id="2_8kqrv"]
 [ext_resource type="PackedScene" uid="uid://fd4aj0bemigw" path="res://scenes/entities/customer.tscn" id="2_u8rcb"]
-[ext_resource type="PackedScene" uid="uid://wdtlxc2q14j6" path="res://scenes/menus/order_ticket.tscn" id="3_2hbr3"]
+[ext_resource type="PackedScene" uid="uid://wdtlxc2q14j6" path="res://scenes/assembly/order_ticket.tscn" id="3_2hbr3"]
 
 [node name="OrderStation" type="Node2D" unique_id=805942768]
 script = ExtResource("1_2hbr3")

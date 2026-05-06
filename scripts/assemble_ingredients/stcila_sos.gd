@@ -7,7 +7,7 @@ func _get_drag_data(at_position):
 	var data = super._get_drag_data(at_position)
 	
 	data["este_sos"] = true
-	data["scena_pata"] = scena_pata_sos
+	data["scena_pata"] = preload("res://scenes/assembly/pata_sos.tscn")
 	data["culoare"] = culoare_sos
 	
 	return data

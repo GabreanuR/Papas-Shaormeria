@@ -36,6 +36,7 @@ texture = ExtResource("1_4001u")
 [resource]
 default_font = ExtResource("1_e04sg")
 default_font_size = 28
+Button/colors/font_color = Color(0.007843138, 0.007843138, 0.007843138, 1)
 Button/styles/focus = SubResource("StyleBoxEmpty_thknt")
 Button/styles/hover = SubResource("StyleBoxTexture_tnish")
 Button/styles/normal = SubResource("StyleBoxTexture_b85mk")

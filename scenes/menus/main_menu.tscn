@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://bev7qroljp42v" path="res://assets/graphics/backgrounds/Layer2_City.png" id="3_6bivr"]
 [ext_resource type="Texture2D" uid="uid://dnu2756guxsde" path="res://assets/graphics/backgrounds/Layer3_Shop.png" id="4_6bivr"]
 [ext_resource type="Shader" uid="uid://d0lbcjxfx0vv" path="res://assets/graphics/shaders/main_menu.gdshader" id="5_imvie"]
-[ext_resource type="Script" uid="uid://bxa5j4y2b4rut" path="res://scripts/managers/light-flicker.gd" id="5_ng0o5"]
+[ext_resource type="Script" uid="uid://bxa5j4y2b4rut" path="res://scripts/components/light-flicker.gd" id="5_ng0o5"]
 [ext_resource type="Texture2D" uid="uid://bp7uatab3fcg" path="res://assets/graphics/backgrounds/Layer4_Name.png" id="7_8r73w"]
 [ext_resource type="Texture2D" uid="uid://j5emefsjrhx6" path="res://assets/graphics/vfx/SteamParticle.png" id="8_1hnlc"]
 [ext_resource type="Texture2D" uid="uid://dlf71u02lvcie" path="res://assets/graphics/backgrounds/ShaormaBase.png" id="9_50h1w"]

@@ -1,0 +1,91 @@
+[gd_scene format=3 uid="uid://drcnfvyblkit3"]
+
+[ext_resource type="Script" uid="uid://bdrej6b5aehc1" path="res://scripts/components/cutting_station_fade.gd" id="1_f5f6w"]
+[ext_resource type="Script" uid="uid://b2hsduofa6osq" path="res://scripts/entities/items/meat.gd" id="2_f5f6w"]
+[ext_resource type="Texture2D" uid="uid://banrjlu16viks" path="res://assets/graphics/cutting_station/final_knife.png" id="2_xuvxo"]
+[ext_resource type="Script" uid="uid://15sv1wvgc34h" path="res://scripts/components/knife.gd" id="3_xuvxo"]
+[ext_resource type="Theme" uid="uid://c30gjc6imkwcf" path="res://assets/theme/main_theme.tres" id="5_60op4"]
+[ext_resource type="FontFile" uid="uid://bpu1j3ggtme57" path="res://assets/fonts/Oswald-Bold.ttf" id="5_f5f6w"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_64kaf"]
+size = Vector2(213.7457, 365.68326)
+
+[sub_resource type="LabelSettings" id="LabelSettings_qqdh5"]
+font = ExtResource("5_f5f6w")
+font_size = 27
+font_color = Color(0.17565721, 0.6162002, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_xqt14"]
+font_size = 42
+font_color = Color(1, 0.88290143, 0, 1)
+outline_size = 10
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4rdjq"]
+bg_color = Color(0.85050595, 0.29748532, 0.11207495, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_e73hd"]
+bg_color = Color(0.29839873, 0.685356, 7.70092e-07, 1)
+
+[node name="CuttingStation" type="Node2D" unique_id=1007575423]
+script = ExtResource("1_f5f6w")
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=510682376]
+offset_left = -60.0
+offset_top = -37.0
+offset_right = 1961.0
+offset_bottom = 1117.0
+
+[node name="Node2D" type="Node2D" parent="." unique_id=760889588]
+
+[node name="Meat" type="Sprite2D" parent="Node2D" unique_id=1880301471]
+position = Vector2(976.99994, 557.00006)
+scale = Vector2(1.455, 1.5)
+script = ExtResource("2_f5f6w")
+
+[node name="Sprite2D" type="Sprite2D" parent="Node2D/Meat" unique_id=346490078]
+scale = Vector2(1, 0.99999994)
+
+[node name="Area2D" type="Area2D" parent="Node2D/Meat" unique_id=427527039]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Node2D/Meat/Area2D" unique_id=714235569]
+position = Vector2(44.673584, 34.666645)
+scale = Vector2(1, 0.99999976)
+shape = SubResource("RectangleShape2D_64kaf")
+debug_color = Color(0, 0.6, 0.69803923, 0.19215687)
+
+[node name="Knife" type="Sprite2D" parent="Node2D" unique_id=2074232495]
+position = Vector2(1281.5, 545.37)
+scale = Vector2(0.5861111, 0.614611)
+texture = ExtResource("2_xuvxo")
+script = ExtResource("3_xuvxo")
+
+[node name="ScoreLabel" type="Label" parent="Node2D" unique_id=102988067]
+offset_left = 983.0
+offset_top = 214.0
+offset_right = 1023.0
+offset_bottom = 237.0
+label_settings = SubResource("LabelSettings_qqdh5")
+uppercase = true
+
+[node name="ResultLabel" type="Label" parent="Node2D" unique_id=605259559]
+offset_left = 1248.0
+offset_top = 340.0
+offset_right = 1837.0
+offset_bottom = 408.0
+text = "Hold click and slice the meat!"
+label_settings = SubResource("LabelSettings_xqt14")
+
+[node name="CutProgress" type="ProgressBar" parent="Node2D" unique_id=997934749]
+offset_left = 1453.0
+offset_top = 588.0
+offset_right = 1649.0
+offset_bottom = 631.0
+theme = ExtResource("5_60op4")
+theme_override_colors/font_color = Color(0.9960334, 0.7611122, 0.32086813, 1)
+theme_override_styles/background = SubResource("StyleBoxFlat_4rdjq")
+theme_override_styles/fill = SubResource("StyleBoxFlat_e73hd")
+
+[node name="FadeOverlay" type="ColorRect" parent="." unique_id=591032218]
+offset_right = 40.0
+offset_bottom = 40.0

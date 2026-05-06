@@ -1,24 +1,23 @@
 extends Node
 
+# --- Variabilele noastre pentru sistemul de zile ---
 var current_day: int = 1
 var is_night: bool = false
 var day_timer: Timer
 
+# --- Variabilele colegilor (Starea stațiilor) ---
+# Dacă nu știi exact ce tip de date așteaptă colegul tău, las-o nespecificată ("untyped") la început:
+var selected_meat := "chicken"
+
 func _ready() -> void:
 	day_timer = Timer.new()
 	day_timer.one_shot = true
-	
-	# Conectăm semnalul de expirare a timpului
 	day_timer.timeout.connect(_on_day_timer_ended)
-	
 	add_child(day_timer)
 
 func start_day(duration_seconds: float) -> void:
 	day_timer.start(duration_seconds)
 
 func _on_day_timer_ended() -> void:
-	# Când expiră timpul, forțăm starea de noapte
 	is_night = true
-	
-	# Indiferent în ce scenă ne aflăm, schimbăm ecranul către DayManager
-	get_tree().change_scene_to_file("res://scenes/day_transition.tscn")
+	get_tree().change_scene_to_file("res://scenes/menus/day_transition.tscn")

@@ -1,0 +1,54 @@
+[gd_scene format=3 uid="uid://bdnf3b5pntghq"]
+
+[ext_resource type="Script" uid="uid://nartdbqrxw6g" path="res://scripts/gameplay/master/gameplay_master.gd" id="1_5cir7"]
+[ext_resource type="PackedScene" uid="uid://cme5sxwqrlgnq" path="res://scenes/gameplay/stations/order/order_station.tscn" id="2_1jril"]
+[ext_resource type="PackedScene" uid="uid://dhip6nndara60" path="res://scenes/gameplay/stations/cutting/MeatSelect.tscn" id="3_6bkqk"]
+[ext_resource type="PackedScene" uid="uid://bbf2c2tprivnc" path="res://scenes/gameplay/stations/assembly/assembly_station.tscn" id="4_twj3c"]
+[ext_resource type="PackedScene" uid="uid://do4jao5ljremp" path="res://scenes/gameplay/stations/wrapping/wrapping_station.tscn" id="5_apmns"]
+[ext_resource type="PackedScene" uid="uid://wdtlxc2q14j6" path="res://scenes/entities/items/order_ticket.tscn" id="6_bfehs"]
+
+[node name="GameplayMaster" type="Node" unique_id=1025286876]
+script = ExtResource("1_5cir7")
+
+[node name="OrderStation" parent="." unique_id=805942768 instance=ExtResource("2_1jril")]
+
+[node name="MeatSelect" parent="." unique_id=1126885329 instance=ExtResource("3_6bkqk")]
+
+[node name="AssemblyStation" parent="." unique_id=702470134 instance=ExtResource("4_twj3c")]
+
+[node name="WrappingStation" parent="." unique_id=931503450 instance=ExtResource("5_apmns")]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=2104389183]
+
+[node name="OrderTicket" parent="CanvasLayer" unique_id=1253955845 instance=ExtResource("6_bfehs")]
+visible = false
+offset_left = 1202.0
+offset_top = 124.0
+offset_right = 1352.0
+offset_bottom = 324.0
+scale = Vector2(1.2, 1.2)
+
+[node name="OrderRope" type="HBoxContainer" parent="CanvasLayer" unique_id=443726609]
+offset_top = 46.0
+offset_right = 1920.0
+offset_bottom = 66.0
+
+[node name="Taskbar" type="HBoxContainer" parent="CanvasLayer" unique_id=2123600549]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="BtnOrder" type="Button" parent="CanvasLayer/Taskbar" unique_id=967242679]
+layout_mode = 2
+text = "Lobby"
+
+[node name="BtnCutting" type="Button" parent="CanvasLayer/Taskbar" unique_id=191849248]
+layout_mode = 2
+text = "Cutting"
+
+[node name="BtnAssembly" type="Button" parent="CanvasLayer/Taskbar" unique_id=535926081]
+layout_mode = 2
+text = "Assembly"
+
+[node name="BtnWrapping" type="Button" parent="CanvasLayer/Taskbar" unique_id=1018834916]
+layout_mode = 2
+text = "Wrapping"

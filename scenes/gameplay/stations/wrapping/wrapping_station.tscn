@@ -1,0 +1,82 @@
+[gd_scene format=3 uid="uid://do4jao5ljremp"]
+
+[ext_resource type="Script" uid="uid://dfdoo3280d7bu" path="res://scripts/gameplay/stations/wrapping/wrap_station.gd" id="1_0cijx"]
+[ext_resource type="Texture2D" uid="uid://q0fjosmuxadx" path="res://assets/graphics/wrapping_station/background.png" id="1_ye6o2"]
+[ext_resource type="Texture2D" uid="uid://cj5agvdegn38l" path="res://assets/graphics/vfx/ChatGPT Image May 5, 2026 at 09_07_52 PM.png" id="2_3xcgq"]
+[ext_resource type="Texture2D" uid="uid://bnrrwi7lnwtw3" path="res://assets/graphics/wrapping_station/send.png" id="2_xqjmc"]
+[ext_resource type="Texture2D" uid="uid://cx2t0uk464cjj" path="res://assets/graphics/wrapping_station/ticketSlot.png" id="3_abibr"]
+[ext_resource type="Texture2D" uid="uid://kpif8wvatiw4" path="res://assets/graphics/ui/order_ticket.png" id="4_xqjmc"]
+[ext_resource type="Script" uid="uid://bejuej8hpb2uu" path="res://scripts/components/wrap_gesture.gd" id="6_loyu3"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0cijx"]
+size = Vector2(244.75, 343.75)
+
+[node name="WrappingStation" type="Node2D" unique_id=931503450]
+script = ExtResource("1_0cijx")
+
+[node name="Background" type="TextureRect" parent="." unique_id=1973410820]
+offset_right = 1920.0
+offset_bottom = 1091.0
+texture = ExtResource("1_ye6o2")
+
+[node name="Tray" type="Node2D" parent="." unique_id=1403466935]
+
+[node name="Sprite2D" type="Sprite2D" parent="Tray" unique_id=1340283374]
+position = Vector2(912, 698)
+scale = Vector2(0.7994792, 0.77734375)
+texture = ExtResource("2_3xcgq")
+
+[node name="SendButton" type="Button" parent="Tray" unique_id=1717044819]
+offset_left = 551.0
+offset_top = 780.0
+offset_right = 697.0
+offset_bottom = 838.0
+
+[node name="Sprite2D" type="Sprite2D" parent="Tray/SendButton" unique_id=1525364896]
+position = Vector2(76.000015, 32.999977)
+scale = Vector2(0.39358646, 0.37408093)
+texture = ExtResource("2_xqjmc")
+
+[node name="Darken" type="ColorRect" parent="Tray/SendButton" unique_id=1940635552]
+layout_mode = 0
+offset_left = -3.0
+offset_top = 2.0
+offset_right = 155.0
+offset_bottom = 57.0
+color = Color(0.07906392, 0.07906392, 0.07906392, 0.30200002)
+
+[node name="TicketSlot" type="Node2D" parent="Tray" unique_id=1453101842]
+
+[node name="Sprite2D" type="Sprite2D" parent="Tray/TicketSlot" unique_id=1291567042]
+position = Vector2(632, 666.00006)
+scale = Vector2(0.46568626, 0.54656863)
+texture = ExtResource("3_abibr")
+
+[node name="Area2D" type="Area2D" parent="Tray/TicketSlot" unique_id=1656402235]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Tray/TicketSlot/Area2D" unique_id=1676468105]
+position = Vector2(634, 668)
+shape = SubResource("RectangleShape2D_0cijx")
+debug_color = Color(0, 0.60038817, 0.70000815, 0.177)
+
+[node name="Ticket" type="Node2D" parent="." unique_id=454856143]
+
+[node name="Sprite2D" type="Sprite2D" parent="Ticket" unique_id=427844910]
+position = Vector2(1627, 150)
+scale = Vector2(0.4129306, 0.34429064)
+texture = ExtResource("4_xqjmc")
+
+[node name="WrapGestureArea" type="ColorRect" parent="." unique_id=1180051629]
+offset_left = 725.0
+offset_top = 552.0
+offset_right = 1082.0
+offset_bottom = 832.0
+color = Color(1, 0.7118161, 1, 0.19800001)
+script = ExtResource("6_loyu3")
+
+[node name="FadeOverlay" type="ColorRect" parent="." unique_id=1221438709]
+offset_left = -50.0
+offset_top = -26.0
+offset_right = 2001.0
+offset_bottom = 1123.0
+color = Color(0, 0, 0, 1)

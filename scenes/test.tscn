@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://b4gpufdl5uc6k"]
 
-[ext_resource type="Script" uid="uid://bejuej8hpb2uu" path="res://scripts/wrapping_station/wrap_gesture.gd" id="1_errlg"]
+[ext_resource type="Script" uid="uid://bejuej8hpb2uu" path="res://scripts/components/wrap_gesture.gd" id="1_errlg"]
 
 [node name="Test" type="Node2D" unique_id=907474050]
 

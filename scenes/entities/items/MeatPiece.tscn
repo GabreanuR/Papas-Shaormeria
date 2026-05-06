@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://djg3fsgrjjs18"]
+
+[ext_resource type="Script" uid="uid://cos3dwovlaf8f" path="res://scripts/entities/items/meat_piece.gd" id="1_cphkc"]
+
+[node name="MeatPiece" type="Node2D" unique_id=1464060570]
+script = ExtResource("1_cphkc")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1712751241]
+offset_right = 12.0
+offset_bottom = 8.0
+color = Color(0.5568628, 0.24313726, 0, 0.9098039)

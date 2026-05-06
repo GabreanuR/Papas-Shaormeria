@@ -1,0 +1,32 @@
+[gd_scene format=3 uid="uid://cme5sxwqrlgnq"]
+
+[ext_resource type="Script" uid="uid://b2eufuo13ev6c" path="res://scripts/gameplay/stations/order/order_station.gd" id="1_2hbr3"]
+[ext_resource type="Texture2D" uid="uid://67r64wpmq4a2" path="res://assets/graphics/backgrounds/tejghea.png" id="1_uca3d"]
+[ext_resource type="Texture2D" uid="uid://4aqj2u4jvasp" path="res://assets/graphics/backgrounds/main_frame.png" id="2_8kqrv"]
+[ext_resource type="PackedScene" uid="uid://fd4aj0bemigw" path="res://scenes/entities/characters/customer.tscn" id="2_u8rcb"]
+
+[node name="OrderStation" type="Node2D" unique_id=805942768]
+script = ExtResource("1_2hbr3")
+
+[node name="LobbyFrame" type="TextureRect" parent="." unique_id=1584637644]
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+texture = ExtResource("2_8kqrv")
+expand_mode = 1
+
+[node name="OrderFrame" type="TextureRect" parent="." unique_id=1812318764]
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+texture = ExtResource("1_uca3d")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Customer" parent="." unique_id=295277394 instance=ExtResource("2_u8rcb")]
+position = Vector2(793, 205)
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1111382505]
+position = Vector2(960, 540)
+
+[connection signal="a_fost_apasat" from="Customer" to="." method="_on_customer_a_fost_apasat"]

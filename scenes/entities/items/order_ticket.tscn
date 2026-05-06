@@ -1,0 +1,43 @@
+[gd_scene format=3 uid="uid://wdtlxc2q14j6"]
+
+[ext_resource type="Texture2D" uid="uid://kpif8wvatiw4" path="res://assets/graphics/ui/order_ticket.png" id="1_csjjt"]
+[ext_resource type="Script" uid="uid://bfrowrat2ok17" path="res://scripts/entities/items/order_ticket.gd" id="1_ta5e0"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_ta5e0"]
+line_spacing = 0.0
+font_size = 58
+font_color = Color(1, 0.7706648, 0.7664455, 1)
+outline_size = 3
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 4
+
+[node name="OrderTicket" type="Control" unique_id=1253955845]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 600.0
+offset_bottom = 600.0
+script = ExtResource("1_ta5e0")
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=1241074478]
+layout_mode = 0
+offset_right = 600.0
+offset_bottom = 600.0
+texture = ExtResource("1_csjjt")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=645770943]
+layout_mode = 0
+offset_top = -7.0
+offset_right = 600.0
+offset_bottom = 593.0
+alignment = 2
+
+[node name="Number" type="Label" parent="." unique_id=1542101667]
+layout_mode = 0
+offset_left = 171.0
+offset_top = 43.0
+offset_right = 251.0
+offset_bottom = 122.0
+text = "01"
+label_settings = SubResource("LabelSettings_ta5e0")

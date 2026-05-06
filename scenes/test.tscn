@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://b4gpufdl5uc6k"]
+
+[ext_resource type="Script" uid="uid://bejuej8hpb2uu" path="res://scripts/wrapping_station/wrap_gesture.gd" id="1_errlg"]
+
+[node name="Test" type="Node2D" unique_id=907474050]
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=726875230]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+color = Color(1, 0.5116678, 1, 1)
+script = ExtResource("1_errlg")

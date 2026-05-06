@@ -1,0 +1,74 @@
+[gd_scene format=3 uid="uid://dhip6nndara60"]
+
+[ext_resource type="Script" uid="uid://cs72x3bg7hb5k" path="res://scenes/cutting_station/meat_select.gd" id="1_kf4k3"]
+[ext_resource type="Texture2D" uid="uid://2chm61ycktj2" path="res://assets/graphics/cutting_station/new_bg.png" id="2_o077c"]
+[ext_resource type="FontFile" uid="uid://bpu1j3ggtme57" path="res://assets/fonts/Oswald-Bold.ttf" id="3_o077c"]
+[ext_resource type="Texture2D" uid="uid://b7l1ensnqab3q" path="res://assets/graphics/cutting_station/final_chick.png" id="4_o077c"]
+[ext_resource type="Texture2D" uid="uid://b6tx574sy2oq1" path="res://assets/graphics/cutting_station/final_beef.png" id="5_5tia3"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_5tia3"]
+font = ExtResource("3_o077c")
+font_size = 38
+font_color = Color(0.8598969, 0.6844726, 0.10950973, 1)
+outline_size = 10
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 4
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_50lc3"]
+size = Vector2(381.25, 599.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_xi0xo"]
+size = Vector2(373, 571)
+
+[node name="MeatSelect" type="Node2D" unique_id=1126885329]
+script = ExtResource("1_kf4k3")
+
+[node name="Background" type="TextureRect" parent="." unique_id=615875480]
+offset_right = 1922.0
+offset_bottom = 1087.0
+texture = ExtResource("2_o077c")
+
+[node name="TitleLabel" type="Label" parent="." unique_id=858306237]
+offset_left = 660.0
+offset_top = 11.0
+offset_right = 1221.0
+offset_bottom = 88.0
+text = "Choose the meat"
+label_settings = SubResource("LabelSettings_5tia3")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="Chicken" type="Node2D" parent="." unique_id=1262384515]
+
+[node name="Sprite2D" type="Sprite2D" parent="Chicken" unique_id=1743906895]
+position = Vector2(681, 547)
+scale = Vector2(1.6619998, 1.599)
+texture = ExtResource("4_o077c")
+
+[node name="Area2D" type="Area2D" parent="Chicken" unique_id=241324252]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Chicken/Area2D" unique_id=1853610072]
+position = Vector2(667.625, 518.25)
+shape = SubResource("RectangleShape2D_50lc3")
+debug_color = Color(0, 0.5411765, 0.627451, 0.22352941)
+
+[node name="Beef" type="Node2D" parent="." unique_id=1519836628]
+
+[node name="Sprite2D" type="Sprite2D" parent="Beef" unique_id=2009507825]
+position = Vector2(1251, 567.5)
+scale = Vector2(1.6589288, 1.4739496)
+texture = ExtResource("5_5tia3")
+
+[node name="Area2D" type="Area2D" parent="Beef" unique_id=1585644819]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Beef/Area2D" unique_id=1222670441]
+position = Vector2(1249.5, 523.5)
+shape = SubResource("RectangleShape2D_xi0xo")
+debug_color = Color(0, 0.6, 0.69803923, 0.25490198)
+
+[node name="FadeOverlay" type="ColorRect" parent="." unique_id=51783781]
+offset_right = 40.0
+offset_bottom = 40.0
+size_flags_horizontal = 3
+color = Color(0, 0, 0, 1)

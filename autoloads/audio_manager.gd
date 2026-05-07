@@ -11,6 +11,7 @@ extends Node
 # ---------------------------------------------------------
 # 3. EXPORTED VARIABLES (Those that appear in the right-side Editor Inspector)
 # ---------------------------------------------------------
+@export var default_click_sound: AudioStream
 
 # ---------------------------------------------------------
 # 4. PUBLIC VARIABLES (Can be read/modified by other scripts)
@@ -29,6 +30,11 @@ extends Node
 # ---------------------------------------------------------
 # 7. GODOT ENGINE FUNCTIONS (The built-in ones)
 # ---------------------------------------------------------
+func _ready() -> void:
+
+	get_tree().node_added.connect(_on_node_added)
+	
+	_connect_existing_buttons(get_tree().root)
 
 # ---------------------------------------------------------
 # 8. PUBLIC FUNCTIONS (Called by you from other scripts)
@@ -64,7 +70,24 @@ func play_sfx(stream: AudioStream) -> void:
 # ---------------------------------------------------------
 # 9. PRIVATE FUNCTIONS (Prefixed with "_", used only internally here)
 # ---------------------------------------------------------
+func _connect_existing_buttons(node: Node) -> void:
+	if node is BaseButton:
+		_attach_click_sound(node)
+		
+	for child in node.get_children():
+		_connect_existing_buttons(child)
+
+func _attach_click_sound(button: BaseButton) -> void:
+	if not button.pressed.is_connected(_play_default_click):
+		button.pressed.connect(_play_default_click)
 
 # ---------------------------------------------------------
 # 10. SIGNAL CALLBACKS (What happens when buttons/timers trigger)
 # ---------------------------------------------------------
+func _on_node_added(node: Node) -> void:
+	if node is BaseButton:
+		_attach_click_sound(node)
+
+func _play_default_click() -> void:
+	if default_click_sound:
+		play_sfx(default_click_sound)

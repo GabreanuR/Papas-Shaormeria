@@ -1,15 +1,8 @@
 extends Control
 
-# ---------------------------------------------------------
-# 2. ENUMS AND CONSTANTS
-# ---------------------------------------------------------
-# NOTE: Path updated to reflect the new directory structure
 const TARGET_SCENE_PATH: String = "res://scenes/day_management/day_transition.tscn"
 const MINIMUM_LOADING_TIME: float = 2.5
 
-# ---------------------------------------------------------
-# 5. PRIVATE VARIABLES
-# ---------------------------------------------------------
 var _min_time_passed: bool = false
 var _scene_is_ready: bool = false
 
@@ -21,16 +14,10 @@ var _tips: Array[String] = [
 	"Tip: Clean tables often to maintain a good reputation in the neighborhood."
 ]
 
-# ---------------------------------------------------------
-# 6. ONREADY VARIABLES
-# ---------------------------------------------------------
 @onready var progress_bar: ProgressBar = %ProgressBar
 @onready var tip_label: Label = %TipLabel
 @onready var start_button: Button = %StartButton
 
-# ---------------------------------------------------------
-# 7. GODOT ENGINE FUNCTIONS
-# ---------------------------------------------------------
 func _ready() -> void:
 	# Initialize UI state
 	start_button.hide()
@@ -75,9 +62,6 @@ func _process(_delta: float) -> void:
 	if _min_time_passed and _scene_is_ready:
 		_show_start_button()
 
-# ---------------------------------------------------------
-# 9. PRIVATE FUNCTIONS
-# ---------------------------------------------------------
 func _show_start_button() -> void:
 	# MAJOR OPTIMIZATION: Completely stop _process() to free up CPU cycles
 	set_process(false)
@@ -92,9 +76,6 @@ func _show_start_button() -> void:
 	var tween: Tween = create_tween()
 	tween.tween_property(start_button, "modulate:a", 1.0, 0.5)
 
-# ---------------------------------------------------------
-# 10. SIGNAL CALLBACKS
-# ---------------------------------------------------------
 func _on_start_pressed() -> void:
 	# Retrieve the loaded scene from memory and switch to it
 	var packed_scene: PackedScene = ResourceLoader.load_threaded_get(TARGET_SCENE_PATH)

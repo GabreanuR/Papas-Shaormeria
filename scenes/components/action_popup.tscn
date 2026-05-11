@@ -1,0 +1,135 @@
+[gd_scene format=3 uid="uid://cfktbdqjlvrnf"]
+
+[ext_resource type="Script" uid="uid://jjkyxvusu8pj" path="res://scripts/components/action_popup.gd" id="1_gtbm1"]
+[ext_resource type="PackedScene" uid="uid://cjexmeym01onb" path="res://scenes/components/modal_overlay.tscn" id="2_dx2fw"]
+[ext_resource type="FontFile" uid="uid://bpu1j3ggtme57" path="res://assets/fonts/Oswald-Bold.ttf" id="3_njjnm"]
+[ext_resource type="FontFile" uid="uid://crfo7nlure7a2" path="res://assets/fonts/Oswald-Regular.ttf" id="4_n5ers"]
+[ext_resource type="Texture2D" uid="uid://cvls4bvivfjfx" path="res://assets/graphics/ui/btn_UI.png" id="5_rdkkj"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_qceya"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cx3fc"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_1x2kc"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_vcoy5"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_h0sok"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_fjxfv"]
+content_margin_left = 40.0
+content_margin_top = 10.0
+content_margin_right = 40.0
+content_margin_bottom = 10.0
+texture = ExtResource("5_rdkkj")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_8xfg8"]
+texture = ExtResource("5_rdkkj")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_o2adl"]
+content_margin_left = 40.0
+content_margin_top = 10.0
+content_margin_right = 40.0
+content_margin_bottom = 10.0
+texture = ExtResource("5_rdkkj")
+
+[node name="ActionPopup" type="Control" unique_id=542609553]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_gtbm1")
+
+[node name="ModalOverlay" parent="." unique_id=1739728802 instance=ExtResource("2_dx2fw")]
+layout_mode = 0
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=1317880250]
+custom_minimum_size = Vector2(500, 800)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="CenterContainer" unique_id=741858532]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/PanelContainer" unique_id=1315016422]
+custom_minimum_size = Vector2(0, 500)
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer" unique_id=459675024]
+custom_minimum_size = Vector2(0, 300)
+layout_mode = 2
+alignment = 1
+
+[node name="PopupTitle" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1613536092]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.101960786, 0.101960786, 0.101960786, 1)
+theme_override_fonts/font = ExtResource("3_njjnm")
+theme_override_font_sizes/font_size = 24
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1454394771]
+layout_mode = 2
+theme_override_constants/separation = 30
+theme_override_styles/separator = SubResource("StyleBoxEmpty_qceya")
+
+[node name="PopupInput" type="LineEdit" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1510630173]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.101960786, 0.101960786, 0.101960786, 1)
+theme_override_colors/font_placeholder_color = Color(0.050980393, 0.050980393, 0.050980393, 0.84705883)
+theme_override_colors/caret_color = Color(0.101960786, 0.101960786, 0.101960786, 1)
+theme_override_colors/selection_color = Color(0.101960786, 0.101960786, 0.101960786, 1)
+theme_override_fonts/font = ExtResource("4_n5ers")
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxEmpty_cx3fc")
+theme_override_styles/read_only = SubResource("StyleBoxEmpty_1x2kc")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_vcoy5")
+placeholder_text = "My shaormeria"
+alignment = 1
+max_length = 20
+
+[node name="HSeparator2" type="HSeparator" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=289302486]
+layout_mode = 2
+theme_override_constants/separation = 20
+theme_override_styles/separator = SubResource("StyleBoxEmpty_h0sok")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=674233332]
+layout_mode = 2
+alignment = 1
+
+[node name="BtnConfirm" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=448116173]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.101960786, 0.101960786, 0.101960786, 1)
+theme_override_colors/font_focus_color = Color(0.101960786, 0.101960786, 0.101960786, 1)
+theme_override_colors/font_pressed_color = Color(0.101960786, 0.101960786, 0.101960786, 1)
+theme_override_colors/font_hover_color = Color(0.101960786, 0.101960786, 0.101960786, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.101960786, 0.101960786, 0.101960786, 1)
+theme_override_fonts/font = ExtResource("4_n5ers")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxTexture_fjxfv")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_8xfg8")
+theme_override_styles/hover = SubResource("StyleBoxTexture_o2adl")
+text = "Start Game"
+
+[node name="BtnCancel" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=435577351]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.101960786, 0.101960786, 0.101960786, 1)
+theme_override_colors/font_focus_color = Color(0.101960786, 0.101960786, 0.101960786, 1)
+theme_override_colors/font_pressed_color = Color(0.101960786, 0.101960786, 0.101960786, 1)
+theme_override_colors/font_hover_color = Color(0.101960786, 0.101960786, 0.101960786, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.101960786, 0.101960786, 0.101960786, 1)
+theme_override_fonts/font = ExtResource("4_n5ers")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxTexture_fjxfv")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_8xfg8")
+theme_override_styles/hover = SubResource("StyleBoxTexture_o2adl")
+text = "Cancel"

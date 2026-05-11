@@ -1,37 +1,12 @@
 extends PointLight2D
 
-# ---------------------------------------------------------
-# 1. SIGNALS (What does this script shout to other scenes?)
-# ---------------------------------------------------------
-
-# ---------------------------------------------------------
-# 2. ENUMS AND CONSTANTS (Fixed values)
-# ---------------------------------------------------------
-
-# ---------------------------------------------------------
-# 3. EXPORTED VARIABLES (Those that appear in the right-side Editor Inspector)
-# ---------------------------------------------------------
 @export var flicker_speed: float = 3.0
 @export var flicker_strength: float = 0.15
 
-# ---------------------------------------------------------
-# 4. PUBLIC VARIABLES (Can be read/modified by other scripts)
-# ---------------------------------------------------------
-
-# ---------------------------------------------------------
-# 5. PRIVATE VARIABLES (Prefixed with "_"; used only inside this script)
-# ---------------------------------------------------------
 var _noise: FastNoiseLite
 var _base_energy: float
 var _time_passed: float = 0.0
 
-# ---------------------------------------------------------
-# 6. ONREADY VARIABLES (Links to the UI / Node Tree)
-# ---------------------------------------------------------
-
-# ---------------------------------------------------------
-# 7. GODOT ENGINE FUNCTIONS (The built-in ones)
-# ---------------------------------------------------------
 func _ready() -> void:
 	_base_energy = energy
 	
@@ -46,10 +21,6 @@ func _process(delta: float) -> void:
 	
 	energy = _base_energy + (noise_value * flicker_strength)
 
-# ---------------------------------------------------------
-# 8. PUBLIC FUNCTIONS (Called by you from other scripts)
-# ---------------------------------------------------------
-
 func fade_out(tween: Tween, duration: float) -> void:
 	set_process(false)
 	tween.tween_property(self, "energy", 0.0, duration)\
@@ -63,11 +34,3 @@ func fade_in(tween: Tween, duration: float) -> void:
 
 func resume_flicker() -> void:
 	set_process(true)
-
-# ---------------------------------------------------------
-# 9. PRIVATE FUNCTIONS (Prefixed with "_", used only internally here)
-# ---------------------------------------------------------
-
-# ---------------------------------------------------------
-# 10. SIGNAL CALLBACKS (What happens when buttons/timers trigger)
-# ---------------------------------------------------------

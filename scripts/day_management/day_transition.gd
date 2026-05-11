@@ -48,7 +48,7 @@ func _on_action_pressed() -> void:
 		
 		# 3. Sărim către prima ta scenă de gameplay
 		# ATENȚIE: Înlocuiește calea de mai jos cu calea reală a primei stații
-		get_tree().change_scene_to_file("res://scenes/gameplay_master.tscn")
+		get_tree().change_scene_to_file("res://scenes/gameplay/master/gameplay_master.tscn")
 		
 	elif current_state == DayState.NIGHT:
 		# Trecem la dimineața următoare

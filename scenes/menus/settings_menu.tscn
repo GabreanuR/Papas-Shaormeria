@@ -1,3 +1,153 @@
 [gd_scene format=3 uid="uid://c5up32xja71ff"]
 
-[node name="SettingsMenu" type="Node2D" unique_id=807801186]
+[ext_resource type="Script" uid="uid://drjjo5hnb1oxp" path="res://scripts/menus/settings_menu.gd" id="1_ojvp1"]
+[ext_resource type="PackedScene" uid="uid://cjexmeym01onb" path="res://scenes/components/modal_overlay.tscn" id="2_da10i"]
+[ext_resource type="Theme" uid="uid://c30gjc6imkwcf" path="res://assets/theme/main_theme.tres" id="3_jjfif"]
+[ext_resource type="FontFile" uid="uid://bpu1j3ggtme57" path="res://assets/fonts/Oswald-Bold.ttf" id="4_kffdn"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_qnuys"]
+font = ExtResource("4_kffdn")
+font_size = 40
+shadow_size = 5
+shadow_color = Color(0, 0, 0, 0.14901961)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_eoonq"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_mcc4n"]
+font = ExtResource("4_kffdn")
+font_size = 28
+font_color = Color(0, 0, 0, 1)
+shadow_size = 2
+shadow_color = Color(1, 1, 1, 0.48235294)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_muhwa"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_g67jo"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_rrg86"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_l0eij"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hg0fu"]
+
+[node name="SettingsMenu" type="Control" unique_id=1186632622]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ojvp1")
+
+[node name="ModalOverlay" parent="." unique_id=1739728802 instance=ExtResource("2_da10i")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SettingsPanel" type="Panel" parent="." unique_id=298652747]
+unique_name_in_owner = true
+layout_mode = 0
+offset_right = 1200.0
+offset_bottom = 700.0
+theme = ExtResource("3_jjfif")
+
+[node name="MarginContainer" type="MarginContainer" parent="SettingsPanel" unique_id=1897174249]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 350
+theme_override_constants/margin_top = 80
+theme_override_constants/margin_right = 350
+theme_override_constants/margin_bottom = 100
+
+[node name="VBoxContainer" type="VBoxContainer" parent="SettingsPanel/MarginContainer" unique_id=438128561]
+layout_mode = 2
+alignment = 1
+
+[node name="SettingsLabel" type="Label" parent="SettingsPanel/MarginContainer/VBoxContainer" unique_id=1723114253]
+layout_mode = 2
+text = "Settings"
+label_settings = SubResource("LabelSettings_qnuys")
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="SettingsPanel/MarginContainer/VBoxContainer" unique_id=1064312950]
+layout_mode = 2
+theme_override_constants/separation = 200
+theme_override_styles/separator = SubResource("StyleBoxEmpty_eoonq")
+
+[node name="MasterVolume" type="HBoxContainer" parent="SettingsPanel/MarginContainer/VBoxContainer" unique_id=940117827]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="SettingsPanel/MarginContainer/VBoxContainer/MasterVolume" unique_id=512892445]
+layout_mode = 2
+text = "Master Volume"
+label_settings = SubResource("LabelSettings_mcc4n")
+
+[node name="Control" type="Control" parent="SettingsPanel/MarginContainer/VBoxContainer/MasterVolume" unique_id=1202619697]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+
+[node name="VolumeSlider" type="HSlider" parent="SettingsPanel/MarginContainer/VBoxContainer/MasterVolume" unique_id=502688246]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+size_flags_stretch_ratio = 5.0
+max_value = 1.0
+step = 0.01
+value = 1.0
+ticks_position = 3
+
+[node name="FullscreenToggleControl" type="HBoxContainer" parent="SettingsPanel/MarginContainer/VBoxContainer" unique_id=354565604]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="SettingsPanel/MarginContainer/VBoxContainer/FullscreenToggleControl" unique_id=224452235]
+layout_mode = 2
+text = "Toggle Fullscreen"
+label_settings = SubResource("LabelSettings_mcc4n")
+
+[node name="Control" type="Control" parent="SettingsPanel/MarginContainer/VBoxContainer/FullscreenToggleControl" unique_id=1597158428]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+
+[node name="FullscreenToggle" type="CheckButton" parent="SettingsPanel/MarginContainer/VBoxContainer/FullscreenToggleControl" unique_id=1215990706]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 0.69803923)
+theme_override_styles/normal = SubResource("StyleBoxEmpty_muhwa")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_g67jo")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_rrg86")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_l0eij")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_hg0fu")
+icon_alignment = 1
+expand_icon = true
+
+[node name="Control" type="Control" parent="SettingsPanel/MarginContainer/VBoxContainer" unique_id=105135189]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BtnCloseSettings" type="Button" parent="SettingsPanel/MarginContainer/VBoxContainer" unique_id=1553396760]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 1)
+text = "Back"

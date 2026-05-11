@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://bnrrwi7lnwtw3" path="res://assets/graphics/wrapping_station/send.png" id="2_xqjmc"]
 [ext_resource type="Texture2D" uid="uid://cx2t0uk464cjj" path="res://assets/graphics/wrapping_station/ticketSlot.png" id="3_abibr"]
 [ext_resource type="Texture2D" uid="uid://kpif8wvatiw4" path="res://assets/graphics/ui/order_ticket.png" id="4_xqjmc"]
-[ext_resource type="Script" uid="uid://bejuej8hpb2uu" path="res://scripts/components/wrap_gesture.gd" id="6_loyu3"]
+[ext_resource type="Script" uid="uid://bejuej8hpb2uu" path="res://scripts/gameplay/stations/wrapping/wrap_gesture.gd" id="6_loyu3"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0cijx"]
 size = Vector2(244.75, 343.75)

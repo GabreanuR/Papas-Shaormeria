@@ -1,0 +1,60 @@
+[gd_scene format=3 uid="uid://di6ecoin5wxy4"]
+
+[ext_resource type="Texture2D" uid="uid://d2wxw14py3xdl" path="res://assets/graphics/backgrounds/metal_shutter.png" id="1_0r2ti"]
+[ext_resource type="Script" uid="uid://bnp2tgflv2uq" path="res://scripts/menus/metal_shutter.gd" id="1_7d8i2"]
+[ext_resource type="AudioStream" uid="uid://c13ptfyyodlxi" path="res://assets/audio/sfx/MetalShutter.wav" id="2_7d8i2"]
+
+[sub_resource type="Animation" id="Animation_booqr"]
+length = 2.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("TextureRect:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 2.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(-20, -1250), Vector2(-20, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_jvvyj"]
+resource_name = "close"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("TextureRect:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(-20, -1200), Vector2(-20, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_0y4r0"]
+_data = {
+&"RESET": SubResource("Animation_booqr"),
+&"close": SubResource("Animation_jvvyj")
+}
+
+[node name="MetalShutter" type="CanvasLayer" unique_id=1829364227]
+layer = 100
+script = ExtResource("1_7d8i2")
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=1962273144]
+offset_left = -20.0
+offset_top = -1250.0
+offset_right = 2030.0
+texture = ExtResource("1_0r2ti")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1461337818]
+libraries/ = SubResource("AnimationLibrary_0y4r0")
+
+[node name="ShutterSFX" type="AudioStreamPlayer" parent="." unique_id=1621050692]
+stream = ExtResource("2_7d8i2")
+
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_animation_finished"]

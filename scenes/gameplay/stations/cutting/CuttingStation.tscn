@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://drcnfvyblkit3"]
 
-[ext_resource type="Script" uid="uid://bdrej6b5aehc1" path="res://scripts/components/cutting_station_fade.gd" id="1_f5f6w"]
-[ext_resource type="Script" uid="uid://b2hsduofa6osq" path="res://scripts/entities/items/meat.gd" id="2_f5f6w"]
+[ext_resource type="Script" uid="uid://bdrej6b5aehc1" path="res://scripts/gameplay/stations/cutting/cutting_station_fade.gd" id="1_f5f6w"]
+[ext_resource type="Script" uid="uid://b2hsduofa6osq" path="res://scripts/gameplay/stations/cutting/meat.gd" id="2_f5f6w"]
 [ext_resource type="Texture2D" uid="uid://banrjlu16viks" path="res://assets/graphics/cutting_station/final_knife.png" id="2_xuvxo"]
-[ext_resource type="Script" uid="uid://15sv1wvgc34h" path="res://scripts/components/knife.gd" id="3_xuvxo"]
+[ext_resource type="Script" uid="uid://15sv1wvgc34h" path="res://scripts/gameplay/stations/cutting/knife.gd" id="3_xuvxo"]
 [ext_resource type="Theme" uid="uid://c30gjc6imkwcf" path="res://assets/theme/main_theme.tres" id="5_60op4"]
 [ext_resource type="FontFile" uid="uid://bpu1j3ggtme57" path="res://assets/fonts/Oswald-Bold.ttf" id="5_f5f6w"]
 

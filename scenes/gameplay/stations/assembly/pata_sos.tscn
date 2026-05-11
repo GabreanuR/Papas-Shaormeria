@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://ihbdasxpe0oe"]
 
-[ext_resource type="Script" uid="uid://d3hgxtxxgp3ns" path="res://scripts/assemble_ingredients/pata_sos.gd" id="1_nwfdc"]
+[ext_resource type="Script" uid="uid://d3hgxtxxgp3ns" path="res://scripts/gameplay/stations/assembly/pata_sos.gd" id="1_nwfdc"]
 
 [node name="PataSos" type="Line2D" unique_id=1292032136]
 top_level = true

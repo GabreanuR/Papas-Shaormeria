@@ -1,0 +1,46 @@
+[gd_scene format=3 uid="uid://dtudyyqugx6oi"]
+
+[ext_resource type="Script" uid="uid://biuyc2n46q6yu" path="res://scripts/menus/credits_menu.gd" id="1_xtkoc"]
+[ext_resource type="PackedScene" uid="uid://cjexmeym01onb" path="res://scenes/components/modal_overlay.tscn" id="2_325oc"]
+[ext_resource type="Texture2D" uid="uid://dfc63jlmpo066" path="res://assets/graphics/backgrounds/CreditsReceipt.png" id="2_d74go"]
+[ext_resource type="Texture2D" uid="uid://b73mike5hi03" path="res://assets/graphics/backgrounds/CloseCredits.png" id="3_325oc"]
+[ext_resource type="Texture2D" uid="uid://ccyl1xy8tfhdy" path="res://assets/graphics/backgrounds/CloseCreditsHover.png" id="5_325oc"]
+
+[node name="CreditsMenu" type="Control" unique_id=1274933329]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_xtkoc")
+
+[node name="ModalOverlay" parent="." unique_id=1739728802 instance=ExtResource("2_325oc")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ReceiptNote" type="TextureRect" parent="." unique_id=382483644]
+layout_mode = 0
+offset_left = 450.0
+offset_top = 1200.0
+offset_right = 1600.0
+offset_bottom = 3200.0
+texture = ExtResource("2_d74go")
+
+[node name="BtnCloseCredits" type="TextureButton" parent="ReceiptNote" unique_id=644837473]
+layout_mode = 0
+offset_left = 820.0
+offset_top = 230.0
+offset_right = 920.0
+offset_bottom = 430.0
+texture_normal = ExtResource("3_325oc")
+texture_hover = ExtResource("5_325oc")
+ignore_texture_size = true
+stretch_mode = 5
+
+[connection signal="pressed" from="ReceiptNote/BtnCloseCredits" to="." method="_on_close_button_pressed"]

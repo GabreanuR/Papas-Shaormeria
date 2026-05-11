@@ -2,6 +2,8 @@ extends PointLight2D
 
 @export var flicker_speed: float = 3.0
 @export var flicker_strength: float = 0.15
+## How rapidly the noise pattern changes within each time step. Higher = more jittery flicker.
+@export var noise_frequency: float = 100.0
 
 var _noise: FastNoiseLite
 var _base_energy: float
@@ -15,9 +17,10 @@ func _ready() -> void:
 	_noise.seed = randi()
 
 func _process(delta: float) -> void:
-	_time_passed += delta * flicker_speed
+	# Wrap with fmod to prevent float precision loss over very long sessions
+	_time_passed = fmod(_time_passed + delta * flicker_speed, 1000.0)
 	
-	var noise_value: float = _noise.get_noise_1d(_time_passed * 100.0)
+	var noise_value: float = _noise.get_noise_1d(_time_passed * noise_frequency)
 	
 	energy = _base_energy + (noise_value * flicker_strength)
 
@@ -28,6 +31,8 @@ func fade_out(tween: Tween, duration: float) -> void:
 		.set_ease(Tween.EASE_OUT)
 
 func fade_in(tween: Tween, duration: float) -> void:
+	# Defensive: ensure the flicker loop isn't fighting the tween
+	set_process(false)
 	tween.tween_property(self, "energy", _base_energy, duration)\
 		.set_trans(Tween.TRANS_SINE)\
 		.set_ease(Tween.EASE_OUT)

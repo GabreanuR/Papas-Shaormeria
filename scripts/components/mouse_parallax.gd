@@ -1,14 +1,22 @@
 extends Control
 
 @export var multipliers: Array[float] = [0.005, 0.01, 0.005, 0.02, 0.0]
+## How snappily layers follow the mouse. Higher = more responsive, less lag.
+@export var lerp_speed: float = 5.0
 
 var _base_positions: Array[Vector2] = []
 var _screen_center: Vector2
 
-@onready var parallax_layers: Array[Node] = get_children()
+# Filter to Control nodes only so _base_positions and parallax_layers indices always align
+@onready var parallax_layers: Array[Node] = get_children().filter(func(n): return n is Control)
 
 func _ready() -> void:
 	await get_tree().process_frame
+	
+	# Warn early if the designer-set multipliers don't match the number of layers
+	if multipliers.size() != parallax_layers.size():
+		push_warning("MouseParallax: multipliers count (%d) doesn't match layer count (%d). Some layers may not move." \
+			% [multipliers.size(), parallax_layers.size()])
 	
 	_update_screen_data()
 	
@@ -24,7 +32,7 @@ func _process(delta: float) -> void:
 			var layer := parallax_layers[i] as Control
 			if layer:
 				var target_position: Vector2 = _base_positions[i] - (offset * multipliers[i])
-				layer.position = layer.position.lerp(target_position, 5.0 * delta)
+				layer.position = layer.position.lerp(target_position, lerp_speed * delta)
 
 func _update_screen_data() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)

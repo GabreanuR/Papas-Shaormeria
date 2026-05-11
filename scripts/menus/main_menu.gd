@@ -18,52 +18,48 @@ const LOADING_SCENE = "res://scenes/menus/loading_screen.tscn"
 # ---------------------------------------------------------
 # 4. PUBLIC VARIABLES (Can be read/modified by other scripts)
 # ---------------------------------------------------------
-var menu_mode: String = "" # Expected values: "new" or "load"
-var screen_center: Vector2
-var base_positions: Array[Vector2] = []
-
-var current_slot_id: int = -1
-var is_overwriting: bool = false
-
-var tex_empty_normal = preload("res://assets/graphics/ui/slot_normal.png")
-var tex_empty_hover = preload("res://assets/graphics/ui/slot_hover.png")
-var tex_filled_normal = preload("res://assets/graphics/ui/slot_filled_normal.png")
-var tex_filled_hover = preload("res://assets/graphics/ui/slot_filled_hover.png")
-
-var is_deleting: bool = false # Stare nouă pentru pop-up
 
 # ---------------------------------------------------------
 # 5. PRIVATE VARIABLES (Prefixed with "_"; used only inside this script)
 # ---------------------------------------------------------
+var _menu_mode: String = "" # Expected values: "new" or "load"
+var _screen_center: Vector2
+
+var _current_slot_id: int = -1
+var _is_overwriting: bool = false
+var _is_deleting: bool = false
+
+var _tex_empty_normal: Texture2D = preload("res://assets/graphics/ui/slot_normal.png")
+var _tex_empty_hover: Texture2D = preload("res://assets/graphics/ui/slot_hover.png")
+var _tex_filled_normal: Texture2D = preload("res://assets/graphics/ui/slot_filled_normal.png")
+var _tex_filled_hover: Texture2D = preload("res://assets/graphics/ui/slot_filled_hover.png")
 
 # ---------------------------------------------------------
 # 6. ONREADY VARIABLES (Links to the UI / Node Tree)
 # ---------------------------------------------------------
-@onready var button_container = $MainGroup
-@onready var settings_menu = $SettingsMenu
-@onready var credits_menu = $CreditsMenu
-@onready var shutter = $MetalShutter
+@onready var button_container: Control = $MainGroup
+@onready var settings_menu: Control = $SettingsMenu
+@onready var credits_menu: Control = $CreditsMenu
+@onready var shutter: CanvasLayer = $MetalShutter
 @onready var camera: Camera2D = $Camera2D
-@onready var action_popup = $ActionPopup
+@onready var action_popup: Control = $ActionPopup
+@onready var saves_panel: Control = $SaveSlotsPanel
+@onready var btn_close_saves: Button = $SaveSlotsPanel/MarginContainer/VBoxContainer/BtnCloseSaves
+@onready var saves_title: Label = $SaveSlotsPanel/MarginContainer/VBoxContainer/SaveSlotsLabel
 
-
-@onready var saves_panel = $SaveSlotsPanel
-@onready var btn_close_saves = $SaveSlotsPanel/MarginContainer/VBoxContainer/BtnCloseSaves
-@onready var saves_title = $SaveSlotsPanel/MarginContainer/VBoxContainer/SaveSlotsLabel
-
-@onready var slots = [
+@onready var slots: Array[Button] = [
 	$SaveSlotsPanel/MarginContainer/VBoxContainer/HBoxContainer/Slot1,
 	$SaveSlotsPanel/MarginContainer/VBoxContainer/HBoxContainer/Slot2,
 	$SaveSlotsPanel/MarginContainer/VBoxContainer/HBoxContainer/Slot3
 ]
 
-@onready var delete_btns = [
+@onready var delete_btns: Array[TextureButton] = [
 	$SaveSlotsPanel/MarginContainer/VBoxContainer/HBoxContainer/Slot1/DeleteBtn1,
 	$SaveSlotsPanel/MarginContainer/VBoxContainer/HBoxContainer/Slot2/DeleteBtn2,
 	$SaveSlotsPanel/MarginContainer/VBoxContainer/HBoxContainer/Slot3/DeleteBtn3
 ]
 
-@onready var slot_labels = [
+@onready var slot_labels: Array[Label] = [
 	$SaveSlotsPanel/MarginContainer/VBoxContainer/HBoxContainer/Slot1/SlotLabel1,
 	$SaveSlotsPanel/MarginContainer/VBoxContainer/HBoxContainer/Slot2/SlotLabel2,
 	$SaveSlotsPanel/MarginContainer/VBoxContainer/HBoxContainer/Slot3/SlotLabel3
@@ -75,8 +71,9 @@ var is_deleting: bool = false # Stare nouă pentru pop-up
 func _ready() -> void:
 	if menu_music:
 		AudioManager.play_music(menu_music, 1.5)
-		
-	$Camera2D.position = get_viewport_rect().size / 2.0
+	
+	_screen_center = get_viewport_rect().size / 2.0
+	camera.position = _screen_center
 	
 	_connect_signals()
 	_initialize_ui_state()
@@ -115,14 +112,14 @@ func _refresh_slots() -> void:
 			name_label.show() 
 			slot_btn.disabled = false
 			
-			style_normal.texture = tex_filled_normal
-			style_hover.texture = tex_filled_hover
-			del_btn.visible = (menu_mode == "load")
-			
+			style_normal.texture = _tex_filled_normal
+			style_hover.texture = _tex_filled_hover
+			del_btn.visible = (_menu_mode == "load")
+		
 		else:
 			del_btn.visible = false
 			
-			if menu_mode == "load":
+			if _menu_mode == "load":
 				name_label.text = "EMPTY SLOT"
 				name_label.show()
 				slot_btn.disabled = true
@@ -133,8 +130,8 @@ func _refresh_slots() -> void:
 				slot_btn.disabled = false
 				slot_btn.modulate = Color.WHITE
 				
-			style_normal.texture = tex_empty_normal
-			style_hover.texture = tex_empty_hover
+			style_normal.texture = _tex_empty_normal
+			style_hover.texture = _tex_empty_hover
 
 		slot_btn.add_theme_stylebox_override("normal", style_normal)
 		slot_btn.add_theme_stylebox_override("hover", style_hover)
@@ -157,17 +154,15 @@ func _connect_signals() -> void:
 	# Secondary UI Buttons
 	if not settings_menu.closed.is_connected(_on_settings_closed):
 		settings_menu.closed.connect(_on_settings_closed)
-		print("Main Menu: Signal connected successfully!")
 	credits_menu.back_requested.connect(_on_credits_closed)
 	btn_close_saves.pressed.connect(_on_close_saves_pressed)
 	
 	# Action Pop-up
 	action_popup.action_confirmed.connect(_on_popup_action_confirmed)
 	action_popup.input_confirmed.connect(_on_popup_input_confirmed)
-	
-	action_popup.cancelled.connect(func(): 
-		is_deleting = false
-		is_overwriting = false
+	action_popup.cancelled.connect(func():
+		_is_deleting = false
+		_is_overwriting = false
 	)
 	# "Juice" hover effects for main buttons
 	for button in button_container.get_children():
@@ -177,7 +172,7 @@ func _connect_signals() -> void:
 
 func _initialize_ui_state() -> void:
 	action_popup.hide()
-	# (Și saves_panel-ul, pe care îl vom refactoriza curând)
+	saves_panel.hide()
 
 func _fade_shop_lights(tween: Tween, turning_off: bool) -> void:
 	var all_lights: Array[Node] = get_tree().get_nodes_in_group("shop_lights")
@@ -209,7 +204,7 @@ func _open_saves_panel() -> void:
 	_fade_shop_lights(tween, true)
 	
 	# Explicit Vector2 typing to prevent inference errors
-	var target_pos: Vector2 = screen_center - (saves_panel.size / 2.0)
+	var target_pos: Vector2 = _screen_center - (saves_panel.size / 2.0)
 	tween.tween_property(saves_panel, "position", target_pos, 0.7)\
 		.set_trans(Tween.TRANS_BACK)\
 		.set_ease(Tween.EASE_OUT)
@@ -238,7 +233,6 @@ func _start_new_game(save_path: String, shop_name: String) -> void:
 
 func _load_game(save_path: String) -> void:
 	if FileAccess.file_exists(save_path):
-		print("File found. Starting transition...")
 		_transition_to_game()
 	else:
 		push_error("Error: Attempted to load a non-existent file!")
@@ -248,10 +242,12 @@ func _transition_to_game() -> void:
 	button_container.hide()
 	
 	AudioManager.stop_music(1.0)
-		
-	var tween := create_tween()
 	
-	tween.finished.connect(_on_transition_done)
+	# Use the existing shutter to transition — consistent with the quit flow
+	shutter.close_shutter()
+	await shutter.shutter_closed
+	
+	_on_transition_done()
 
 func _get_shop_name_from_file(path: String) -> String:
 	var file := FileAccess.open(path, FileAccess.READ)
@@ -304,7 +300,6 @@ func _on_button_unhover(btn: BaseButton) -> void:
 	tween.tween_property(btn, "modulate", Color.WHITE, 0.1)
 
 func _on_settings_pressed() -> void:
-	print("Opening Settings...")
 	button_container.hide()
 
 	var tween := create_tween()
@@ -313,15 +308,15 @@ func _on_settings_pressed() -> void:
 	settings_menu.open_settings()
 
 func _on_settings_closed() -> void:
-	print("Main Menu: Received 'closed' signal!") # Dacă vezi asta în Output, conexiunea e bună
-	
-	# 1. Forțăm butoanele să apară imediat (fără tween, pentru test)
+	# 1. Arătăm butoanele INSTANTANEU, chiar când începe închiderea
 	button_container.show()
 	
-	# 2. Executăm restul logicii
+	# 2. Pornim restul efectelor vizuale în fundal
 	var tween := create_tween()
 	_fade_shop_lights(tween, false)
-	_resume_lights_processing()
+	
+	# 3. La finalul tween-ului, doar repornim logica de lumini (fără să mai ascundem UI-ul)
+	tween.chain().tween_callback(_resume_lights_processing)
 	
 func _on_credits_pressed() -> void:
 	button_container.hide()
@@ -336,10 +331,7 @@ func _on_credits_closed() -> void:
 	
 	var tween := create_tween()
 	_fade_shop_lights(tween, false)
-	
-	tween.chain().tween_callback(func():
-		_resume_lights_processing()
-	)
+	tween.chain().tween_callback(_resume_lights_processing)
 
 func _on_quit_pressed() -> void:
 	# Disable user input
@@ -362,12 +354,12 @@ func _on_quit_pressed() -> void:
 	get_tree().quit()
 
 func _on_new_game_pressed() -> void:
-	menu_mode = "new"
+	_menu_mode = "new"
 	saves_title.text = "New Game - Pick a slot"
 	_open_saves_panel()
 
 func _on_load_game_pressed() -> void:
-	menu_mode = "load"
+	_menu_mode = "load"
 	saves_title.text = "Load Game - Choose a save"
 	_open_saves_panel()
 
@@ -390,70 +382,59 @@ func _on_close_saves_pressed() -> void:
 	)
 
 func _on_slot_clicked(slot_id: int, is_filled: bool) -> void:
-	current_slot_id = slot_id
-	is_deleting = false 
+	_current_slot_id = slot_id
+	_is_deleting = false
 	
-	if menu_mode == "new":
+	if _menu_mode == "new":
 		if is_filled:
-			is_overwriting = true
-			# Comandăm componenta să ceară confirmare
+			_is_overwriting = true
 			action_popup.ask_confirmation("Overwrite old save?", "Overwrite")
 		else:
-			is_overwriting = false
-			# Comandăm componenta să ceară un text
+			_is_overwriting = false
 			action_popup.ask_input("Name your shop:", "Start game")
 			
-	elif menu_mode == "load" and is_filled:
+	elif _menu_mode == "load" and is_filled:
 		_load_game(SAVE_FILE_TEMPLATE % slot_id)
 
 # 1. Când jucătorul a zis "Da" la ștergere sau suprascriere
 func _on_popup_action_confirmed() -> void:
-	var save_path: String = SAVE_FILE_TEMPLATE % current_slot_id
+	var save_path: String = SAVE_FILE_TEMPLATE % _current_slot_id
 	
-	if is_deleting:
+	if _is_deleting:
 		if FileAccess.file_exists(save_path):
 			DirAccess.remove_absolute(save_path)
-		is_deleting = false
+		_is_deleting = false
 		_refresh_slots()
 		
-	elif is_overwriting:
-		is_overwriting = false
-		# Trecem din modul "Confirmare" în modul "Input" pentru numele noului shop
+	elif _is_overwriting:
+		_is_overwriting = false
 		action_popup.ask_input("Name your new shop:", "Start game")
 
 # 2. Când jucătorul a dat Submit la numele magazinului
 func _on_popup_input_confirmed(shop_name: String) -> void:
-	var save_path: String = SAVE_FILE_TEMPLATE % current_slot_id
+	var save_path: String = SAVE_FILE_TEMPLATE % _current_slot_id
 	
-	# --- VALIDARE ---
 	if shop_name.is_empty():
-		shop_name = "Shop " + str(current_slot_id)
+		shop_name = "Shop " + str(_current_slot_id)
 		
 	if shop_name.length() > 20:
 		shop_name = shop_name.left(20)
 		
-	if _is_name_duplicate(shop_name, current_slot_id):
-		# Folosim funcția nouă din componentă pentru a arăta eroarea!
+	if _is_name_duplicate(shop_name, _current_slot_id):
 		action_popup.show_error("Numele există deja! Alege altul.")
 		return
 		
-	# --- TOTUL E OK ---
 	action_popup.hide()
 	_start_new_game(save_path, shop_name)
 
 func _on_transition_done() -> void:
-	print("Animation finished. Attempting to load scene: ", LOADING_SCENE)
-	
 	var err := get_tree().change_scene_to_file(LOADING_SCENE)
-	
 	if err != OK:
-		print("!!! CRITICAL ERROR !!!")
-		print("Error code: ", err)
-		print("Check if loading_screen.tscn exists at exact path: ", LOADING_SCENE)
+		push_error("Critical Error: Could not load '%s'. Error code: %d" % [LOADING_SCENE, err])
 
 func _on_delete_request(slot_id: int) -> void:
-	current_slot_id = slot_id
-	is_deleting = true
-	is_overwriting = false
+	_current_slot_id = slot_id
+	_is_deleting = true
+	_is_overwriting = false
 	
 	action_popup.ask_confirmation("Are you sure?", "Yes, delete")

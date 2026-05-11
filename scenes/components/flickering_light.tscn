@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://dx8edl0k8nior"]
 
 [ext_resource type="Texture2D" uid="uid://dhr5hqnmaucfh" path="res://assets/theme/light_texture.tres" id="1_3xd8c"]
-[ext_resource type="Script" uid="uid://bxa5j4y2b4rut" path="res://scripts/components/light-flicker.gd" id="2_lifie"]
+[ext_resource type="Script" uid="uid://bxa5j4y2b4rut" path="res://scripts/components/light_flicker.gd" id="2_lifie"]
 
 [node name="FlickeringLight" type="PointLight2D" unique_id=458594897 groups=["shop_lights"]]
 texture = ExtResource("1_3xd8c")

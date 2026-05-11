@@ -95,6 +95,10 @@ func _on_close_pressed() -> void:
 	if _is_busy: return
 	_is_busy = true
 	
+	# 1. ANUNȚĂM MENIUL PRINCIPAL INSTANTANEU!
+	closed.emit() 
+	
+	# 2. Începem animațiile de dispariție în ritmul lor
 	overlay.fade_out(0.6)
 	
 	var tween := create_tween()
@@ -106,9 +110,6 @@ func _on_close_pressed() -> void:
 	
 	hide()
 	_is_busy = false
-	# ASTA E LINIA CRITICĂ:
-	closed.emit() 
-	print("Settings Component: Signal 'closed' emitted!")
 
 # ---------------------------------------------------------
 # 10. SIGNAL CALLBACKS

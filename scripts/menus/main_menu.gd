@@ -28,42 +28,16 @@ var _screen_center: Vector2
 var _current_slot_id: int = -1
 var _is_overwriting: bool = false
 var _is_deleting: bool = false
-
-var _tex_empty_normal: Texture2D = preload("res://assets/graphics/ui/slot_normal.png")
-var _tex_empty_hover: Texture2D = preload("res://assets/graphics/ui/slot_hover.png")
-var _tex_filled_normal: Texture2D = preload("res://assets/graphics/ui/slot_filled_normal.png")
-var _tex_filled_hover: Texture2D = preload("res://assets/graphics/ui/slot_filled_hover.png")
-
 # ---------------------------------------------------------
 # 6. ONREADY VARIABLES (Links to the UI / Node Tree)
 # ---------------------------------------------------------
 @onready var button_container: Control = $MainGroup
+@onready var saves_menu = $SavesMenu
 @onready var settings_menu: Control = $SettingsMenu
 @onready var credits_menu: Control = $CreditsMenu
 @onready var shutter: CanvasLayer = $MetalShutter
 @onready var camera: Camera2D = $Camera2D
 @onready var action_popup: Control = $ActionPopup
-@onready var saves_panel: Control = $SaveSlotsPanel
-@onready var btn_close_saves: Button = $SaveSlotsPanel/MarginContainer/VBoxContainer/BtnCloseSaves
-@onready var saves_title: Label = $SaveSlotsPanel/MarginContainer/VBoxContainer/SaveSlotsLabel
-
-@onready var slots: Array[Button] = [
-	$SaveSlotsPanel/MarginContainer/VBoxContainer/HBoxContainer/Slot1,
-	$SaveSlotsPanel/MarginContainer/VBoxContainer/HBoxContainer/Slot2,
-	$SaveSlotsPanel/MarginContainer/VBoxContainer/HBoxContainer/Slot3
-]
-
-@onready var delete_btns: Array[TextureButton] = [
-	$SaveSlotsPanel/MarginContainer/VBoxContainer/HBoxContainer/Slot1/DeleteBtn1,
-	$SaveSlotsPanel/MarginContainer/VBoxContainer/HBoxContainer/Slot2/DeleteBtn2,
-	$SaveSlotsPanel/MarginContainer/VBoxContainer/HBoxContainer/Slot3/DeleteBtn3
-]
-
-@onready var slot_labels: Array[Label] = [
-	$SaveSlotsPanel/MarginContainer/VBoxContainer/HBoxContainer/Slot1/SlotLabel1,
-	$SaveSlotsPanel/MarginContainer/VBoxContainer/HBoxContainer/Slot2/SlotLabel2,
-	$SaveSlotsPanel/MarginContainer/VBoxContainer/HBoxContainer/Slot3/SlotLabel3
-]
 
 # ---------------------------------------------------------
 # 7. GODOT ENGINE FUNCTIONS (The built-in ones)
@@ -76,7 +50,6 @@ func _ready() -> void:
 	camera.position = _screen_center
 	
 	_connect_signals()
-	_initialize_ui_state()
 
 # ---------------------------------------------------------
 # 8. PUBLIC FUNCTIONS (Called by you from other scripts)
@@ -85,64 +58,6 @@ func _ready() -> void:
 # ---------------------------------------------------------
 # 9. PRIVATE FUNCTIONS (Prefixed with "_", used only internally here)
 # ---------------------------------------------------------
-func _refresh_slots() -> void:
-	for i in range(slots.size()):
-		var slot_btn: Button = slots[i]
-		var del_btn: TextureButton = delete_btns[i]
-		var name_label: Label = slot_labels[i]
-		var slot_id: int = i + 1
-		
-		var save_path: String = SAVE_FILE_TEMPLATE % slot_id
-		var has_save: bool = FileAccess.file_exists(save_path)
-		
-		slot_btn.text = "" 
-		slot_btn.modulate = Color.WHITE
-		
-		var style_normal := StyleBoxTexture.new()
-		var style_hover := StyleBoxTexture.new()
-		
-		if has_save:
-			var full_name: String = _get_shop_name_from_file(save_path)
-			
-			if full_name.length() > 20:
-				name_label.text = full_name.left(17) + "..."
-			else:
-				name_label.text = full_name
-			
-			name_label.show() 
-			slot_btn.disabled = false
-			
-			style_normal.texture = _tex_filled_normal
-			style_hover.texture = _tex_filled_hover
-			del_btn.visible = (_menu_mode == "load")
-		
-		else:
-			del_btn.visible = false
-			
-			if _menu_mode == "load":
-				name_label.text = "EMPTY SLOT"
-				name_label.show()
-				slot_btn.disabled = true
-				slot_btn.modulate = Color(0.5, 0.5, 0.5, 0.7)
-			else:
-				name_label.text = ""
-				name_label.hide()
-				slot_btn.disabled = false
-				slot_btn.modulate = Color.WHITE
-				
-			style_normal.texture = _tex_empty_normal
-			style_hover.texture = _tex_empty_hover
-
-		slot_btn.add_theme_stylebox_override("normal", style_normal)
-		slot_btn.add_theme_stylebox_override("hover", style_hover)
-		
-		if slot_btn.pressed.is_connected(_on_slot_clicked):
-			slot_btn.pressed.disconnect(_on_slot_clicked)
-		slot_btn.pressed.connect(_on_slot_clicked.bind(slot_id, has_save))
-		
-		if not del_btn.pressed.is_connected(_on_delete_request):
-			del_btn.pressed.connect(_on_delete_request.bind(slot_id))
-
 func _connect_signals() -> void:
 	# Main Menu Buttons
 	button_container.get_node("NewGameButton").pressed.connect(_on_new_game_pressed)
@@ -151,11 +66,15 @@ func _connect_signals() -> void:
 	button_container.get_node("CreditsButton").pressed.connect(_on_credits_pressed)
 	button_container.get_node("QuitButton").pressed.connect(_on_quit_pressed)
 	
+	saves_menu.closed.connect(_on_saves_closed)
+	saves_menu.request_new.connect(_on_saves_request_new)
+	saves_menu.request_load.connect(_on_saves_request_load)
+	saves_menu.request_delete.connect(_on_saves_request_delete)
+	
 	# Secondary UI Buttons
 	if not settings_menu.closed.is_connected(_on_settings_closed):
 		settings_menu.closed.connect(_on_settings_closed)
 	credits_menu.back_requested.connect(_on_credits_closed)
-	btn_close_saves.pressed.connect(_on_close_saves_pressed)
 	
 	# Action Pop-up
 	action_popup.action_confirmed.connect(_on_popup_action_confirmed)
@@ -169,10 +88,6 @@ func _connect_signals() -> void:
 		if button is BaseButton: 
 			button.mouse_entered.connect(_on_button_hover.bind(button))
 			button.mouse_exited.connect(_on_button_unhover.bind(button))
-
-func _initialize_ui_state() -> void:
-	action_popup.hide()
-	saves_panel.hide()
 
 func _fade_shop_lights(tween: Tween, turning_off: bool) -> void:
 	var all_lights: Array[Node] = get_tree().get_nodes_in_group("shop_lights")
@@ -192,22 +107,45 @@ func _resume_lights_processing() -> void:
 		if light.has_method("resume_flicker"):
 			light.resume_flicker()
 
-func _open_saves_panel() -> void:
-	# Update slot visuals based on existing save files
-	_refresh_slots()
-	
+# --- 1. OPEN / CLOSE LOGIC ---
+func _on_new_game_pressed() -> void:
 	button_container.hide()
 	var tween := create_tween()
-	tween.set_parallel(true)
-	
-	# Turn off shop lights using the helper function
 	_fade_shop_lights(tween, true)
+	saves_menu.open_menu("new")
+
+func _on_load_game_pressed() -> void:
+	button_container.hide()
+	var tween := create_tween()
+	_fade_shop_lights(tween, true)
+	saves_menu.open_menu("load")
+
+func _on_saves_closed() -> void:
+	button_container.show()
+	var tween := create_tween()
+	_fade_shop_lights(tween, false)
+	tween.chain().tween_callback(_resume_lights_processing)
+
+# --- 2. SIGNAL ROUTING TO ACTION POPUP ---
+func _on_saves_request_new(slot_id: int, is_filled: bool) -> void:
+	_current_slot_id = slot_id
+	_is_deleting = false
 	
-	# Explicit Vector2 typing to prevent inference errors
-	var target_pos: Vector2 = _screen_center - (saves_panel.size / 2.0)
-	tween.tween_property(saves_panel, "position", target_pos, 0.7)\
-		.set_trans(Tween.TRANS_BACK)\
-		.set_ease(Tween.EASE_OUT)
+	if is_filled:
+		_is_overwriting = true
+		action_popup.ask_confirmation("Overwrite old save?", "Overwrite")
+	else:
+		_is_overwriting = false
+		action_popup.ask_input("Name your shop:", "Start game")
+
+func _on_saves_request_load(slot_id: int) -> void:
+	_load_game(SAVE_FILE_TEMPLATE % slot_id)
+
+func _on_saves_request_delete(slot_id: int) -> void:
+	_current_slot_id = slot_id
+	_is_deleting = true
+	_is_overwriting = false
+	action_popup.ask_confirmation("Are you sure?", "Yes, delete")
 
 func _get_default_save_data(shop_name: String) -> Dictionary:
 	return {
@@ -238,14 +176,10 @@ func _load_game(save_path: String) -> void:
 		push_error("Error: Attempted to load a non-existent file!")
 
 func _transition_to_game() -> void:
-	saves_panel.hide()
+	saves_menu.hide()
 	button_container.hide()
 	
 	AudioManager.stop_music(1.0)
-	
-	# Use the existing shutter to transition — consistent with the quit flow
-	shutter.close_shutter()
-	await shutter.shutter_closed
 	
 	_on_transition_done()
 
@@ -353,34 +287,6 @@ func _on_quit_pressed() -> void:
 	await shutter.shutter_closed
 	get_tree().quit()
 
-func _on_new_game_pressed() -> void:
-	_menu_mode = "new"
-	saves_title.text = "New Game - Pick a slot"
-	_open_saves_panel()
-
-func _on_load_game_pressed() -> void:
-	_menu_mode = "load"
-	saves_title.text = "Load Game - Choose a save"
-	_open_saves_panel()
-
-func _on_close_saves_pressed() -> void:
-	var tween := create_tween()
-	tween.set_parallel(true)
-	
-	# Turn shop lights back on using the helper function
-	_fade_shop_lights(tween, false)
-	
-	var hidden_pos := Vector2(saves_panel.position.x, -1000)
-	tween.tween_property(saves_panel, "position", hidden_pos, 0.6)\
-		.set_trans(Tween.TRANS_BACK)\
-		.set_ease(Tween.EASE_IN)
-		
-	
-	tween.chain().tween_callback(func(): 
-		button_container.show()
-		_resume_lights_processing()
-	)
-
 func _on_slot_clicked(slot_id: int, is_filled: bool) -> void:
 	_current_slot_id = slot_id
 	_is_deleting = false
@@ -404,7 +310,7 @@ func _on_popup_action_confirmed() -> void:
 		if FileAccess.file_exists(save_path):
 			DirAccess.remove_absolute(save_path)
 		_is_deleting = false
-		_refresh_slots()
+		saves_menu.refresh_display()
 		
 	elif _is_overwriting:
 		_is_overwriting = false

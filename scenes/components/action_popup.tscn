@@ -35,7 +35,11 @@ texture = ExtResource("5_rdkkj")
 
 [node name="ActionPopup" type="Control" unique_id=542609553]
 layout_mode = 3
-anchors_preset = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_gtbm1")
 
 [node name="ModalOverlay" parent="." unique_id=1739728802 instance=ExtResource("2_dx2fw")]

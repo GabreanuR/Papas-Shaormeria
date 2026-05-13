@@ -1,4 +1,4 @@
-extends "res://scripts/components/ingredient.gd"
+extends "res://scripts/gameplay/stations/assembly/ingredient.gd"
 
 @export var scena_pata_sos: PackedScene
 @export var culoare_sos: Color

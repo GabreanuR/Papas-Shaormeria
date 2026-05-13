@@ -2,13 +2,14 @@
 
 [ext_resource type="Script" uid="uid://xj5euc8ciy82" path="res://scripts/menus/main_menu.gd" id="1_ovrgc"]
 [ext_resource type="PackedScene" uid="uid://dqxmlwwg4ncyl" path="res://scenes/components/mouse_parallax.tscn" id="3_a3hrp"]
+[ext_resource type="Texture2D" uid="uid://panixcu2ytcl" path="res://assets/graphics/ui/main_menu_buttons/Btn-NewGame.png" id="4_3w8rc"]
+[ext_resource type="Script" uid="uid://dsylot13ktcuo" path="res://scripts/components/animated_menu_button.gd" id="5_uxao6"]
+[ext_resource type="Texture2D" uid="uid://65t2713bsy47" path="res://assets/graphics/ui/main_menu_buttons/Btn-LoadGame.png" id="6_3w8rc"]
+[ext_resource type="Texture2D" uid="uid://d0vkvhhb60oug" path="res://assets/graphics/ui/main_menu_buttons/Btn-Settings.png" id="7_uxao6"]
+[ext_resource type="Texture2D" uid="uid://c2f07m2u6u0dy" path="res://assets/graphics/ui/main_menu_buttons/Btn-Credits.png" id="8_vr0hv"]
+[ext_resource type="Texture2D" uid="uid://dtjcknnkaggg5" path="res://assets/graphics/ui/main_menu_buttons/Btn-Quit.png" id="9_a3hrp"]
 [ext_resource type="PackedScene" uid="uid://8wemv2h5tlyc" path="res://scenes/menus/saves_menu.tscn" id="9_bh4e2"]
 [ext_resource type="PackedScene" uid="uid://c5up32xja71ff" path="res://scenes/menus/settings_menu.tscn" id="9_vr0hv"]
-[ext_resource type="Texture2D" uid="uid://lirpiv2vkss1" path="res://assets/graphics/backgrounds/Btn-NewGame.png" id="10_euy4r"]
-[ext_resource type="Texture2D" uid="uid://c6dtulnh27tmv" path="res://assets/graphics/backgrounds/Btn-LoadGame.png" id="11_bh4e2"]
-[ext_resource type="Texture2D" uid="uid://5lcutndmdlev" path="res://assets/graphics/backgrounds/Btn-Settings.png" id="12_3w8rc"]
-[ext_resource type="Texture2D" uid="uid://c03qupodydqlv" path="res://assets/graphics/backgrounds/Btn-Credits.png" id="13_uxao6"]
-[ext_resource type="Texture2D" uid="uid://c5l7bei2u1goe" path="res://assets/graphics/backgrounds/Btn-Quit.png" id="14_3w8rc"]
 [ext_resource type="PackedScene" uid="uid://cfktbdqjlvrnf" path="res://scenes/components/action_popup.tscn" id="15_uxao6"]
 [ext_resource type="AudioStream" uid="uid://c8hgt5u57celp" path="res://assets/audio/music/LobbyMusicMainMenu.mp3" id="16_a3hrp"]
 [ext_resource type="PackedScene" uid="uid://di6ecoin5wxy4" path="res://scenes/menus/metal_shutter.tscn" id="19_jygr6"]
@@ -52,9 +53,10 @@ offset_right = -136.18065
 offset_bottom = 24.395393
 rotation = -0.25747412
 pivot_offset = Vector2(81, 46)
-texture_normal = ExtResource("10_euy4r")
+texture_normal = ExtResource("4_3w8rc")
 ignore_texture_size = true
 stretch_mode = 5
+script = ExtResource("5_uxao6")
 
 [node name="LoadGameButton" type="TextureButton" parent="MainGroup" unique_id=1911385492]
 layout_mode = 0
@@ -64,9 +66,10 @@ offset_right = -144.00003
 offset_bottom = 73.0
 rotation = 0.20621103
 pivot_offset = Vector2(75.5, 30)
-texture_normal = ExtResource("11_bh4e2")
+texture_normal = ExtResource("6_3w8rc")
 ignore_texture_size = true
 stretch_mode = 5
+script = ExtResource("5_uxao6")
 
 [node name="SettingsButton" type="TextureButton" parent="MainGroup" unique_id=1252206924]
 layout_mode = 0
@@ -76,9 +79,10 @@ offset_right = -122.5992
 offset_bottom = 140.74872
 rotation = -0.26515928
 pivot_offset = Vector2(102, 27)
-texture_normal = ExtResource("12_3w8rc")
+texture_normal = ExtResource("7_uxao6")
 ignore_texture_size = true
 stretch_mode = 5
+script = ExtResource("5_uxao6")
 
 [node name="CreditsButton" type="TextureButton" parent="MainGroup" unique_id=85335887]
 layout_mode = 0
@@ -88,9 +92,10 @@ offset_right = -147.19281
 offset_bottom = 211.84941
 rotation = 0.38941157
 pivot_offset = Vector2(74, 23)
-texture_normal = ExtResource("13_uxao6")
+texture_normal = ExtResource("8_vr0hv")
 ignore_texture_size = true
 stretch_mode = 5
+script = ExtResource("5_uxao6")
 
 [node name="QuitButton" type="TextureButton" parent="MainGroup" unique_id=870987513]
 layout_mode = 0
@@ -100,9 +105,10 @@ offset_right = -123.217026
 offset_bottom = 287.7154
 rotation = -0.3192309
 pivot_offset = Vector2(94, 23)
-texture_normal = ExtResource("14_3w8rc")
+texture_normal = ExtResource("9_a3hrp")
 ignore_texture_size = true
 stretch_mode = 5
+script = ExtResource("5_uxao6")
 
 [node name="SavesMenu" parent="." unique_id=1607434101 instance=ExtResource("9_bh4e2")]
 layout_mode = 0

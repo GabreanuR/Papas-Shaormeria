@@ -83,11 +83,7 @@ func _connect_signals() -> void:
 		_is_deleting = false
 		_is_overwriting = false
 	)
-	# "Juice" hover effects for main buttons
-	for button in button_container.get_children():
-		if button is BaseButton: 
-			button.mouse_entered.connect(_on_button_hover.bind(button))
-			button.mouse_exited.connect(_on_button_unhover.bind(button))
+	# "Juice" hover effects for main buttons (moved to AnimatedMenuButton)
 
 func _fade_shop_lights(tween: Tween, turning_off: bool) -> void:
 	var all_lights: Array[Node] = get_tree().get_nodes_in_group("shop_lights")
@@ -215,23 +211,6 @@ func _is_name_duplicate(new_name: String, ignore_slot_id: int) -> bool:
 # ---------------------------------------------------------
 # 10. SIGNAL CALLBACKS (What happens when buttons/timers trigger)
 # ---------------------------------------------------------
-func _on_button_hover(btn: BaseButton) -> void:
-	var tween := create_tween()
-	tween.set_parallel(true)
-	
-	btn.pivot_offset = btn.size / 2.0
-	
-	# Scale up by 5% and slightly darken
-	tween.tween_property(btn, "scale", Vector2(1.05, 1.05), 0.1).set_trans(Tween.TRANS_QUAD)
-	tween.tween_property(btn, "modulate", Color(0.8, 0.8, 0.8, 1.0), 0.1)
-
-func _on_button_unhover(btn: BaseButton) -> void:
-	var tween := create_tween()
-	tween.set_parallel(true)
-	
-	# Restore original scale and brightness
-	tween.tween_property(btn, "scale", Vector2.ONE, 0.1).set_trans(Tween.TRANS_QUAD)
-	tween.tween_property(btn, "modulate", Color.WHITE, 0.1)
 
 func _on_settings_pressed() -> void:
 	button_container.hide()

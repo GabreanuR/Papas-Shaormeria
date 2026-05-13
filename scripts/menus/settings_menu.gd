@@ -136,10 +136,11 @@ func _apply_windowed_mode() -> void:
 	var windowed_size := Vector2i(1280, 720)
 	DisplayServer.call_deferred("window_set_size", windowed_size)
 	
-	# Center the newly created window on the monitor
 	var current_screen_pos := DisplayServer.screen_get_position()
 	var current_screen_size := DisplayServer.screen_get_size()
-	var window_pos: Vector2i = current_screen_pos + (current_screen_size / 2) - (windowed_size / 2)
+	
+	var screen_center := Vector2(current_screen_pos) + (Vector2(current_screen_size) / 2.0)
+	var window_pos := Vector2i(screen_center - (Vector2(windowed_size) / 2.0))
 	
 	DisplayServer.call_deferred("window_set_position", window_pos)
 	

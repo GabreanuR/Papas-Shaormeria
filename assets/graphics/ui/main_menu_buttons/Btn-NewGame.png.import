@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://5lcutndmdlev"
-path="res://.godot/imported/Btn-Settings.png-e1d4efda414d555f02f48da3dbf8737b.ctex"
+uid="uid://panixcu2ytcl"
+path="res://.godot/imported/Btn-NewGame.png-f53c149013e2646de053d424a1b20f92.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/graphics/backgrounds/Btn-Settings.png"
-dest_files=["res://.godot/imported/Btn-Settings.png-e1d4efda414d555f02f48da3dbf8737b.ctex"]
+source_file="res://assets/graphics/ui/main_menu_buttons/Btn-NewGame.png"
+dest_files=["res://.godot/imported/Btn-NewGame.png-f53c149013e2646de053d424a1b20f92.ctex"]
 
 [params]
 

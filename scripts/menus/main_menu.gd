@@ -1,36 +1,17 @@
 extends Control
 
-# ---------------------------------------------------------
-# 1. SIGNALS (What does this script shout to other scenes?)
-# ---------------------------------------------------------
-
-# ---------------------------------------------------------
-# 2. ENUMS AND CONSTANTS (Fixed values)
-# ---------------------------------------------------------
 const SAVE_FILE_TEMPLATE = "user://save_slot_%d.json"
 const LOADING_SCENE = "res://scenes/menus/loading_screen.tscn"
 
-# ---------------------------------------------------------
-# 3. EXPORTED VARIABLES (Those that appear in the right-side Editor Inspector)
-# ---------------------------------------------------------
 @export var menu_music: AudioStream
 
-# ---------------------------------------------------------
-# 4. PUBLIC VARIABLES (Can be read/modified by other scripts)
-# ---------------------------------------------------------
-
-# ---------------------------------------------------------
-# 5. PRIVATE VARIABLES (Prefixed with "_"; used only inside this script)
-# ---------------------------------------------------------
 var _menu_mode: String = "" # Expected values: "new" or "load"
 var _screen_center: Vector2
 
 var _current_slot_id: int = -1
 var _is_overwriting: bool = false
 var _is_deleting: bool = false
-# ---------------------------------------------------------
-# 6. ONREADY VARIABLES (Links to the UI / Node Tree)
-# ---------------------------------------------------------
+
 @onready var button_container: Control = $MainGroup
 @onready var saves_menu = $SavesMenu
 @onready var settings_menu: Control = $SettingsMenu
@@ -39,9 +20,6 @@ var _is_deleting: bool = false
 @onready var camera: Camera2D = $Camera2D
 @onready var action_popup: Control = $ActionPopup
 
-# ---------------------------------------------------------
-# 7. GODOT ENGINE FUNCTIONS (The built-in ones)
-# ---------------------------------------------------------
 func _ready() -> void:
 	if menu_music:
 		AudioManager.play_music(menu_music, 1.5)
@@ -51,13 +29,6 @@ func _ready() -> void:
 	
 	_connect_signals()
 
-# ---------------------------------------------------------
-# 8. PUBLIC FUNCTIONS (Called by you from other scripts)
-# ---------------------------------------------------------
-
-# ---------------------------------------------------------
-# 9. PRIVATE FUNCTIONS (Prefixed with "_", used only internally here)
-# ---------------------------------------------------------
 func _connect_signals() -> void:
 	# Main Menu Buttons
 	button_container.get_node("NewGameButton").pressed.connect(_on_new_game_pressed)
@@ -66,82 +37,32 @@ func _connect_signals() -> void:
 	button_container.get_node("CreditsButton").pressed.connect(_on_credits_pressed)
 	button_container.get_node("QuitButton").pressed.connect(_on_quit_pressed)
 	
+	# Saves Menu
 	saves_menu.closed.connect(_on_saves_closed)
 	saves_menu.request_new.connect(_on_saves_request_new)
 	saves_menu.request_load.connect(_on_saves_request_load)
 	saves_menu.request_delete.connect(_on_saves_request_delete)
 	
 	# Secondary UI Buttons
-	if not settings_menu.closed.is_connected(_on_settings_closed):
-		settings_menu.closed.connect(_on_settings_closed)
+	settings_menu.closed.connect(_on_settings_closed)
 	credits_menu.back_requested.connect(_on_credits_closed)
 	
 	# Action Pop-up
 	action_popup.action_confirmed.connect(_on_popup_action_confirmed)
 	action_popup.input_confirmed.connect(_on_popup_input_confirmed)
-	action_popup.cancelled.connect(func():
-		_is_deleting = false
-		_is_overwriting = false
-	)
-	# "Juice" hover effects for main buttons (moved to AnimatedMenuButton)
+	action_popup.cancelled.connect(_on_popup_cancelled)
 
-func _fade_shop_lights(tween: Tween, turning_off: bool) -> void:
+func _toggle_shop_lights(turning_off: bool) -> void:
 	var all_lights: Array[Node] = get_tree().get_nodes_in_group("shop_lights")
 	
 	for light in all_lights:
-		# Safety check: ne asigurăm că lumina are scriptul nostru atașat
-		if light.has_method("fade_out"):
-			if turning_off:
-				light.fade_out(tween, 0.4)
-			else:
-				light.fade_in(tween, 0.6)
-
-func _resume_lights_processing() -> void:
-	var all_lights: Array[Node] = get_tree().get_nodes_in_group("shop_lights")
-	
-	for light in all_lights:
-		if light.has_method("resume_flicker"):
-			light.resume_flicker()
-
-# --- 1. OPEN / CLOSE LOGIC ---
-func _on_new_game_pressed() -> void:
-	button_container.hide()
-	var tween := create_tween()
-	_fade_shop_lights(tween, true)
-	saves_menu.open_menu("new")
-
-func _on_load_game_pressed() -> void:
-	button_container.hide()
-	var tween := create_tween()
-	_fade_shop_lights(tween, true)
-	saves_menu.open_menu("load")
-
-func _on_saves_closed() -> void:
-	button_container.show()
-	var tween := create_tween()
-	_fade_shop_lights(tween, false)
-	tween.chain().tween_callback(_resume_lights_processing)
-
-# --- 2. SIGNAL ROUTING TO ACTION POPUP ---
-func _on_saves_request_new(slot_id: int, is_filled: bool) -> void:
-	_current_slot_id = slot_id
-	_is_deleting = false
-	
-	if is_filled:
-		_is_overwriting = true
-		action_popup.ask_confirmation("Overwrite old save?", "Overwrite")
-	else:
-		_is_overwriting = false
-		action_popup.ask_input("Name your shop:", "Start game")
-
-func _on_saves_request_load(slot_id: int) -> void:
-	_load_game(SAVE_FILE_TEMPLATE % slot_id)
-
-func _on_saves_request_delete(slot_id: int) -> void:
-	_current_slot_id = slot_id
-	_is_deleting = true
-	_is_overwriting = false
-	action_popup.ask_confirmation("Are you sure?", "Yes, delete")
+		# Safety check: ensure the light has our script attached
+		if turning_off:
+			if light.has_method("turn_off"):
+				light.turn_off()
+		else:
+			if light.has_method("turn_on"):
+				light.turn_on()
 
 func _get_default_save_data(shop_name: String) -> Dictionary:
 	return {
@@ -180,6 +101,9 @@ func _transition_to_game() -> void:
 	_on_transition_done()
 
 func _get_shop_name_from_file(path: String) -> String:
+	if not FileAccess.file_exists(path):
+		return "Error Reading"
+		
 	var file := FileAccess.open(path, FileAccess.READ)
 	if not file:
 		return "Error Reading"
@@ -187,11 +111,12 @@ func _get_shop_name_from_file(path: String) -> String:
 	var content := file.get_as_text()
 	file.close()
 	
-	var data = JSON.parse_string(content)
-	
-	# Verificăm dacă data este un dicționar valid și are cheia salvată anterior
-	if data is Dictionary and data.has("shop_name"):
-		return str(data["shop_name"])
+	# Future-proof JSON parsing
+	var json := JSON.new()
+	if json.parse(content) == OK:
+		var data = json.get_data()
+		if typeof(data) == TYPE_DICTIONARY and data.has("shop_name"):
+			return str(data["shop_name"])
 			
 	return "No Name Found"
 	
@@ -208,43 +133,26 @@ func _is_name_duplicate(new_name: String, ignore_slot_id: int) -> bool:
 				
 	return false
 
-# ---------------------------------------------------------
-# 10. SIGNAL CALLBACKS (What happens when buttons/timers trigger)
-# ---------------------------------------------------------
+# --- Main Menu Buttons ---
+func _on_new_game_pressed() -> void:
+	button_container.hide()
+	_toggle_shop_lights(true)
+	saves_menu.open_menu("new")
+
+func _on_load_game_pressed() -> void:
+	button_container.hide()
+	_toggle_shop_lights(true)
+	saves_menu.open_menu("load")
 
 func _on_settings_pressed() -> void:
 	button_container.hide()
-
-	var tween := create_tween()
-	_fade_shop_lights(tween, true)
-	
+	_toggle_shop_lights(true)
 	settings_menu.open_settings()
 
-func _on_settings_closed() -> void:
-	# 1. Arătăm butoanele INSTANTANEU, chiar când începe închiderea
-	button_container.show()
-	
-	# 2. Pornim restul efectelor vizuale în fundal
-	var tween := create_tween()
-	_fade_shop_lights(tween, false)
-	
-	# 3. La finalul tween-ului, doar repornim logica de lumini (fără să mai ascundem UI-ul)
-	tween.chain().tween_callback(_resume_lights_processing)
-	
 func _on_credits_pressed() -> void:
 	button_container.hide()
-	
-	var tween := create_tween()
-	_fade_shop_lights(tween, true)
-	
+	_toggle_shop_lights(true)
 	credits_menu.play_credits()
-		
-func _on_credits_closed() -> void:
-	button_container.show()
-	
-	var tween := create_tween()
-	_fade_shop_lights(tween, false)
-	tween.chain().tween_callback(_resume_lights_processing)
 
 func _on_quit_pressed() -> void:
 	# Disable user input
@@ -255,7 +163,7 @@ func _on_quit_pressed() -> void:
 	var tween := create_tween()
 	tween.set_parallel(true)
 	
-	_fade_shop_lights(tween, true)
+	_toggle_shop_lights(true)
 	
 	tween.tween_property(camera, "zoom", Vector2(0.97, 0.97), 2.5) \
 		.set_trans(Tween.TRANS_SINE) \
@@ -266,22 +174,50 @@ func _on_quit_pressed() -> void:
 	await shutter.shutter_closed
 	get_tree().quit()
 
-func _on_slot_clicked(slot_id: int, is_filled: bool) -> void:
+# --- Sub-Menu Signals ---
+func _on_saves_closed() -> void:
+	button_container.show()
+	await saves_menu.overlay.fade_out_finished
+	_toggle_shop_lights(false)
+
+func _on_settings_closed() -> void:
+	# 1. Show buttons INSTANTLY right when closing starts
+	button_container.show()
+	
+	# 2. Wait for the menu to disappear completely before turning on lights
+	await settings_menu.overlay.fade_out_finished
+	_toggle_shop_lights(false)
+	
+func _on_credits_closed() -> void:
+	button_container.show()
+	
+	# Wait for the menu to disappear completely
+	await credits_menu.overlay.fade_out_finished
+	_toggle_shop_lights(false)
+
+# --- Save Slot Interactions ---
+func _on_saves_request_new(slot_id: int, is_filled: bool) -> void:
 	_current_slot_id = slot_id
 	_is_deleting = false
 	
-	if _menu_mode == "new":
-		if is_filled:
-			_is_overwriting = true
-			action_popup.ask_confirmation("Overwrite old save?", "Overwrite")
-		else:
-			_is_overwriting = false
-			action_popup.ask_input("Name your shop:", "Start game")
-			
-	elif _menu_mode == "load" and is_filled:
-		_load_game(SAVE_FILE_TEMPLATE % slot_id)
+	if is_filled:
+		_is_overwriting = true
+		action_popup.ask_confirmation("Overwrite old save?", "Overwrite")
+	else:
+		_is_overwriting = false
+		action_popup.ask_input("Name your shop:", "Start game")
 
-# 1. Când jucătorul a zis "Da" la ștergere sau suprascriere
+func _on_saves_request_load(slot_id: int) -> void:
+	_load_game(SAVE_FILE_TEMPLATE % slot_id)
+
+func _on_saves_request_delete(slot_id: int) -> void:
+	_current_slot_id = slot_id
+	_is_deleting = true
+	_is_overwriting = false
+	action_popup.ask_confirmation("Are you sure?", "Yes, delete")
+
+# --- Action Popup Responses ---
+# 1. When the user confirmed deletion or overwrite
 func _on_popup_action_confirmed() -> void:
 	var save_path: String = SAVE_FILE_TEMPLATE % _current_slot_id
 	
@@ -295,7 +231,7 @@ func _on_popup_action_confirmed() -> void:
 		_is_overwriting = false
 		action_popup.ask_input("Name your new shop:", "Start game")
 
-# 2. Când jucătorul a dat Submit la numele magazinului
+# 2. When the user submitted the shop name
 func _on_popup_input_confirmed(shop_name: String) -> void:
 	var save_path: String = SAVE_FILE_TEMPLATE % _current_slot_id
 	
@@ -306,20 +242,18 @@ func _on_popup_input_confirmed(shop_name: String) -> void:
 		shop_name = shop_name.left(20)
 		
 	if _is_name_duplicate(shop_name, _current_slot_id):
-		action_popup.show_error("Numele există deja! Alege altul.")
+		action_popup.show_error("Name already exists! Choose another.")
 		return
 		
 	action_popup.hide()
 	_start_new_game(save_path, shop_name)
 
+func _on_popup_cancelled() -> void:
+	_is_deleting = false
+	_is_overwriting = false
+
+# --- Transitions ---
 func _on_transition_done() -> void:
 	var err := get_tree().change_scene_to_file(LOADING_SCENE)
 	if err != OK:
 		push_error("Critical Error: Could not load '%s'. Error code: %d" % [LOADING_SCENE, err])
-
-func _on_delete_request(slot_id: int) -> void:
-	_current_slot_id = slot_id
-	_is_deleting = true
-	_is_overwriting = false
-	
-	action_popup.ask_confirmation("Are you sure?", "Yes, delete")

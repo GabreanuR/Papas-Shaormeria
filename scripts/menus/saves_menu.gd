@@ -1,16 +1,10 @@
 extends Control
 
-# ---------------------------------------------------------
-# 1. SIGNALS
-# ---------------------------------------------------------
 signal closed
 signal request_load(slot_id: int)
 signal request_new(slot_id: int, is_filled: bool)
 signal request_delete(slot_id: int)
 
-# ---------------------------------------------------------
-# 2. CONSTANTS & VARIABLES
-# ---------------------------------------------------------
 const SAVE_FILE_TEMPLATE = "user://save_slot_%d.json"
 
 var _menu_mode: String = "" # "new" or "load"
@@ -21,9 +15,6 @@ var _tex_empty_hover: Texture2D = preload("res://assets/graphics/ui/slot_hover.p
 var _tex_filled_normal: Texture2D = preload("res://assets/graphics/ui/slot_filled_normal.png")
 var _tex_filled_hover: Texture2D = preload("res://assets/graphics/ui/slot_filled_hover.png")
 
-# ---------------------------------------------------------
-# 3. ONREADY VARIABLES
-# ---------------------------------------------------------
 @onready var overlay: ColorRect = $ModalOverlay
 @onready var saves_panel: Control = %SaveSlotsPanel
 @onready var saves_title: Label = %SaveSlotsLabel
@@ -33,20 +24,19 @@ var _tex_filled_hover: Texture2D = preload("res://assets/graphics/ui/slot_filled
 @onready var delete_btns: Array[TextureButton] = [%DeleteBtn1, %DeleteBtn2, %DeleteBtn3]
 @onready var slot_labels: Array[Label] = [%SlotLabel1, %SlotLabel2, %SlotLabel3]
 
-# ---------------------------------------------------------
-# 4. ENGINE FUNCTIONS
-# ---------------------------------------------------------
 func _ready() -> void:
 	saves_panel.position.y = -2000
 	hide()
-	overlay.hide()
-	overlay.modulate.a = 0.0
+	overlay.hide() 
 	
 	btn_close.pressed.connect(_on_close_pressed)
+	get_viewport().size_changed.connect(_on_viewport_size_changed)
 
-# ---------------------------------------------------------
-# 5. PUBLIC FUNCTIONS
-# ---------------------------------------------------------
+func _unhandled_input(event: InputEvent) -> void:
+	if visible and not _is_busy and event.is_action_pressed("ui_cancel"):
+		get_viewport().set_input_as_handled()
+		_on_close_pressed()
+
 func open_menu(mode: String) -> void:
 	if _is_busy: return
 	_is_busy = true
@@ -62,6 +52,7 @@ func open_menu(mode: String) -> void:
 	
 	show()
 	overlay.show()
+	
 	overlay.fade_in(0.85, 0.5)
 	
 	var tween := create_tween()
@@ -74,13 +65,10 @@ func open_menu(mode: String) -> void:
 	await tween.finished
 	_is_busy = false
 
-# Metodă helper ca Meniul Principal să o poată apela după ce șterge un fișier
+# Helper method so Main Menu can refresh after deleting a file
 func refresh_display() -> void:
 	_refresh_slots()
 
-# ---------------------------------------------------------
-# 6. PRIVATE LOGIC
-# ---------------------------------------------------------
 func _refresh_slots() -> void:
 	for i in range(slots.size()):
 		var slot_btn: Button = slots[i]
@@ -135,21 +123,31 @@ func _refresh_slots() -> void:
 			del_btn.pressed.connect(_on_delete_clicked.bind(slot_id))
 
 func _get_shop_name_from_file(path: String) -> String:
+	if not FileAccess.file_exists(path):
+		return "No Save"
+		
 	var file := FileAccess.open(path, FileAccess.READ)
-	if not file: return "Error Reading"
+	if not file: 
+		return "Error Reading File"
 	
 	var content := file.get_as_text()
 	file.close()
 	
-	var data = JSON.parse_string(content)
-	if data is Dictionary and data.has("shop_name"):
-		return str(data["shop_name"])
+	# Future-proof parsing: Use JSON instance to safely catch and log corruption
+	var json := JSON.new()
+	var error := json.parse(content)
+	
+	if error != OK:
+		push_error("Save file corrupted or invalid JSON in '%s'. Error on line %d: %s" % [path, json.get_error_line(), json.get_error_message()])
+		return "Corrupt Save"
+		
+	var data = json.get_data()
+	if typeof(data) == TYPE_DICTIONARY:
+		if data.has("shop_name"):
+			return str(data["shop_name"])
 			
-	return "No Name Found"
+	return "Unknown Shop"
 
-# ---------------------------------------------------------
-# 7. SIGNAL CALLBACKS
-# ---------------------------------------------------------
 func _on_slot_clicked(slot_id: int, is_filled: bool) -> void:
 	if _menu_mode == "load":
 		request_load.emit(slot_id)
@@ -159,18 +157,29 @@ func _on_slot_clicked(slot_id: int, is_filled: bool) -> void:
 func _on_delete_clicked(slot_id: int) -> void:
 	request_delete.emit(slot_id)
 
+func _on_viewport_size_changed() -> void:
+	if visible and not _is_busy:
+		var screen_size := get_viewport_rect().size
+		saves_panel.position.x = (screen_size.x / 2.0) - (saves_panel.size.x / 2.0)
+		saves_panel.position.y = (screen_size.y / 2.0) - (saves_panel.size.y / 2.0)
+
 func _on_close_pressed() -> void:
 	if _is_busy: return
 	_is_busy = true
 	
-	closed.emit() # Anunțăm instantaneu Meniul Principal!
+	# 1. NOTIFY MAIN MENU INSTANTLY!
+	closed.emit() 
 	
+	# 2. Turn off the darkness
 	overlay.fade_out(0.6)
+	
+	# 3. Animate panel back up
 	var tween := create_tween()
 	tween.tween_property(saves_panel, "position:y", -1500, 0.6)\
 		.set_trans(Tween.TRANS_BACK)\
 		.set_ease(Tween.EASE_IN)
 		
 	await tween.finished
+	
 	hide()
 	_is_busy = false

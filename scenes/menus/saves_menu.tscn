@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://c0ovgjjh2udh4" path="res://scripts/menus/saves_menu.gd" id="1_bcnhv"]
 [ext_resource type="PackedScene" uid="uid://cjexmeym01onb" path="res://scenes/components/modal_overlay.tscn" id="2_8rx5r"]
-[ext_resource type="Theme" uid="uid://c30gjc6imkwcf" path="res://assets/theme/main_theme.tres" id="3_ciw3a"]
 [ext_resource type="FontFile" uid="uid://bpu1j3ggtme57" path="res://assets/fonts/Oswald-Bold.ttf" id="4_4rc42"]
 [ext_resource type="Texture2D" uid="uid://b73mike5hi03" path="res://assets/graphics/backgrounds/CloseCredits.png" id="5_0nodc"]
 [ext_resource type="Texture2D" uid="uid://ccyl1xy8tfhdy" path="res://assets/graphics/backgrounds/CloseCreditsHover.png" id="6_fb6v6"]
@@ -17,11 +16,15 @@ shadow_color = Color(0, 0, 0, 0.14901961)
 
 [node name="SavesMenu" type="Control" unique_id=1607434101]
 layout_mode = 3
-anchors_preset = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_bcnhv")
 
 [node name="ModalOverlay" parent="." unique_id=1739728802 instance=ExtResource("2_8rx5r")]
-layout_mode = 0
+layout_mode = 1
 
 [node name="SaveSlotsPanel" type="Panel" parent="." unique_id=1849330837]
 unique_name_in_owner = true
@@ -37,7 +40,6 @@ offset_right = 1300.0
 offset_bottom = 600.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = ExtResource("3_ciw3a")
 
 [node name="MarginContainer" type="MarginContainer" parent="SaveSlotsPanel" unique_id=233125669]
 layout_mode = 1

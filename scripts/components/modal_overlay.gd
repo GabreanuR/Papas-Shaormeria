@@ -9,6 +9,9 @@ signal fade_out_finished
 var _fade_tween: Tween
 
 func _ready() -> void:
+	# Force full screen coverage to prevent visibility bugs if anchors aren't set in the editor
+	set_anchors_preset(Control.PRESET_FULL_RECT)
+	
 	# Ensure it starts completely invisible and ignores mouse clicks when hidden
 	modulate.a = 0.0
 	mouse_filter = Control.MOUSE_FILTER_IGNORE

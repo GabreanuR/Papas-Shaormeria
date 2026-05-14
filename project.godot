@@ -31,6 +31,11 @@ window/stretch/mode="canvas_items"
 
 shop_lights=""
 
+[gui]
+
+theme/custom="uid://icmwfh7h1jg8"
+theme/custom_font="uid://crfo7nlure7a2"
+
 [physics]
 
 3d/physics_engine="Jolt Physics"

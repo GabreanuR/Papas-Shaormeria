@@ -2,8 +2,10 @@
 
 [ext_resource type="Script" uid="uid://jjkyxvusu8pj" path="res://scripts/components/action_popup.gd" id="1_gtbm1"]
 [ext_resource type="PackedScene" uid="uid://cjexmeym01onb" path="res://scenes/components/modal_overlay.tscn" id="2_dx2fw"]
+[ext_resource type="Theme" uid="uid://icmwfh7h1jg8" path="res://assets/theme/global_ui_theme.tres" id="3_dx2fw"]
 [ext_resource type="FontFile" uid="uid://bpu1j3ggtme57" path="res://assets/fonts/Oswald-Bold.ttf" id="3_njjnm"]
 [ext_resource type="FontFile" uid="uid://crfo7nlure7a2" path="res://assets/fonts/Oswald-Regular.ttf" id="4_n5ers"]
+[ext_resource type="StyleBox" uid="uid://td4sbrleyhty" path="res://assets/theme/booklet.tres" id="4_njjnm"]
 [ext_resource type="Texture2D" uid="uid://cvls4bvivfjfx" path="res://assets/graphics/ui/btn_UI.png" id="5_rdkkj"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_qceya"]
@@ -56,6 +58,8 @@ grow_vertical = 2
 
 [node name="PanelContainer" type="PanelContainer" parent="CenterContainer" unique_id=741858532]
 layout_mode = 2
+theme = ExtResource("3_dx2fw")
+theme_override_styles/panel = ExtResource("4_njjnm")
 
 [node name="MarginContainer" type="MarginContainer" parent="CenterContainer/PanelContainer" unique_id=1315016422]
 custom_minimum_size = Vector2(0, 500)

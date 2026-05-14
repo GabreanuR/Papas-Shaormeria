@@ -24,18 +24,10 @@ func _process(delta: float) -> void:
 	
 	energy = _base_energy + (noise_value * flicker_strength)
 
-func fade_out(tween: Tween, duration: float) -> void:
+func turn_off() -> void:
 	set_process(false)
-	tween.tween_property(self, "energy", 0.0, duration)\
-		.set_trans(Tween.TRANS_SINE)\
-		.set_ease(Tween.EASE_OUT)
+	energy = 0.0
 
-func fade_in(tween: Tween, duration: float) -> void:
-	# Defensive: ensure the flicker loop isn't fighting the tween
-	set_process(false)
-	tween.tween_property(self, "energy", _base_energy, duration)\
-		.set_trans(Tween.TRANS_SINE)\
-		.set_ease(Tween.EASE_OUT)
-
-func resume_flicker() -> void:
+func turn_on() -> void:
+	energy = _base_energy
 	set_process(true)

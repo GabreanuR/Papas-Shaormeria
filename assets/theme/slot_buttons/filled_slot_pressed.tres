@@ -1,0 +1,10 @@
+[gd_resource type="StyleBoxTexture" format=3 uid="uid://bpg38uunffchk"]
+
+[ext_resource type="Texture2D" uid="uid://badvuq75f0oik" path="res://assets/graphics/ui/slot_buttons/fiiled_slot_pressed.png" id="1_ji7gp"]
+
+[resource]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+content_margin_bottom = 20.0
+texture = ExtResource("1_ji7gp")

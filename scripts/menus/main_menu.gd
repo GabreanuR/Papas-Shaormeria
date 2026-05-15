@@ -5,7 +5,6 @@ const LOADING_SCENE = "res://scenes/menus/loading_screen.tscn"
 
 @export var menu_music: AudioStream
 
-var _menu_mode: String = "" # Expected values: "new" or "load"
 var _screen_center: Vector2
 
 var _current_slot_id: int = -1
@@ -242,7 +241,7 @@ func _on_popup_input_confirmed(shop_name: String) -> void:
 		shop_name = shop_name.left(20)
 		
 	if _is_name_duplicate(shop_name, _current_slot_id):
-		action_popup.show_error("Name already exists! Choose another.")
+		action_popup.show_error("Name already exists!")
 		return
 		
 	action_popup.hide()

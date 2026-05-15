@@ -1,0 +1,6 @@
+[gd_resource type="StyleBoxTexture" format=3 uid="uid://kqhxed5wtsx4"]
+
+[ext_resource type="Texture2D" uid="uid://cnmki4ym5asjs" path="res://assets/graphics/ui/settings_ui/slider_knob_hover.png" id="1_i6gj6"]
+
+[resource]
+texture = ExtResource("1_i6gj6")

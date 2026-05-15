@@ -29,7 +29,7 @@ func ask_confirmation(title_text: String, confirm_btn_text: String) -> void:
 	_current_mode = Mode.CONFIRMATION
 	
 	title_label.text = title_text
-	title_label.remove_theme_color_override("font_color")
+	title_label.theme_type_variation = "Label"
 	
 	btn_confirm.text = confirm_btn_text
 	btn_cancel.text = "Cancel"
@@ -43,7 +43,7 @@ func ask_input(title_text: String, confirm_btn_text: String, default_text: Strin
 	_current_mode = Mode.INPUT
 	
 	title_label.text = title_text
-	title_label.remove_theme_color_override("font_color")
+	title_label.theme_type_variation = "Label"
 	
 	btn_confirm.text = confirm_btn_text
 	btn_cancel.text = "Cancel"
@@ -56,7 +56,7 @@ func ask_input(title_text: String, confirm_btn_text: String, default_text: Strin
 # Called by the Main Menu if validation fails, displaying an error message
 func show_error(error_msg: String) -> void:
 	title_label.text = error_msg
-	title_label.add_theme_color_override("font_color", Color.RED)
+	title_label.theme_type_variation = "ErrorLabel"
 
 func _on_confirm_pressed() -> void:
 	if _current_mode == Mode.CONFIRMATION:

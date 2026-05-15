@@ -3,10 +3,8 @@
 [ext_resource type="Script" uid="uid://jjkyxvusu8pj" path="res://scripts/components/action_popup.gd" id="1_gtbm1"]
 [ext_resource type="PackedScene" uid="uid://cjexmeym01onb" path="res://scenes/components/modal_overlay.tscn" id="2_dx2fw"]
 [ext_resource type="Theme" uid="uid://icmwfh7h1jg8" path="res://assets/theme/global_ui_theme.tres" id="3_dx2fw"]
-[ext_resource type="FontFile" uid="uid://bpu1j3ggtme57" path="res://assets/fonts/Oswald-Bold.ttf" id="3_njjnm"]
 [ext_resource type="FontFile" uid="uid://crfo7nlure7a2" path="res://assets/fonts/Oswald-Regular.ttf" id="4_n5ers"]
 [ext_resource type="StyleBox" uid="uid://td4sbrleyhty" path="res://assets/theme/booklet.tres" id="4_njjnm"]
-[ext_resource type="Texture2D" uid="uid://cvls4bvivfjfx" path="res://assets/graphics/ui/btn_UI.png" id="5_rdkkj"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_qceya"]
 
@@ -17,23 +15,6 @@
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_vcoy5"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_h0sok"]
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_fjxfv"]
-content_margin_left = 40.0
-content_margin_top = 10.0
-content_margin_right = 40.0
-content_margin_bottom = 10.0
-texture = ExtResource("5_rdkkj")
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_8xfg8"]
-texture = ExtResource("5_rdkkj")
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_o2adl"]
-content_margin_left = 40.0
-content_margin_top = 10.0
-content_margin_right = 40.0
-content_margin_bottom = 10.0
-texture = ExtResource("5_rdkkj")
 
 [node name="ActionPopup" type="Control" unique_id=542609553]
 layout_mode = 3
@@ -46,6 +27,11 @@ script = ExtResource("1_gtbm1")
 
 [node name="ModalOverlay" parent="." unique_id=1739728802 instance=ExtResource("2_dx2fw")]
 layout_mode = 0
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+grow_horizontal = 1
+grow_vertical = 1
 
 [node name="CenterContainer" type="CenterContainer" parent="." unique_id=1317880250]
 custom_minimum_size = Vector2(500, 800)
@@ -77,9 +63,7 @@ alignment = 1
 [node name="PopupTitle" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1613536092]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.101960786, 0.101960786, 0.101960786, 1)
-theme_override_fonts/font = ExtResource("3_njjnm")
-theme_override_font_sizes/font_size = 24
+theme = ExtResource("3_dx2fw")
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1454394771]
@@ -115,29 +99,9 @@ alignment = 1
 [node name="BtnConfirm" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=448116173]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.101960786, 0.101960786, 0.101960786, 1)
-theme_override_colors/font_focus_color = Color(0.101960786, 0.101960786, 0.101960786, 1)
-theme_override_colors/font_pressed_color = Color(0.101960786, 0.101960786, 0.101960786, 1)
-theme_override_colors/font_hover_color = Color(0.101960786, 0.101960786, 0.101960786, 1)
-theme_override_colors/font_hover_pressed_color = Color(0.101960786, 0.101960786, 0.101960786, 1)
-theme_override_fonts/font = ExtResource("4_n5ers")
-theme_override_font_sizes/font_size = 18
-theme_override_styles/normal = SubResource("StyleBoxTexture_fjxfv")
-theme_override_styles/pressed = SubResource("StyleBoxTexture_8xfg8")
-theme_override_styles/hover = SubResource("StyleBoxTexture_o2adl")
 text = "Start Game"
 
 [node name="BtnCancel" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=435577351]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.101960786, 0.101960786, 0.101960786, 1)
-theme_override_colors/font_focus_color = Color(0.101960786, 0.101960786, 0.101960786, 1)
-theme_override_colors/font_pressed_color = Color(0.101960786, 0.101960786, 0.101960786, 1)
-theme_override_colors/font_hover_color = Color(0.101960786, 0.101960786, 0.101960786, 1)
-theme_override_colors/font_hover_pressed_color = Color(0.101960786, 0.101960786, 0.101960786, 1)
-theme_override_fonts/font = ExtResource("4_n5ers")
-theme_override_font_sizes/font_size = 18
-theme_override_styles/normal = SubResource("StyleBoxTexture_fjxfv")
-theme_override_styles/pressed = SubResource("StyleBoxTexture_8xfg8")
-theme_override_styles/hover = SubResource("StyleBoxTexture_o2adl")
 text = "Cancel"

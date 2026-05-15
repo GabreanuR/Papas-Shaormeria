@@ -1,0 +1,14 @@
+[gd_resource type="StyleBoxTexture" format=3 uid="uid://wqj61ngc6ody"]
+
+[ext_resource type="Texture2D" uid="uid://cesvdcni7t634" path="res://assets/graphics/ui/base_buttons/button_pressed.png" id="1_7wera"]
+
+[resource]
+content_margin_left = 30.0
+content_margin_top = 10.0
+content_margin_right = 30.0
+content_margin_bottom = 10.0
+texture = ExtResource("1_7wera")
+texture_margin_left = 10.0
+texture_margin_top = 10.0
+texture_margin_right = 10.0
+texture_margin_bottom = 10.0

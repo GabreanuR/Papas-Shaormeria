@@ -2,15 +2,10 @@
 
 [ext_resource type="Script" uid="uid://c0ovgjjh2udh4" path="res://scripts/menus/saves_menu.gd" id="1_bcnhv"]
 [ext_resource type="PackedScene" uid="uid://cjexmeym01onb" path="res://scenes/components/modal_overlay.tscn" id="2_8rx5r"]
-[ext_resource type="FontFile" uid="uid://bpu1j3ggtme57" path="res://assets/fonts/Oswald-Bold.ttf" id="4_4rc42"]
-[ext_resource type="Texture2D" uid="uid://b73mike5hi03" path="res://assets/graphics/backgrounds/CloseCredits.png" id="5_0nodc"]
-[ext_resource type="Texture2D" uid="uid://ccyl1xy8tfhdy" path="res://assets/graphics/backgrounds/CloseCreditsHover.png" id="6_fb6v6"]
-
-[sub_resource type="LabelSettings" id="LabelSettings_c8h0u"]
-font = ExtResource("4_4rc42")
-font_size = 40
-shadow_size = 5
-shadow_color = Color(0, 0, 0, 0.14901961)
+[ext_resource type="Theme" uid="uid://icmwfh7h1jg8" path="res://assets/theme/global_ui_theme.tres" id="3_ufga0"]
+[ext_resource type="Texture2D" uid="uid://cpa2qmtme1b4d" path="res://assets/graphics/ui/cancel_buttons/button_cancel_normal.png" id="4_bcnhv"]
+[ext_resource type="Texture2D" uid="uid://bw53bas6ddvuu" path="res://assets/graphics/ui/cancel_buttons/button_cancel_pressed.png" id="5_8rx5r"]
+[ext_resource type="Texture2D" uid="uid://b7y0d8lttef68" path="res://assets/graphics/ui/cancel_buttons/button_cancel_hover.png" id="6_ciw3a"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_sx688"]
 
@@ -60,8 +55,9 @@ alignment = 1
 [node name="SaveSlotsLabel" type="Label" parent="SaveSlotsPanel/MarginContainer/VBoxContainer" unique_id=1389808391]
 unique_name_in_owner = true
 layout_mode = 2
+theme = ExtResource("3_ufga0")
+theme_type_variation = &"TitleLabel"
 text = "Saves"
-label_settings = SubResource("LabelSettings_c8h0u")
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="SaveSlotsPanel/MarginContainer/VBoxContainer" unique_id=178363504]
@@ -85,14 +81,15 @@ layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -80.0
-offset_top = 20.0
-offset_right = 317.0
-offset_bottom = 533.0
+offset_left = -100.0
+offset_top = 50.0
+offset_right = 28.0
+offset_bottom = 178.0
 grow_horizontal = 0
-scale = Vector2(0.15, 0.15)
-texture_normal = ExtResource("5_0nodc")
-texture_hover = ExtResource("6_fb6v6")
+scale = Vector2(0.4, 0.4)
+texture_normal = ExtResource("4_bcnhv")
+texture_pressed = ExtResource("5_8rx5r")
+texture_hover = ExtResource("6_ciw3a")
 
 [node name="SlotLabel1" type="Label" parent="SaveSlotsPanel/MarginContainer/VBoxContainer/HBoxContainer/Slot1" unique_id=329503473]
 unique_name_in_owner = true
@@ -102,7 +99,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_fonts/font = ExtResource("4_4rc42")
+theme_type_variation = &"WhiteLabel"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -117,14 +114,15 @@ layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -80.0
-offset_top = 20.0
-offset_right = 317.0
-offset_bottom = 533.0
+offset_left = -100.0
+offset_top = 50.0
+offset_right = 28.0
+offset_bottom = 178.0
 grow_horizontal = 0
-scale = Vector2(0.15, 0.15)
-texture_normal = ExtResource("5_0nodc")
-texture_hover = ExtResource("6_fb6v6")
+scale = Vector2(0.4, 0.4)
+texture_normal = ExtResource("4_bcnhv")
+texture_pressed = ExtResource("5_8rx5r")
+texture_hover = ExtResource("6_ciw3a")
 
 [node name="SlotLabel2" type="Label" parent="SaveSlotsPanel/MarginContainer/VBoxContainer/HBoxContainer/Slot2" unique_id=241590954]
 unique_name_in_owner = true
@@ -134,7 +132,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_fonts/font = ExtResource("4_4rc42")
+theme_type_variation = &"WhiteLabel"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -146,14 +144,15 @@ layout_mode = 2
 [node name="DeleteBtn3" type="TextureButton" parent="SaveSlotsPanel/MarginContainer/VBoxContainer/HBoxContainer/Slot3" unique_id=1420106015]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 320.0
-offset_top = 20.0
-offset_right = 717.0
-offset_bottom = 533.0
+offset_left = 300.0
+offset_top = 50.0
+offset_right = 428.0
+offset_bottom = 178.0
 grow_horizontal = 0
-scale = Vector2(0.15, 0.15)
-texture_normal = ExtResource("5_0nodc")
-texture_hover = ExtResource("6_fb6v6")
+scale = Vector2(0.4, 0.4)
+texture_normal = ExtResource("4_bcnhv")
+texture_pressed = ExtResource("5_8rx5r")
+texture_hover = ExtResource("6_ciw3a")
 
 [node name="SlotLabel3" type="Label" parent="SaveSlotsPanel/MarginContainer/VBoxContainer/HBoxContainer/Slot3" unique_id=1790255767]
 unique_name_in_owner = true
@@ -163,7 +162,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_fonts/font = ExtResource("4_4rc42")
+theme_type_variation = &"WhiteLabel"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -176,9 +175,4 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
-theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
-theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 1)
 text = "Back"

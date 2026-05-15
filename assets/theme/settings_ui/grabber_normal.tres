@@ -1,0 +1,6 @@
+[gd_resource type="StyleBoxTexture" format=3 uid="uid://bgquy0ol84hpq"]
+
+[ext_resource type="Texture2D" uid="uid://5hsnc7h30ew1" path="res://assets/graphics/ui/settings_ui/slider_knob.png" id="1_4vc2d"]
+
+[resource]
+texture = ExtResource("1_4vc2d")

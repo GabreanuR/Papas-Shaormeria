@@ -10,11 +10,6 @@ const SAVE_FILE_TEMPLATE = "user://save_slot_%d.json"
 var _menu_mode: String = "" # "new" or "load"
 var _is_busy: bool = false
 
-var _tex_empty_normal: Texture2D = preload("res://assets/graphics/ui/slot_normal.png")
-var _tex_empty_hover: Texture2D = preload("res://assets/graphics/ui/slot_hover.png")
-var _tex_filled_normal: Texture2D = preload("res://assets/graphics/ui/slot_filled_normal.png")
-var _tex_filled_hover: Texture2D = preload("res://assets/graphics/ui/slot_filled_hover.png")
-
 @onready var overlay: ColorRect = $ModalOverlay
 @onready var saves_panel: Control = %SaveSlotsPanel
 @onready var saves_title: Label = %SaveSlotsLabel
@@ -42,7 +37,7 @@ func open_menu(mode: String) -> void:
 	_is_busy = true
 	
 	_menu_mode = mode
-	saves_title.text = "New Game - Pick a slot" if mode == "new" else "Load Game - Choose a save"
+	saves_title.text = "New Game" if mode == "new" else "Load Game"
 	
 	_refresh_slots()
 	
@@ -82,18 +77,16 @@ func _refresh_slots() -> void:
 		slot_btn.text = "" 
 		slot_btn.modulate = Color.WHITE
 		
-		var style_normal := StyleBoxTexture.new()
-		var style_hover := StyleBoxTexture.new()
-		
 		if has_save:
 			var full_name: String = _get_shop_name_from_file(save_path)
 			name_label.text = full_name.left(17) + "..." if full_name.length() > 20 else full_name
 			name_label.show() 
 			slot_btn.disabled = false
-			
-			style_normal.texture = _tex_filled_normal
-			style_hover.texture = _tex_filled_hover
 			del_btn.visible = (_menu_mode == "load")
+			
+			slot_btn.theme_type_variation = "FilledSlot"
+			name_label.theme_type_variation = "WhiteLabel"
+			
 		else:
 			del_btn.visible = false
 			
@@ -101,19 +94,14 @@ func _refresh_slots() -> void:
 				name_label.text = "EMPTY SLOT"
 				name_label.show()
 				slot_btn.disabled = true
-				slot_btn.modulate = Color(0.5, 0.5, 0.5, 0.7)
 			else:
 				name_label.text = ""
 				name_label.hide()
 				slot_btn.disabled = false
-				slot_btn.modulate = Color.WHITE
 				
-			style_normal.texture = _tex_empty_normal
-			style_hover.texture = _tex_empty_hover
+			slot_btn.theme_type_variation = "EmptySlot"
+			name_label.theme_type_variation = ""
 
-		slot_btn.add_theme_stylebox_override("normal", style_normal)
-		slot_btn.add_theme_stylebox_override("hover", style_hover)
-		
 		# Disconnect old signals safely
 		if slot_btn.pressed.is_connected(_on_slot_clicked):
 			slot_btn.pressed.disconnect(_on_slot_clicked)
@@ -121,7 +109,8 @@ func _refresh_slots() -> void:
 		
 		if not del_btn.pressed.is_connected(_on_delete_clicked):
 			del_btn.pressed.connect(_on_delete_clicked.bind(slot_id))
-
+			
+	
 func _get_shop_name_from_file(path: String) -> String:
 	if not FileAccess.file_exists(path):
 		return "No Save"

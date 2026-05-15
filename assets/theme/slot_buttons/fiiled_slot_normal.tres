@@ -1,0 +1,10 @@
+[gd_resource type="StyleBoxTexture" format=3 uid="uid://bd7drkih3uguy"]
+
+[ext_resource type="Texture2D" uid="uid://ceulo15h2pl6h" path="res://assets/graphics/ui/slot_buttons/filled_slot_normal.png" id="1_0wmpe"]
+
+[resource]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+content_margin_bottom = 20.0
+texture = ExtResource("1_0wmpe")

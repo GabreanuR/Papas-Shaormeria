@@ -1,8 +1,6 @@
 [gd_scene format=3 uid="uid://bg5iyaqlkv6gd"]
 
 [ext_resource type="Script" uid="uid://401l2ndupyqw" path="res://scripts/menus/loading_screen.gd" id="1_8ycgy"]
-[ext_resource type="FontFile" uid="uid://crfo7nlure7a2" path="res://assets/fonts/Oswald-Regular.ttf" id="2_7krkx"]
-[ext_resource type="Theme" uid="uid://c30gjc6imkwcf" path="res://assets/theme/main_theme.tres" id="3_u6do7"]
 
 [node name="Control" type="Control" unique_id=790664584]
 layout_mode = 3
@@ -36,7 +34,7 @@ offset_right = 500.0
 offset_bottom = 245.5
 grow_horizontal = 2
 grow_vertical = 2
-theme = ExtResource("3_u6do7")
+theme_type_variation = &"WhiteLabel"
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2
@@ -44,20 +42,15 @@ autowrap_mode = 2
 [node name="ProgressBar" type="ProgressBar" parent="." unique_id=1613604969]
 unique_name_in_owner = true
 layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -2.0
-offset_top = -180.0
-offset_right = 2.0
-offset_bottom = -133.0
+anchors_preset = -1
+anchor_left = 0.166
+anchor_top = 0.9
+anchor_right = 0.833
+anchor_bottom = 0.9
+offset_top = 40.0
+offset_bottom = 50.0
 grow_horizontal = 2
 grow_vertical = 0
-theme = ExtResource("3_u6do7")
-theme_override_fonts/font = ExtResource("2_7krkx")
-theme_override_font_sizes/font_size = 28
 step = 0.1
 
 [node name="StartButton" type="Button" parent="." unique_id=428013915]
@@ -75,5 +68,4 @@ offset_right = 100.0
 offset_bottom = -110.0
 grow_horizontal = 2
 grow_vertical = 0
-theme = ExtResource("3_u6do7")
 text = "Start"

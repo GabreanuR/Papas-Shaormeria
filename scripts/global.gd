@@ -7,6 +7,8 @@ signal day_ended
 signal money_changed(new_amount: float)
 ## Emitted every time the daily cash register changes — for the in-game HUD.
 signal daily_earnings_changed(amount: float)
+## Emitted when the day counter advances so UI components can update reactively.
+signal day_changed(new_day: int)
 
 # ---------------------------------------------------------
 # 2. ENUMS
@@ -47,6 +49,14 @@ var daily_earnings: float = 0.0
 var _day_timer: Timer
 
 # ---------------------------------------------------------
+# 5b. PUBLIC COMPUTED PROPERTIES
+# ---------------------------------------------------------
+## Read-only access to the remaining day time. Avoids external scripts
+## touching the private _day_timer node directly.
+var day_time_left: float:
+	get: return _day_timer.time_left if _day_timer else 0.0
+
+# ---------------------------------------------------------
 # 6. ONREADY VARIABLES
 # ---------------------------------------------------------
 
@@ -77,6 +87,14 @@ func start_day(duration_seconds: float) -> void:
 	daily_earnings = 0.0
 	daily_earnings_changed.emit(daily_earnings)
 	_day_timer.start(duration_seconds)
+
+## Advances the day counter by one and resets the night flag.
+## Always use this instead of writing to current_save["day"] directly,
+## so that all listeners (e.g. TopBar) are notified via day_changed.
+func advance_day() -> void:
+	current_save["day"] += 1
+	is_night = false
+	day_changed.emit(current_save["day"])
 
 ## Called from the Main Menu when creating or loading a game.
 func load_save_data(slot_id: int, parsed_data: Dictionary) -> void:

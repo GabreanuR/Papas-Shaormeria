@@ -58,13 +58,16 @@ func _set_state(new_state: DayState) -> void:
 	match _current_state:
 		DayState.MORNING:
 			_night_container.hide()
-			_summary_menu.hide() # Ne asigurăm că rezumatul e închis
+			_summary_menu.hide()     # Close summary panel from previous night
+			_upgrades_menu.hide()    # Ensure modals are closed on re-entry
+			_customize_menu.hide()
+			_achievements_menu.hide()
 			_morning_container.show()
 
 		DayState.NIGHT:
 			_morning_container.hide()
 			_night_container.show()
-			_summary_menu.show() # Deschidem automat pop-up-ul cu rezumatul zilei
+			_summary_menu.show()     # Auto-open summary at end of day
 
 # ---------------------------------------------------------
 # SIGNAL CALLBACKS (Fluxul zilelor)
@@ -74,25 +77,20 @@ func _on_start_day_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/gameplay/master/gameplay_master.tscn")
 
 func _on_next_day_pressed() -> void:
-	Global.current_save["day"] += 1
-	Global.is_night = false
+	Global.advance_day()
 	_set_state(DayState.MORNING)
 
 # ---------------------------------------------------------
 # FUNCȚII PRIVATE DE SISTEM
 # ---------------------------------------------------------
 func _setup_button_glow(btn: TextureButton) -> void:
-	# Iterăm prin copiii butonului pentru a găsi sursa de lumină
+	# Iterate over the button's children to find the light source
 	for child in btn.get_children():
 		if child is PointLight2D:
-			# Oprim lumina inițial folosind metoda din scriptul ei
-			if child.has_method("turn_off"):
-				child.turn_off()
-			
-			# Conectăm acțiunile de mouse la funcțiile luminii
+			# Only wire events if the light component has both methods
 			if child.has_method("turn_on") and child.has_method("turn_off"):
+				child.turn_off()  # Start with the light off
 				btn.mouse_entered.connect(child.turn_on)
 				btn.mouse_exited.connect(child.turn_off)
-			
-			# Oprim căutarea odată ce am găsit lumina
+			# Stop searching once the light node is found
 			break

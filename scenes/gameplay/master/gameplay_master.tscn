@@ -39,8 +39,10 @@ offset_right = 1920.0
 offset_bottom = 66.0
 
 [node name="Taskbar" type="HBoxContainer" parent="CanvasLayer" unique_id=2123600549]
-offset_right = 40.0
-offset_bottom = 40.0
+offset_left = 635.0
+offset_top = 974.0
+offset_right = 1212.0
+offset_bottom = 1037.0
 
 [node name="BtnOrder" type="Button" parent="CanvasLayer/Taskbar" unique_id=967242679]
 unique_name_in_owner = true

@@ -1,8 +1,12 @@
 [gd_scene format=3 uid="uid://poa1kme3gfho"]
 
 [ext_resource type="Script" uid="uid://0m6pr8h8kb5e" path="res://scripts/ui/top_bar.gd" id="1_xsohi"]
+[ext_resource type="Theme" uid="uid://icmwfh7h1jg8" path="res://assets/theme/global_ui_theme.tres" id="2_k450f"]
+[ext_resource type="Texture2D" uid="uid://jpal250o0ncj" path="res://assets/graphics/ui/day_transition_buttons/menu_button_normal.png" id="3_wgqcq"]
+[ext_resource type="Texture2D" uid="uid://blhuo6rt2sbvf" path="res://assets/graphics/ui/day_transition_buttons/menu_button_hover.png" id="4_5315t"]
 
 [node name="TopBar" type="HBoxContainer" unique_id=1361950912]
+custom_minimum_size = Vector2(0, 100)
 anchors_preset = 10
 anchor_right = 1.0
 grow_horizontal = 2
@@ -14,6 +18,9 @@ layout_mode = 2
 [node name="FirstLabel" type="Label" parent="MarginContainer" unique_id=865317842]
 unique_name_in_owner = true
 layout_mode = 2
+theme = ExtResource("2_k450f")
+theme_type_variation = &"TitleLabel"
+text = "Day 1"
 
 [node name="MarginContainer2" type="MarginContainer" parent="." unique_id=760393245]
 layout_mode = 2
@@ -21,10 +28,17 @@ layout_mode = 2
 [node name="SecondLabel" type="Label" parent="MarginContainer2" unique_id=252668843]
 unique_name_in_owner = true
 layout_mode = 2
+theme = ExtResource("2_k450f")
+theme_type_variation = &"TitleLabel"
+text = "$ 100"
 
-[node name="Control" type="Control" parent="." unique_id=775244565]
+[node name="Spacer" type="Control" parent="." unique_id=775244565]
 layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="MenuBtn" type="TextureButton" parent="." unique_id=800234697]
 unique_name_in_owner = true
 layout_mode = 2
+texture_normal = ExtResource("3_wgqcq")
+texture_hover = ExtResource("4_5315t")
+stretch_mode = 0

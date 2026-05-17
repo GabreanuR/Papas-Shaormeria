@@ -1,59 +1,86 @@
 extends Node
 
 # ---------------------------------------------------------
-# 1. SIGNALS (What does this script shout to other scenes?)
+# 1. SIGNALS
+# ---------------------------------------------------------
+signal day_ended
+signal money_changed(new_amount: float)
+
+# ---------------------------------------------------------
+# 2. ENUMS
 # ---------------------------------------------------------
 
 # ---------------------------------------------------------
-# 2. ENUMS AND CONSTANTS (Fixed values)
+# 3. CONSTANTS
 # ---------------------------------------------------------
 
 # ---------------------------------------------------------
-# 3. EXPORTED VARIABLES (Those that appear in the right-side Editor Inspector)
+# 4. PUBLIC VARIABLES
 # ---------------------------------------------------------
+## The player's "pocket". Everything related to player progress lives here.
+## Populated from the JSON file when the player selects a Save Slot.
+var current_save: Dictionary = {
+	"shop_name": "Papa's Shaormeria",
+	"day": 1,
+	"money": 0.0,
+	"upgrades": {},       # e.g. {"faster_grill": true, "extra_sauce": false}
+	"customization": {},  # e.g. {"wall_color": "red", "counter_type": "wood"}
+	"achievements": {}    # e.g. {"first_sale": true}
+}
 
-# ---------------------------------------------------------
-# 4. PUBLIC VARIABLES (Can be read/modified by other scripts)
-# ---------------------------------------------------------
-# --- Variabilele noastre pentru sistemul de zile ---
-var current_day: int = 1
+## Whether the current game period is night (the day timer has run out).
 var is_night: bool = false
-var day_timer: Timer
 
-# --- Variabilele colegilor (Starea stațiilor) ---
-# Dacă nu știi exact ce tip de date așteaptă colegul tău, las-o nespecificată ("untyped") la început:
-var selected_meat := "chicken"
+## The ID of the currently active save slot.
+var active_slot_id: int = -1
 
 # ---------------------------------------------------------
-# 5. PRIVATE VARIABLES (Prefixed with "_"; used only inside this script)
+# 5. PRIVATE VARIABLES
+# ---------------------------------------------------------
+var _day_timer: Timer
+
+# ---------------------------------------------------------
+# 6. ONREADY VARIABLES
 # ---------------------------------------------------------
 
 # ---------------------------------------------------------
-# 6. ONREADY VARIABLES (Links to the UI / Node Tree)
-# ---------------------------------------------------------
-
-# ---------------------------------------------------------
-# 7. GODOT ENGINE FUNCTIONS (The built-in ones)
+# 7. GODOT ENGINE FUNCTIONS
 # ---------------------------------------------------------
 func _ready() -> void:
-	day_timer = Timer.new()
-	day_timer.one_shot = true
-	day_timer.timeout.connect(_on_day_timer_ended)
-	add_child(day_timer)
+	_day_timer = Timer.new()
+	_day_timer.one_shot = true
+	_day_timer.timeout.connect(_on_day_timer_ended)
+	add_child(_day_timer)
 
 # ---------------------------------------------------------
-# 8. PUBLIC FUNCTIONS (Called by you from other scripts)
+# 8. PUBLIC FUNCTIONS
 # ---------------------------------------------------------
+
+## Adds or subtracts money and notifies the UI via signal.
+func add_money(amount: float) -> void:
+	current_save["money"] += amount
+	money_changed.emit(current_save["money"])
+
+## Starts the day timer. Called by DayTransition when the player clicks "Start Day".
 func start_day(duration_seconds: float) -> void:
-	day_timer.start(duration_seconds)
+	is_night = false
+	_day_timer.start(duration_seconds)
+
+## Called from the Main Menu when creating or loading a game.
+func load_save_data(slot_id: int, parsed_data: Dictionary) -> void:
+	active_slot_id = slot_id
+	current_save = parsed_data
 
 # ---------------------------------------------------------
-# 9. PRIVATE FUNCTIONS (Prefixed with "_", used only internally here)
+# 9. PRIVATE FUNCTIONS
 # ---------------------------------------------------------
 
 # ---------------------------------------------------------
-# 10. SIGNAL CALLBACKS (What happens when buttons/timers trigger)
+# 10. SIGNAL CALLBACKS
 # ---------------------------------------------------------
 func _on_day_timer_ended() -> void:
 	is_night = true
-	get_tree().change_scene_to_file("res://scenes/menus/day_transition.tscn")
+	day_ended.emit()
+	# NOTE: Scene navigation is intentionally NOT done here.
+	# GameplayMaster listens to `day_ended` and handles the scene transition,
+	# keeping Global free of any scene-flow responsibilities.

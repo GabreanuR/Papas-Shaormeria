@@ -11,12 +11,16 @@
 script = ExtResource("1_5cir7")
 
 [node name="OrderStation" parent="." unique_id=805942768 instance=ExtResource("2_1jril")]
+unique_name_in_owner = true
 
 [node name="MeatSelect" parent="." unique_id=1126885329 instance=ExtResource("3_6bkqk")]
+unique_name_in_owner = true
 
 [node name="AssemblyStation" parent="." unique_id=702470134 instance=ExtResource("4_twj3c")]
+unique_name_in_owner = true
 
 [node name="WrappingStation" parent="." unique_id=931503450 instance=ExtResource("5_apmns")]
+unique_name_in_owner = true
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=2104389183]
 
@@ -38,17 +42,21 @@ offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="BtnOrder" type="Button" parent="CanvasLayer/Taskbar" unique_id=967242679]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Lobby"
 
 [node name="BtnCutting" type="Button" parent="CanvasLayer/Taskbar" unique_id=191849248]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Cutting"
 
 [node name="BtnAssembly" type="Button" parent="CanvasLayer/Taskbar" unique_id=535926081]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Assembly"
 
 [node name="BtnWrapping" type="Button" parent="CanvasLayer/Taskbar" unique_id=1018834916]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Wrapping"

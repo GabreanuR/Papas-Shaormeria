@@ -1,0 +1,5 @@
+[gd_scene format=3 uid="uid://bxrqpa5qi6v0c"]
+
+[node name="AchievementsMenu" type="Control" unique_id=1413360184]
+layout_mode = 3
+anchors_preset = 0

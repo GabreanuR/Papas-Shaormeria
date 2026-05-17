@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://poa1kme3gfho"]
+
+[ext_resource type="Script" uid="uid://0m6pr8h8kb5e" path="res://scripts/ui/top_bar.gd" id="1_xsohi"]
+
+[node name="TopBar" type="HBoxContainer" unique_id=1361950912]
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+script = ExtResource("1_xsohi")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1142004349]
+layout_mode = 2
+
+[node name="FirstLabel" type="Label" parent="MarginContainer" unique_id=865317842]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="MarginContainer2" type="MarginContainer" parent="." unique_id=760393245]
+layout_mode = 2
+
+[node name="SecondLabel" type="Label" parent="MarginContainer2" unique_id=252668843]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Control" type="Control" parent="." unique_id=775244565]
+layout_mode = 2
+
+[node name="MenuBtn" type="TextureButton" parent="." unique_id=800234697]
+unique_name_in_owner = true
+layout_mode = 2

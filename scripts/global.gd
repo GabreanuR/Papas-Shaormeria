@@ -5,6 +5,8 @@ extends Node
 # ---------------------------------------------------------
 signal day_ended
 signal money_changed(new_amount: float)
+## Emitted every time the daily cash register changes — for the in-game HUD.
+signal daily_earnings_changed(amount: float)
 
 # ---------------------------------------------------------
 # 2. ENUMS
@@ -34,6 +36,11 @@ var is_night: bool = false
 ## The ID of the currently active save slot.
 var active_slot_id: int = -1
 
+## The "cash register on the counter" — money earned strictly today.
+## Reset to zero at the start of each new day. NOT saved to disk directly;
+## it is added to current_save["money"] at end-of-day.
+var daily_earnings: float = 0.0
+
 # ---------------------------------------------------------
 # 5. PRIVATE VARIABLES
 # ---------------------------------------------------------
@@ -56,14 +63,19 @@ func _ready() -> void:
 # 8. PUBLIC FUNCTIONS
 # ---------------------------------------------------------
 
-## Adds or subtracts money and notifies the UI via signal.
+## Adds money earned from a sale.
+## Updates both the global bank account and today's cash register.
 func add_money(amount: float) -> void:
 	current_save["money"] += amount
 	money_changed.emit(current_save["money"])
+	daily_earnings += amount
+	daily_earnings_changed.emit(daily_earnings)
 
 ## Starts the day timer. Called by DayTransition when the player clicks "Start Day".
 func start_day(duration_seconds: float) -> void:
 	is_night = false
+	daily_earnings = 0.0
+	daily_earnings_changed.emit(daily_earnings)
 	_day_timer.start(duration_seconds)
 
 ## Called from the Main Menu when creating or loading a game.

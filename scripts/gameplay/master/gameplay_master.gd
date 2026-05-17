@@ -15,7 +15,15 @@ extends Node
 # ---------------------------------------------------------
 # 4. PUBLIC VARIABLES
 # ---------------------------------------------------------
-
+# Aceasta este lipia fizică pe care o prepari ACUM. 
+# Când o livrezi, o resetezi.
+var current_pita_state: Dictionary = {
+	"meat_type": "",      
+	"is_cut": false,    
+	"cook_level": 0.0,   
+	"sauces": [],         
+	"vegetables": []      
+}
 # ---------------------------------------------------------
 # 5. PRIVATE VARIABLES
 # ---------------------------------------------------------

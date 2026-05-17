@@ -1,86 +1,98 @@
 extends Control
 
-# ---------------------------------------------------------
-# 1. SIGNALS
-# ---------------------------------------------------------
-
-# ---------------------------------------------------------
-# 2. ENUMS
-# ---------------------------------------------------------
 enum DayState { MORNING, NIGHT }
-
-# ---------------------------------------------------------
-# 3. CONSTANTS
-# ---------------------------------------------------------
-
-# ---------------------------------------------------------
-# 4. PUBLIC VARIABLES
-# ---------------------------------------------------------
-
-# ---------------------------------------------------------
-# 5. PRIVATE VARIABLES
-# ---------------------------------------------------------
 var _current_state: DayState = DayState.MORNING
 
 # ---------------------------------------------------------
-# 6. ONREADY VARIABLES
+# CONTAINERE PRINCIPALE
 # ---------------------------------------------------------
-@onready var _morning_bg: Control = %MorningBG
-@onready var _night_bg: Control = %NightBG
-@onready var _day_label: Label = %DayLabel
-@onready var _action_btn: Button = %ActionBtn
+@onready var _morning_container: Control = %MorningMenusContainer
+@onready var _night_container: Control = %NightContainer
 
 # ---------------------------------------------------------
-# 7. GODOT ENGINE FUNCTIONS
+# BUTOANE DIMINEAȚA
 # ---------------------------------------------------------
+@onready var _btn_start_day: TextureButton = %BtnStartDay
+@onready var _btn_customize: TextureButton = %BtnCustomize
+@onready var _btn_upgrades: TextureButton = %BtnUpgrades
+@onready var _btn_achievements: TextureButton = %BtnAchievements
+
+# ---------------------------------------------------------
+# BUTOANE NOAPTEA
+# ---------------------------------------------------------
+@onready var _btn_next_day: Button = %BtnNextDay
+
+# ---------------------------------------------------------
+# SCENE INSTANȚIATE (Pop-up-urile tale modulare)
+# ---------------------------------------------------------
+@onready var _summary_menu: Control = %SummaryPanel
+@onready var _upgrades_menu: Control = %UpgradesMenu
+@onready var _customize_menu: Control = %CustomizationMenu
+@onready var _achievements_menu: Control = %AchievementsMenu
+
 func _ready() -> void:
-	_action_btn.pressed.connect(_on_action_btn_pressed)
+	# Conectăm butoanele principale de flux
+	_btn_start_day.pressed.connect(_on_start_day_pressed)
+	_btn_next_day.pressed.connect(_on_next_day_pressed)
+	
+	# Conectăm butoanele pentru a deschide scenele instanțiate
+	_btn_customize.pressed.connect(func(): _customize_menu.show())
+	_btn_upgrades.pressed.connect(func(): _upgrades_menu.show())
+	_btn_achievements.pressed.connect(func(): _achievements_menu.show())
 
-	# Check the global flag to determine whether we just ended a day.
+	# --- NOU: Inițializăm efectul de glow pentru toate butoanele ---
+	_setup_button_glow(_btn_start_day)
+	_setup_button_glow(_btn_customize)
+	_setup_button_glow(_btn_upgrades)
+	_setup_button_glow(_btn_achievements)
+
+	# Verificăm starea din Global
 	if Global.is_night:
 		_set_state(DayState.NIGHT)
 	else:
 		_set_state(DayState.MORNING)
 
-# ---------------------------------------------------------
-# 8. PUBLIC FUNCTIONS
-# ---------------------------------------------------------
-
-# ---------------------------------------------------------
-# 9. PRIVATE FUNCTIONS
-# ---------------------------------------------------------
 func _set_state(new_state: DayState) -> void:
 	_current_state = new_state
 
 	match _current_state:
 		DayState.MORNING:
-			_morning_bg.show()
-			_night_bg.hide()
-			_day_label.text = "Day " + str(Global.current_save["day"])
-			_action_btn.text = "Start Day"
-			_action_btn.show()
+			_night_container.hide()
+			_summary_menu.hide() # Ne asigurăm că rezumatul e închis
+			_morning_container.show()
 
 		DayState.NIGHT:
-			_morning_bg.hide()
-			_night_bg.show()
-			# Day has NOT been incremented yet — it ticks over when the player
-			# confirms "Next Day", so we show the day that just ended correctly.
-			_day_label.text = "End of Day " + str(Global.current_save["day"])
-			_action_btn.text = "Next Day"
-			_action_btn.show()
+			_morning_container.hide()
+			_night_container.show()
+			_summary_menu.show() # Deschidem automat pop-up-ul cu rezumatul zilei
 
 # ---------------------------------------------------------
-# 10. SIGNAL CALLBACKS
+# SIGNAL CALLBACKS (Fluxul zilelor)
 # ---------------------------------------------------------
-func _on_action_btn_pressed() -> void:
-	match _current_state:
-		DayState.MORNING:
-			# Start the global day timer, then load the gameplay scene.
-			Global.start_day(30.0)
-			get_tree().change_scene_to_file("res://scenes/gameplay/master/gameplay_master.tscn")
+func _on_start_day_pressed() -> void:
+	Global.start_day(30.0)
+	get_tree().change_scene_to_file("res://scenes/gameplay/master/gameplay_master.tscn")
 
-		DayState.NIGHT:
-			# Increment the day and reset the night flag — the new day begins now.
-			Global.current_save["day"] += 1
-			Global.is_night = false
-			_set_state(DayState.MORNING)
+func _on_next_day_pressed() -> void:
+	Global.current_save["day"] += 1
+	Global.is_night = false
+	_set_state(DayState.MORNING)
+
+# ---------------------------------------------------------
+# FUNCȚII PRIVATE DE SISTEM
+# ---------------------------------------------------------
+func _setup_button_glow(btn: TextureButton) -> void:
+	# Iterăm prin copiii butonului pentru a găsi sursa de lumină
+	for child in btn.get_children():
+		if child is PointLight2D:
+			# Oprim lumina inițial folosind metoda din scriptul ei
+			if child.has_method("turn_off"):
+				child.turn_off()
+			
+			# Conectăm acțiunile de mouse la funcțiile luminii
+			if child.has_method("turn_on") and child.has_method("turn_off"):
+				btn.mouse_entered.connect(child.turn_on)
+				btn.mouse_exited.connect(child.turn_off)
+			
+			# Oprim căutarea odată ce am găsit lumina
+			break

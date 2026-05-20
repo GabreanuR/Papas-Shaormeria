@@ -59,7 +59,9 @@ func select_meat(meat_type: String):
 		return
 
 	selected = true
-	Global.selected_meat = meat_type
+
+	var gameplay_master = get_parent()
+	gameplay_master.current_pita_state["meat_type"] = meat_type
 
 	var tween = create_tween()
 	tween.tween_property(fade_overlay, "color:a", 1.0, 1.1)\
@@ -68,4 +70,19 @@ func select_meat(meat_type: String):
 
 	await tween.finished
 
-	get_tree().change_scene_to_file("res://scenes/CuttingStation.tscn")
+	var existing_cutting = gameplay_master.get_node_or_null("CuttingStation")
+	if existing_cutting:
+		existing_cutting.queue_free()
+
+	var cutting_scene = preload("res://scenes/gameplay/stations/cutting/CuttingStation.tscn")
+	var cutting_instance = cutting_scene.instantiate()
+	cutting_instance.name = "CuttingStation"
+
+	gameplay_master.add_child(cutting_instance)
+	hide()
+func reset_meat_select():
+	selected = false
+	show()
+
+	if fade_overlay:
+		fade_overlay.color.a = 0.0

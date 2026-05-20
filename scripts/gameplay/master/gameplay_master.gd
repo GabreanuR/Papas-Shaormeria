@@ -18,12 +18,52 @@ extends Node
 # Aceasta este lipia fizică pe care o prepari ACUM. 
 # Când o livrezi, o resetezi.
 var current_pita_state: Dictionary = {
-	"meat_type": "",      
-	"is_cut": false,    
-	"cook_level": 0.0,   
-	"sauces": [],         
-	"vegetables": []      
+	"meat_type": "",
+	"is_cut": false,
+	"sauces": [],
+	"vegetables": [],
+
+	"scores": {
+		"cutting": 0,
+		"waiting": 0,
+		"assembly": 0,
+		"wrapping": 0
+	},
+
+	"total_score": 0
 }
+
+#functii adaugate de maia
+func update_station_score(station_name: String, score: int) -> void:
+	current_pita_state["scores"][station_name] = score
+
+	var total := 0
+	for station_score in current_pita_state["scores"].values():
+		total += station_score
+
+	current_pita_state["total_score"] = total
+
+
+func save_current_pita() -> void:
+	completed_pitas.append(current_pita_state.duplicate(true))
+
+	current_pita_state = {
+		"meat_type": "",
+		"is_cut": false,
+		"sauces": [],
+		"vegetables": [],
+		"scores": {
+			"cutting": 0,
+			"waiting": 0,
+			"assembly": 0,
+			"wrapping": 0
+		},
+		"total_score": 0
+	}
+	
+#am terminat cu functiile adaugate de maia
+
+var completed_pitas: Array[Dictionary] = []
 # ---------------------------------------------------------
 # 5. PRIVATE VARIABLES
 # ---------------------------------------------------------

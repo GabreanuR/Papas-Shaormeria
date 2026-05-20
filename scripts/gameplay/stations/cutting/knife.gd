@@ -4,8 +4,6 @@ extends Sprite2D
 @onready var cut_progress = get_parent().get_node("CutProgress")
 @onready var result_label = get_parent().get_node("ResultLabel")
 
-var meat_piece_scene = preload("res://scenes/cutting_station/MeatPiece.tscn")
-
 var score := 0.0
 var progress := 0.0
 var visited_zones := []
@@ -14,15 +12,16 @@ var finished := false
 
 var blade_offset := Vector2(-45, -45)
 
-# 🔽 NOU - control spawn
 var spawn_cooldown := 0.0
 var spawn_delay := 0.09
+
 
 func _ready():
 	cut_progress.min_value = 0
 	cut_progress.max_value = 100
 	cut_progress.value = 0
 	result_label.text = "Hold click and slice the meat!"
+
 
 func _process(delta):
 	if finished:
@@ -36,6 +35,7 @@ func _process(delta):
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		check_cutting(blade_point)
 
+
 func check_cutting(blade_point):
 	var shape = meat_area.get_node("CollisionShape2D").shape
 	var meat_pos = meat_area.global_position
@@ -46,12 +46,6 @@ func check_cutting(blade_point):
 	)
 
 	if meat_rect.has_point(blade_point):
-
-		# 🔽 spawn control
-		if spawn_cooldown <= 0:
-			spawn_meat_piece(blade_point)
-			spawn_cooldown = spawn_delay
-
 		var local_y = blade_point.y - meat_rect.position.y
 		var zone_height = meat_rect.size.y / 5
 		var zone = int(local_y / zone_height)
@@ -76,17 +70,13 @@ func check_cutting(blade_point):
 	if progress >= 100:
 		finish_cutting()
 
-func spawn_meat_piece(spawn_position):
-	var piece = meat_piece_scene.instantiate()
-	get_parent().add_child(piece)
-	piece.global_position = spawn_position
 
 func finish_cutting():
 	finished = true
 	progress = 100
 	cut_progress.value = 100
 
-	var final_score = int(score)
+	var final_score = max(int(score), 0)
 
 	if final_score >= 180:
 		result_label.text = "Perfect cut! Final score: " + str(final_score)
@@ -94,3 +84,23 @@ func finish_cutting():
 		result_label.text = "Good cut! Final score: " + str(final_score)
 	else:
 		result_label.text = "Bad cut! Final score: " + str(final_score)
+
+	var gameplay_master = get_tree().current_scene
+
+	if gameplay_master and "current_pita_state" in gameplay_master:
+		gameplay_master.current_pita_state["is_cut"] = true
+
+	if gameplay_master and gameplay_master.has_method("update_station_score"):
+		gameplay_master.update_station_score("cutting", final_score)
+
+	await get_tree().create_timer(1.5).timeout
+
+	var cutting_station = get_parent().get_parent()
+	cutting_station.queue_free()
+
+	var meat_select = gameplay_master.get_node_or_null("MeatSelect")
+	if meat_select and meat_select.has_method("reset_meat_select"):
+		meat_select.reset_meat_select()
+
+	if gameplay_master and gameplay_master.has_method("_go_to_assembly"):
+		gameplay_master._go_to_assembly()

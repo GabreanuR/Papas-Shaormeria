@@ -15,35 +15,37 @@ var beef_background := preload("res://assets/graphics/cutting_station/bg_beef.pn
 
 
 func _ready():
-	if Global.selected_meat == "beef":
+	var gameplay_master = get_tree().current_scene
+	var meat_type := "chicken"
+
+	if gameplay_master and "current_pita_state" in gameplay_master:
+		meat_type = gameplay_master.current_pita_state.get("meat_type", "chicken")
+
+	if meat_type == "beef":
 		sprite.texture = beef_texture
 		background.texture = beef_background
 
 		position = Vector2(870, 680)
 		scale = Vector2(1.7, 1.7)
 
-		# 🔹 SCORE
 		if score_label:
 			score_label.anchor_left = 0
 			score_label.anchor_right = 0
 			score_label.offset_left = 50
 			score_label.offset_top = 150
 
-		# 🔹 RESULT
 		if result_label:
 			result_label.anchor_left = 0
 			result_label.anchor_right = 0
 			result_label.offset_left = 50
 			result_label.offset_top = 200
 
-		# 🔹 PROGRESS BAR
 		if progress_bar:
 			progress_bar.anchor_left = 0
 			progress_bar.anchor_right = 0
 			progress_bar.offset_left = 50
 			progress_bar.offset_top = 550
-		
-		
+
 	else:
 		sprite.texture = chicken_texture
 		background.texture = chicken_background
@@ -53,7 +55,9 @@ func _ready():
 
 		if score_label:
 			score_label.position = Vector2(900, 100)
+
 		if result_label:
 			result_label.position = Vector2(900, 150)
+
 		if progress_bar:
 			progress_bar.position = Vector2(900, 520)

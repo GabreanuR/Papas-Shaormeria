@@ -124,21 +124,23 @@ const PITA_TARGET_POS := Vector2(904, 692)
 const ASSEMBLY_PITA_CENTER := Vector2(1371, 1080)
 
 func receive_pita_from_assembly(source_lipie_container: Node, pita_state: Dictionary) -> void:
-	if assembled_pita1 and is_instance_valid(assembled_pita1):
-		assembled_pita1.queue_free()
-
 	if source_lipie_container == null:
 		print("Nu am primit LipieContainer")
 		return
 
-	assembled_pita1 = source_lipie_container.duplicate(7)
-	assembled_pita1.name = "AssembledPitaOnTray"
-	assembled_pita1.visible = true
+	source_lipie_container.reparent(tray)
+	source_lipie_container.visible = true
 
-	tray.add_child(assembled_pita1)
+	source_lipie_container.scale = Vector2(0.45, 0.45)
+	source_lipie_container.z_index = 100
 
-	assembled_pita1.position = PITA_TARGET_POS - ASSEMBLY_PITA_CENTER
-	assembled_pita1.scale = Vector2(0.65, 0.65)
-	assembled_pita1.z_index = 100
+	var lipie_sprite := source_lipie_container.find_child("Lipie", true, false)
 
-	print("Lipia a fost trimisa in wrapping:", pita_state)
+	if lipie_sprite:
+		var target_global_pos := Vector2(820, 600)
+		var current_lipie_global_pos = lipie_sprite.global_position
+		var offset = target_global_pos - current_lipie_global_pos
+
+		source_lipie_container.global_position += offset
+	else:
+		source_lipie_container.position = Vector2(0, 0)

@@ -139,6 +139,11 @@ func _go_to_assembly() -> void:
 		_next_to_wrapping_button.visible = true
 
 func _go_to_wrapping() -> void:
+	var lipie_container = _assembly_station.find_child("LipieContainer", true, false)
+
+	if lipie_container and _wrapping_station.has_method("receive_pita_from_assembly"):
+		_wrapping_station.receive_pita_from_assembly(lipie_container, current_pita_state)
+
 	_show_only(_wrapping_station)
 #sfarsit	
 

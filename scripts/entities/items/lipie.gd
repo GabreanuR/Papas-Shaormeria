@@ -3,6 +3,21 @@ extends TextureRect
 @onready var container_lipie = get_node("../MascaLipie/IngredientePeLipie")
 @onready var container_mizerie = get_tree().current_scene.find_child("MizerieMasa")
 
+var meat_sprite: Sprite2D = null
+
+var meat_on_pita := {
+	"chicken": {
+		"texture": preload("res://assets/graphics/ingredients/carne_pui.png"),
+		"position": Vector2(0, 0),
+		"scale": Vector2(1, 1)
+	},
+	"beef": {
+		"texture": preload("res://assets/graphics/ingredients/carne_vita.png"),
+		"position": Vector2(0, 0),
+		"scale": Vector2(1, 1)
+	}
+}
+
 var ingrediente_puse = []
 var sos_curent = null
 var puncte_scor = []
@@ -10,8 +25,14 @@ var mod_sos_activ = false
 var sticla_vizuala = null
 var punctaj_sos : float = 100.0
 var numar_picaturi_ideale : int = 250 
+#var adaugate de maia
+#var chicken_pita_texture := 
+#var beef_pita_texture := 
+#sfarsit
 
 func _ready():
+	get_parent().visible = false
+
 	for x in range(-120, 121, 60):
 		for y in range(-120, 121, 60):
 			puncte_scor.append(Vector2(x, y))
@@ -159,3 +180,32 @@ func calculeaza_scor_sos():
 	print("Scor: ", int(scor_final), "%")
 	
 	return scor_final
+	
+	
+func update_from_cutting():
+	var gameplay_master = get_tree().current_scene
+	var pita_state = gameplay_master.current_pita_state
+
+	var meat_type = pita_state.get("meat_type", "")
+	var is_cut = pita_state.get("is_cut", false)
+
+	if meat_type == "" or not is_cut:
+		get_parent().visible = false
+		return
+
+	get_parent().visible = true
+
+	if not meat_on_pita.has(meat_type):
+		return
+
+	if meat_sprite == null:
+		meat_sprite = Sprite2D.new()
+		meat_sprite.name = "GeneratedMeatOnPita"
+		container_lipie.add_child(meat_sprite)
+
+	var meat_data = meat_on_pita[meat_type]
+
+	meat_sprite.texture = meat_data["texture"]
+	meat_sprite.position = meat_data["position"]
+	meat_sprite.scale = meat_data["scale"]
+	meat_sprite.visible = true

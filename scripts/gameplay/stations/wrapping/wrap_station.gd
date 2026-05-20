@@ -8,6 +8,9 @@ extends Node2D
 @onready var darken = $Tray/SendButton/Darken
 @onready var fade = $FadeOverlay
 
+var assembled_pita: Node2D = null
+const PITA_ON_TRAY_POSITION := Vector2(904, 692)
+
 var wrap_quality: float = 0.0
 var can_drag_ticket := false
 var is_dragging_ticket := false
@@ -114,3 +117,28 @@ func get_slot_area() -> Rect2:
 
 func is_mouse_over_send(mouse_pos: Vector2) -> bool:
 	return mouse_pos.distance_to(send_button.global_position) < 120.0
+	
+var assembled_pita1: Node2D = null
+
+const PITA_TARGET_POS := Vector2(904, 692)
+const ASSEMBLY_PITA_CENTER := Vector2(1371, 1080)
+
+func receive_pita_from_assembly(source_lipie_container: Node, pita_state: Dictionary) -> void:
+	if assembled_pita1 and is_instance_valid(assembled_pita1):
+		assembled_pita1.queue_free()
+
+	if source_lipie_container == null:
+		print("Nu am primit LipieContainer")
+		return
+
+	assembled_pita1 = source_lipie_container.duplicate(7)
+	assembled_pita1.name = "AssembledPitaOnTray"
+	assembled_pita1.visible = true
+
+	tray.add_child(assembled_pita1)
+
+	assembled_pita1.position = PITA_TARGET_POS - ASSEMBLY_PITA_CENTER
+	assembled_pita1.scale = Vector2(0.65, 0.65)
+	assembled_pita1.z_index = 100
+
+	print("Lipia a fost trimisa in wrapping:", pita_state)

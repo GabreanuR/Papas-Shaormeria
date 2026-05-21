@@ -160,6 +160,9 @@ func _go_to_wrapping() -> void:
 	if _assembly_camera:
 		_assembly_camera.enabled = false
 
+	# We MUST finish sauce mode before reparenting, so the Lipie node can still be found
+	finish_sauce_mode()
+
 	var lipie_container = _assembly_station.find_child("LipieContainer", true, false)
 
 	if lipie_container and _wrapping_station.has_method("receive_pita_from_assembly"):

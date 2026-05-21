@@ -11,7 +11,7 @@ var required_swipes := ["right", "left", "up"]
 var current_swipe_index := 0
 var mistakes := 0
 
-func _unhandled_input(event):
+func _input(event):
 	if current_swipe_index >= required_swipes.size():
 		return
 

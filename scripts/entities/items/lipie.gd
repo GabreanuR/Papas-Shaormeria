@@ -117,7 +117,7 @@ func _process(_delta):
 		sticla_vizuala.global_position = get_global_mouse_position()
 		sticla_vizuala.offset = Vector2(0, 125) 
 
-func _unhandled_input(event):
+func _input(event):
 	if mod_sos_activ:
 		if event is InputEventMouseButton:
 			if event.button_index == MOUSE_BUTTON_LEFT:

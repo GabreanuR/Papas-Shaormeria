@@ -47,9 +47,6 @@ func creeaza_picatura():
 	pic.texture = textura_picatura
 	pic.scale = Vector2(0.08, 0.08)
 	pic.rotation = randf_range(0, PI * 2)
-	pic.z_index = 0
-	pic.z_as_relative = false
-	
 	var m_pos = get_global_mouse_position()
 	var lipie = _get_lipie()
 	

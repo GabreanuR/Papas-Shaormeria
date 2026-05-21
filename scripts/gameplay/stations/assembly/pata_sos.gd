@@ -5,6 +5,9 @@ var poate_pune = true
 var culoare_sos = Color(1, 1, 1)
 var textura_picatura = preload("res://assets/graphics/ingredients/sos_zig_zag_alb.png") # Pune calea ta către poza cu picătura
 
+func _ready():
+	pass
+
 func _process(_delta):
 	if activ:
 		creeaza_picatura()
@@ -38,3 +41,21 @@ func creeaza_picatura():
 			pic.modulate = culoare_sos.darkened(0.2)
 			pic.z_index = 1 
 			pic.add_to_group("sos_pe_masa")
+			
+
+		
+		
+	var gameplay_master = get_tree().current_scene
+	if gameplay_master and gameplay_master.has_method("restart_sauce_finish_timer"):
+		gameplay_master.restart_sauce_finish_timer()
+		
+		
+		
+func finish_sauce() -> void:
+	activ = false
+
+	for child in get_children():
+		if child is Sprite2D:
+			child.visible = false
+
+	remove_from_group("active_sauce_bottle")

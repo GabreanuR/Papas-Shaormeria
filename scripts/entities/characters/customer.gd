@@ -2,10 +2,12 @@ extends Node2D
 
 var comanda_mea: Array = [] # O lăsăm goală la început
 signal a_fost_apasat(ingrediente)
+signal patience_expired
 var a_dat_comanda: bool = false 
 @onready var buton_comanda = $TextureButton
-var rabdare_maxima: float = 100.0
-var rabdare_curenta: float = 100.0
+@export var rabdare_maxima: float = 100.0
+@export var patience_decay_rate: float = 2.5
+var rabdare_curenta: float = rabdare_maxima
 var scade_rabdare: bool = true # Se oprește când îi iei comanda
 
 # Lista cu "meniul" de unde putem alege (fără lipie)
@@ -60,10 +62,12 @@ func genereaza_comanda_random():
 		comanda_mea.append(extra_posibile[i])		
 
 func _process(delta):
-	# Dacă încă așteaptă să i se ia comanda, îi scade răbdarea
 	if scade_rabdare and rabdare_curenta > 0:
-		# Scadem vreo 2-3 puncte pe secundă. delta ne asigură că scade la fel de repede pe orice PC.
-		rabdare_curenta -= 2.5 * delta 
+		rabdare_curenta -= patience_decay_rate * delta
+		if rabdare_curenta <= 0:
+			rabdare_curenta = 0
+			set_process(false)
+			patience_expired.emit()
 
 # Modifică funcția de click ca să oprească scăderea răbdării:
 func _on_texture_button_pressed():

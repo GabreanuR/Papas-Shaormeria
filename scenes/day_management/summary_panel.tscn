@@ -1,5 +1,65 @@
 [gd_scene format=3 uid="uid://cdoeho2o7r6yi"]
 
-[node name="SummaryPanel" type="Control" unique_id=93081908]
-layout_mode = 3
-anchors_preset = 0
+[ext_resource type="Script" uid="uid://bkd2sfa3u2w4x" path="res://scripts/day_management/summary_panel.gd" id="1_3d51l"]
+[ext_resource type="Theme" uid="uid://icmwfh7h1jg8" path="res://assets/theme/global_ui_theme.tres" id="1_5nkx8"]
+
+[node name="SummaryPanel" type="Panel" unique_id=1292618273]
+theme = ExtResource("1_5nkx8")
+script = ExtResource("1_3d51l")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1488408892]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Label" type="Label" parent="VBoxContainer" unique_id=1191741731]
+layout_mode = 2
+text = "Daily Report"
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer" unique_id=1235095646]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=1379333639]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer" unique_id=495377399]
+layout_mode = 2
+text = "Customers Served:"
+
+[node name="LblCustomers" type="Label" parent="VBoxContainer/HBoxContainer" unique_id=1864039413]
+unique_name_in_owner = true
+layout_mode = 2
+text = "%Value
+"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer" unique_id=313085752]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer2" unique_id=1547771874]
+layout_mode = 2
+text = "Perfect Orders:"
+
+[node name="LblPerfects" type="Label" parent="VBoxContainer/HBoxContainer2" unique_id=97307780]
+unique_name_in_owner = true
+layout_mode = 2
+text = "%Value"
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer" unique_id=21531634]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer3" unique_id=1811907000]
+layout_mode = 2
+text = "Tips Earned:"
+
+[node name="LblTips" type="Label" parent="VBoxContainer/HBoxContainer3" unique_id=708629714]
+unique_name_in_owner = true
+layout_mode = 2
+text = "$ %Value"
+
+[node name="HSeparator2" type="HSeparator" parent="VBoxContainer" unique_id=1881191007]
+layout_mode = 2
+
+[node name="LblTotal" type="Label" parent="VBoxContainer" unique_id=1085223181]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Total Profit"

@@ -3,9 +3,11 @@ extends Node2D
 @onready var sprite := $Sprite2D
 @onready var background := $"../../TextureRect"
 
-@onready var score_label := get_tree().current_scene.get_node_or_null("ScoreLabel")
-@onready var result_label := get_tree().current_scene.get_node_or_null("ResultLabel")
-@onready var progress_bar := get_tree().current_scene.get_node_or_null("CutProgress")
+## Resolved in _ready — avoids calling get_tree().current_scene at @onready time
+## when the scene tree may not be fully constructed.
+var score_label: Control = null
+var result_label: Control = null
+var progress_bar: Control = null
 
 var chicken_texture := preload("res://assets/graphics/cutting_station/final_chick.png")
 var beef_texture := preload("res://assets/graphics/cutting_station/final_beef.png")
@@ -15,7 +17,13 @@ var beef_background := preload("res://assets/graphics/cutting_station/bg_beef.pn
 
 
 func _ready():
-	var gameplay_master = get_tree().current_scene
+	var scene_root = get_tree().current_scene
+	if scene_root:
+		score_label = scene_root.get_node_or_null("ScoreLabel")
+		result_label = scene_root.get_node_or_null("ResultLabel")
+		progress_bar = scene_root.get_node_or_null("CutProgress")
+
+	var gameplay_master = scene_root
 	var meat_type := "chicken"
 
 	if gameplay_master and "current_pita_state" in gameplay_master:

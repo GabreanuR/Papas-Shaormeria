@@ -9,7 +9,6 @@ extends Node2D
 @onready var fade = $FadeOverlay
 
 var assembled_pita: Node2D = null
-const PITA_ON_TRAY_POSITION := Vector2(904, 692)
 
 var wrap_quality: float = 0.0
 var can_drag_ticket := false
@@ -21,7 +20,6 @@ var slot_area_size := Vector2(500, 500)
 
 
 func _ready():
-	print("WRAP STATION READY")
 
 	wrap_area.wrap_completed.connect(_on_wrap_done)
 
@@ -36,12 +34,10 @@ func _ready():
 
 
 func _on_wrap_done(quality: float):
-	print("Wrapping finished:", quality)
 
 	wrap_quality = quality
 	can_drag_ticket = true
 
-	print("Ticket drag activat")
 
 
 func _input(event):
@@ -53,7 +49,6 @@ func _input(event):
 				is_dragging_ticket = true
 				ticket_offset = ticket.global_position - mouse_pos
 				ticket.z_index = 200
-				print("Start drag ticket")
 
 			elif ticket_placed and is_mouse_over_send(mouse_pos):
 				_on_send_pressed()
@@ -88,17 +83,10 @@ func check_ticket_drop(mouse_pos: Vector2):
 		darken.visible = false
 		darken.modulate.a = 0.0
 
-		print("Ticket placed and attached to tray!")
-	else:
-		print("Ticket NOT in slot area")
-
-
 func _on_send_pressed():
 	if not ticket_placed:
-		print("Nu poti trimite comanda pana nu pui ticketul.")
 		return
 
-	print("Trimitem comanda cu quality:", wrap_quality)
 
 	var tween = create_tween()
 	tween.tween_property(tray, "position:x", tray.position.x + 1800, 0.85)
@@ -117,15 +105,9 @@ func get_slot_area() -> Rect2:
 
 func is_mouse_over_send(mouse_pos: Vector2) -> bool:
 	return mouse_pos.distance_to(send_button.global_position) < 120.0
-	
-var assembled_pita1: Node2D = null
 
-const PITA_TARGET_POS := Vector2(904, 692)
-const ASSEMBLY_PITA_CENTER := Vector2(1371, 1080)
-
-func receive_pita_from_assembly(source_lipie_container: Node, pita_state: Dictionary) -> void:
+func receive_pita_from_assembly(source_lipie_container: Node, _pita_state: Dictionary) -> void:
 	if source_lipie_container == null:
-		print("Nu am primit LipieContainer")
 		return
 
 	source_lipie_container.reparent(tray)

@@ -36,6 +36,9 @@ var imagini_ingrediente = {
 	"jalapenos": preload("res://assets/graphics/ingredients/jalapenos.png")
 }
 
+func _ready():
+	set_process(false)
+
 # 2. Funcția care va fi apelata cand clientul striga comanda
 func primeste_comanda(lista_ingrediente: Array, numar_client: int):
 	# Setăm textul biletului. 
@@ -84,6 +87,7 @@ func _gui_input(event):
 		if event.pressed:
 			# Începem să tragem biletul
 			se_trage = true
+			set_process(true)
 			offset_mouse = global_position - get_global_mouse_position()
 			
 			# Rupem biletul de pe cârlig
@@ -99,7 +103,7 @@ func _gui_input(event):
 			elibereaza_bilet()
 
 # Verificăm constant mișcarea
-func _process(delta):
+func _process(_delta):
 	if se_trage:
 		global_position = get_global_mouse_position() + offset_mouse
 		
@@ -111,6 +115,7 @@ func _process(delta):
 # Logica unde se așază biletul am pus-o separat ca să fie ordonată
 func elibereaza_bilet():
 	se_trage = false
+	set_process(false)
 	
 	if global_position.y > 150: 
 		scale = Vector2(1.2, 1.2) 

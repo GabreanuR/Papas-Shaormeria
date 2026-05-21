@@ -130,7 +130,6 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="NightBG" type="TextureRect" parent="NightContainer" unique_id=666725901]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -153,7 +152,6 @@ offset_bottom = 296.0
 
 [node name="BtnNextDay" type="Button" parent="NightContainer" unique_id=888498550]
 unique_name_in_owner = true
-visible = false
 layout_mode = 0
 offset_left = 140.0
 offset_top = 253.0

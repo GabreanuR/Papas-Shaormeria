@@ -10,10 +10,13 @@ var visited_zones := []
 var last_zone := -1
 var finished := false
 
-var blade_offset := Vector2(-45, -45)
+@export var blade_offset := Vector2(-45, -45)
 
 var spawn_cooldown := 0.0
 var spawn_delay := 0.09
+
+const SCORE_PERFECT_THRESHOLD := 180
+const SCORE_GOOD_THRESHOLD := 100
 
 
 func _ready():
@@ -78,9 +81,9 @@ func finish_cutting():
 
 	var final_score = max(int(score), 0)
 
-	if final_score >= 180:
+	if final_score >= SCORE_PERFECT_THRESHOLD:
 		result_label.text = "Perfect cut! Final score: " + str(final_score)
-	elif final_score >= 100:
+	elif final_score >= SCORE_GOOD_THRESHOLD:
 		result_label.text = "Good cut! Final score: " + str(final_score)
 	else:
 		result_label.text = "Bad cut! Final score: " + str(final_score)

@@ -2,6 +2,8 @@ extends Control
 
 signal closed
 
+const DEFAULT_WINDOWED_SIZE := Vector2i(1280, 720)
+
 var _is_busy: bool = false
 
 @onready var overlay: ColorRect = $ModalOverlay
@@ -119,7 +121,7 @@ func _apply_windowed_mode() -> void:
 	DisplayServer.call_deferred("window_set_mode", DisplayServer.WINDOW_MODE_WINDOWED)
 	
 	# Force a smaller resolution to prevent OS auto-maximizing
-	var windowed_size := Vector2i(1280, 720)
+	var windowed_size := DEFAULT_WINDOWED_SIZE
 	DisplayServer.call_deferred("window_set_size", windowed_size)
 	
 	var current_screen_pos := DisplayServer.screen_get_position()

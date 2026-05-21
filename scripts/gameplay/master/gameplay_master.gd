@@ -11,51 +11,20 @@ extends Node
 # ---------------------------------------------------------
 # 3. CONSTANTS
 # ---------------------------------------------------------
-#adaugate de maia
 const ASSEMBLY_INGREDIENTS_CAMERA_POS := Vector2(380, 230)
 const ASSEMBLY_SAUCES_CAMERA_POS := Vector2(2340, 230)
 const LIPIE_INGREDIENTS_POS := Vector2(670, 570)
 const LIPIE_SAUCES_POS := Vector2(2630, 570)
-
-var _sauce_finish_timer: Timer
 
 # ---------------------------------------------------------
 # 4. PUBLIC VARIABLES
 # ---------------------------------------------------------
 # Aceasta este lipia fizică pe care o prepari ACUM. 
 # Când o livrezi, o resetezi.
-#dictionar modificat de maia
-var current_pita_state: Dictionary = {
-	"meat_type": "",
-	"is_cut": false,
-	"sauces": [],
-	"vegetables": [],
+var current_pita_state: Dictionary = _new_pita_state()
 
-	"scores": {
-		"cutting": 0,
-		"waiting": 0,
-		"assembly": 0,
-		"wrapping": 0
-	},
-
-	"total_score": 0
-}
-
-#functii adaugate de maia
-func update_station_score(station_name: String, score: int) -> void:
-	current_pita_state["scores"][station_name] = score
-
-	var total := 0
-	for station_score in current_pita_state["scores"].values():
-		total += station_score
-
-	current_pita_state["total_score"] = total
-
-
-func save_current_pita() -> void:
-	completed_pitas.append(current_pita_state.duplicate(true))
-
-	current_pita_state = {
+static func _new_pita_state() -> Dictionary:
+	return {
 		"meat_type": "",
 		"is_cut": false,
 		"sauces": [],
@@ -68,14 +37,27 @@ func save_current_pita() -> void:
 		},
 		"total_score": 0
 	}
-	
-#am terminat cu functiile adaugate de maia
+
+func update_station_score(station_name: String, score: int) -> void:
+	current_pita_state["scores"][station_name] = score
+
+	var total := 0
+	for station_score in current_pita_state["scores"].values():
+		total += station_score
+
+	current_pita_state["total_score"] = total
+
+
+func save_current_pita() -> void:
+	completed_pitas.append(current_pita_state.duplicate(true))
+	current_pita_state = _new_pita_state()
 
 var completed_pitas: Array[Dictionary] = []
 # ---------------------------------------------------------
 # 5. PRIVATE VARIABLES
 # ---------------------------------------------------------
 var _assembly_camera: Camera2D
+var _sauce_finish_timer: Timer
 var _go_to_sauces_button: Button
 var _go_to_wrapping_button: Button
 
@@ -86,6 +68,8 @@ var _go_to_wrapping_button: Button
 @onready var _cutting_station: Node = %MeatSelect
 @onready var _assembly_station: Node = %AssemblyStation
 @onready var _wrapping_station: Node = %WrappingStation
+
+@onready var _order_camera: Camera2D = _order_station.find_child("Camera2D", true, false)
 
 @onready var _btn_order: Button = %BtnOrder
 @onready var _btn_cutting: Button = %BtnCutting
@@ -121,6 +105,9 @@ func _ready() -> void:
 
 ## Shows only the given station and hides all others.
 func _show_only(station: Node) -> void:
+	if station != _assembly_station:
+		finish_sauce_mode()
+
 	_order_station.hide()
 	_cutting_station.hide()
 	_assembly_station.hide()
@@ -135,13 +122,13 @@ func _show_only(station: Node) -> void:
 	station.show()
 
 func _go_to_order() -> void:
+	_reset_current_pita_state()
 	_show_only(_order_station)
+	_activate_camera_for(_order_station)
 
-
-#modificate de maia
 func _go_to_cutting() -> void:
 	_show_only(_cutting_station)
-
+	_activate_camera_for(_cutting_station)
 
 func _go_to_assembly() -> void:
 	_show_only(_assembly_station)
@@ -179,14 +166,14 @@ func _go_to_wrapping() -> void:
 		_wrapping_station.receive_pita_from_assembly(lipie_container, current_pita_state)
 
 	_show_only(_wrapping_station)
+	_activate_camera_for(_wrapping_station)
 
-#sfarsit	
 
 # ---------------------------------------------------------
 # 10. SIGNAL CALLBACKS
 # ---------------------------------------------------------
 func _on_day_ended() -> void:
-	get_tree().change_scene_to_file("res://scenes/menus/day_transition.tscn")
+	get_tree().change_scene_to_file("res://scenes/day_management/day_transition.tscn")
 
 
 func _create_assembly_buttons() -> void:
@@ -244,14 +231,26 @@ func _go_to_assembly_sauces() -> void:
 		).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 
 	await tween.finished
-	
-
-	
 
 	if _go_to_wrapping_button:
 		_go_to_wrapping_button.visible = true
 
 
+func _activate_camera_for(station: Node) -> void:
+	if _assembly_camera:
+		_assembly_camera.enabled = false
+
+	var station_camera: Camera2D = station.find_child("Camera2D", true, false)
+	if station_camera:
+		station_camera.enabled = true
+		station_camera.make_current()
+	elif _order_camera:
+		_order_camera.enabled = true
+		_order_camera.make_current()
+
+
+func _reset_current_pita_state() -> void:
+	current_pita_state = _new_pita_state()
 
 func _create_sauce_finish_timer() -> void:
 	_sauce_finish_timer = Timer.new()
@@ -265,9 +264,16 @@ func restart_sauce_finish_timer() -> void:
 		_sauce_finish_timer.start()
 		
 func finish_sauce_mode() -> void:
+	if _assembly_station:
+		var lipie = _assembly_station.find_child("Lipie", true, false)
+		if lipie and lipie.has_method("finalizeaza_minigame_sos"):
+			if lipie.mod_sos_activ:
+				lipie.finalizeaza_minigame_sos()
+
 	for preview in get_tree().get_nodes_in_group("sauce_drag_preview"):
 		if preview and is_instance_valid(preview):
 			preview.queue_free()
+	
 	get_viewport().gui_cancel_drag()
 	get_viewport().gui_release_focus()
 

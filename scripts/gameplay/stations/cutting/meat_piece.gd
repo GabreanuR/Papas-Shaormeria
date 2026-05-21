@@ -1,7 +1,7 @@
 extends Node2D
 
 var velocity := Vector2.ZERO
-var gravity := 520.0
+@export var gravity := 520.0
 var rotation_speed := 0.0
 
 func _ready():
@@ -32,5 +32,5 @@ func _process(delta):
 	# se micșorează puțin când cade
 	scale *= 0.995
 
-	if position.y > 850:
+	if position.y > get_viewport_rect().size.y:
 		queue_free()

@@ -11,7 +11,7 @@ var required_swipes := ["right", "left", "up"]
 var current_swipe_index := 0
 var mistakes := 0
 
-func _input(event):
+func _unhandled_input(event):
 	if current_swipe_index >= required_swipes.size():
 		return
 
@@ -25,25 +25,19 @@ func _input(event):
 
 				if delta.length() >= min_swipe_distance:
 					var direction := get_swipe_direction(delta)
-					print("Directie:", direction)
 
 					if current_swipe_index < required_swipes.size() and direction == required_swipes[current_swipe_index]:
 						current_swipe_index += 1
-						print("Corect:", current_swipe_index, "/", required_swipes.size())
 
 						update_visual()
 
 						if current_swipe_index >= required_swipes.size():
 							var quality: float = max(0.0, 1.0 - mistakes * 0.2)
-							print("WRAP COMPLET! Quality:", quality)
 							wrap_completed.emit(quality)
 							return
 					else:
-						print("Gresit -> reset")
 						mistakes += 1
 						reset_wrap()
-				else:
-					print("Swipe prea scurt")
 
 			is_dragging = false
 

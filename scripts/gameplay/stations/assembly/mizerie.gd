@@ -1,7 +1,7 @@
 extends TextureRect
 
 func _can_drop_data(_at_position, data):
-	return typeof(data) == TYPE_DICTIONARY
+	return typeof(data) == TYPE_DICTIONARY and data.has("poza")
 
 func _drop_data(_at_position, data):
 	var mouse_pos = get_global_mouse_position()

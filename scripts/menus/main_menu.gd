@@ -1,9 +1,7 @@
 extends Control
 
-const SAVE_FILE_TEMPLATE: String = "user://save_slot_%d.json"
 const LOADING_SCENE: String = "res://scenes/menus/loading_screen.tscn"
 const MAX_SHOP_NAME_LENGTH: int = 20
-const MAX_SAVE_SLOTS: int = 3
 
 
 @export var menu_music: AudioStream
@@ -69,18 +67,8 @@ func _toggle_shop_lights(turning_off: bool) -> void:
 			if light.has_method("turn_on"):
 				light.turn_on()
 
-func _get_default_save_data(shop_name: String) -> Dictionary:
-	return {
-		"day": 1,
-		"money": 150.0,
-		"reputation": 0,
-		"inventory": { "meat_kg": 10.0, "pita_bread": 20, "garlic_sauce": 15, "spicy_sauce": 15 },
-		"unlocked_upgrades": [],
-		"shop_name": shop_name
-	}
-
 func _start_new_game(save_path: String, shop_name: String) -> void:
-	var data := _get_default_save_data(shop_name)
+	var data := Global.get_default_save_data(shop_name)
 	var file := FileAccess.open(save_path, FileAccess.WRITE)
 
 	if not file:
@@ -133,33 +121,14 @@ func _do_transition() -> void:
 	if err != OK:
 		push_error("Critical Error: Could not load '%s'. Error code: %d" % [LOADING_SCENE, err])
 
-func _get_shop_name_from_file(path: String) -> String:
-	if not FileAccess.file_exists(path):
-		return "Error Reading"
-
-	var file := FileAccess.open(path, FileAccess.READ)
-	if not file:
-		return "Error Reading"
-
-	var content := file.get_as_text()
-	file.close()
-
-	var json := JSON.new()
-	if json.parse(content) == OK:
-		var data = json.get_data()
-		if typeof(data) == TYPE_DICTIONARY and data.has("shop_name"):
-			return str(data["shop_name"])
-
-	return "No Name Found"
-
 func _is_name_duplicate(new_name: String, ignore_slot_id: int) -> bool:
-	for i in range(1, MAX_SAVE_SLOTS + 1):
+	for i in range(1, Global.MAX_SAVE_SLOTS + 1):
 		if i == ignore_slot_id:
 			continue
 
-		var path: String = SAVE_FILE_TEMPLATE % i
+		var path: String = Global.SAVE_FILE_TEMPLATE % i
 		if FileAccess.file_exists(path):
-			if _get_shop_name_from_file(path).to_lower() == new_name.to_lower():
+			if Global.get_shop_name_from_file(path).to_lower() == new_name.to_lower():
 				return true
 
 	return false
@@ -233,7 +202,7 @@ func _on_saves_request_new(slot_id: int, is_filled: bool) -> void:
 
 func _on_saves_request_load(slot_id: int) -> void:
 	_current_slot_id = slot_id
-	_load_game(SAVE_FILE_TEMPLATE % slot_id)
+	_load_game(Global.SAVE_FILE_TEMPLATE % slot_id)
 
 func _on_saves_request_delete(slot_id: int) -> void:
 	_current_slot_id = slot_id
@@ -243,7 +212,7 @@ func _on_saves_request_delete(slot_id: int) -> void:
 
 # --- Action Popup Responses ---
 func _on_popup_action_confirmed() -> void:
-	var save_path: String = SAVE_FILE_TEMPLATE % _current_slot_id
+	var save_path: String = Global.SAVE_FILE_TEMPLATE % _current_slot_id
 
 	if _is_deleting:
 		if FileAccess.file_exists(save_path):
@@ -256,7 +225,7 @@ func _on_popup_action_confirmed() -> void:
 		_action_popup.ask_input("Name your new shop:", "Start game")
 
 func _on_popup_input_confirmed(shop_name: String) -> void:
-	var save_path: String = SAVE_FILE_TEMPLATE % _current_slot_id
+	var save_path: String = Global.SAVE_FILE_TEMPLATE % _current_slot_id
 
 	if shop_name.is_empty():
 		shop_name = "Shop " + str(_current_slot_id)

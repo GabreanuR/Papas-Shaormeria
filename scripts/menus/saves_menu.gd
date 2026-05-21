@@ -5,7 +5,7 @@ signal request_load(slot_id: int)
 signal request_new(slot_id: int, is_filled: bool)
 signal request_delete(slot_id: int)
 
-const SAVE_FILE_TEMPLATE = "user://save_slot_%d.json"
+
 
 var _menu_mode: String = "" # "new" or "load"
 var _is_busy: bool = false
@@ -71,15 +71,15 @@ func _refresh_slots() -> void:
 		var name_label: Label = slot_labels[i]
 		var slot_id: int = i + 1
 		
-		var save_path: String = SAVE_FILE_TEMPLATE % slot_id
+		var save_path: String = Global.SAVE_FILE_TEMPLATE % slot_id
 		var has_save: bool = FileAccess.file_exists(save_path)
 		
 		slot_btn.text = "" 
 		slot_btn.modulate = Color.WHITE
 		
 		if has_save:
-			var full_name: String = _get_shop_name_from_file(save_path)
-			name_label.text = full_name.left(17) + "..." if full_name.length() > 20 else full_name
+			var full_name: String = Global.get_shop_name_from_file(save_path)
+			name_label.text = full_name.left(17) + "..." if full_name.length() > 17 else full_name
 			name_label.show() 
 			slot_btn.disabled = false
 			del_btn.visible = (_menu_mode == "load")
@@ -111,31 +111,7 @@ func _refresh_slots() -> void:
 			del_btn.pressed.connect(_on_delete_clicked.bind(slot_id))
 			
 	
-func _get_shop_name_from_file(path: String) -> String:
-	if not FileAccess.file_exists(path):
-		return "No Save"
-		
-	var file := FileAccess.open(path, FileAccess.READ)
-	if not file: 
-		return "Error Reading File"
-	
-	var content := file.get_as_text()
-	file.close()
-	
-	# Future-proof parsing: Use JSON instance to safely catch and log corruption
-	var json := JSON.new()
-	var error := json.parse(content)
-	
-	if error != OK:
-		push_error("Save file corrupted or invalid JSON in '%s'. Error on line %d: %s" % [path, json.get_error_line(), json.get_error_message()])
-		return "Corrupt Save"
-		
-	var data = json.get_data()
-	if typeof(data) == TYPE_DICTIONARY:
-		if data.has("shop_name"):
-			return str(data["shop_name"])
-			
-	return "Unknown Shop"
+
 
 func _on_slot_clicked(slot_id: int, is_filled: bool) -> void:
 	if _menu_mode == "load":

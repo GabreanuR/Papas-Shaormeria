@@ -25,10 +25,7 @@ var mod_sos_activ = false
 var sticla_vizuala = null
 var punctaj_sos : float = 100.0
 var numar_picaturi_ideale : int = 250 
-#var adaugate de maia
-#var chicken_pita_texture := 
-#var beef_pita_texture := 
-#sfarsit
+
 
 func _ready():
 	get_parent().visible = false
@@ -120,7 +117,7 @@ func _process(_delta):
 		sticla_vizuala.global_position = get_global_mouse_position()
 		sticla_vizuala.offset = Vector2(0, 125) 
 
-func _input(event):
+func _unhandled_input(event):
 	if mod_sos_activ:
 		if event is InputEventMouseButton:
 			if event.button_index == MOUSE_BUTTON_LEFT:
@@ -130,7 +127,11 @@ func _input(event):
 					if sos_curent: sos_curent.activ = false
 			
 			if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
-				finalizeaza_minigame_sos()
+				var gm = get_tree().current_scene
+				if gm and gm.has_method("finish_sauce_mode"):
+					gm.finish_sauce_mode()
+				else:
+					finalizeaza_minigame_sos()
 
 func finalizeaza_minigame_sos():
 	mod_sos_activ = false
@@ -147,16 +148,9 @@ func finalizeaza_minigame_sos():
 	
 	if sos_curent:
 		calculeaza_scor_sos()
+		if sos_curent.has_method("finish_sauce"):
+			sos_curent.finish_sauce()
 		sos_curent = null
-		
-	var camera = get_viewport().get_camera_2d()
-	if camera:
-		var active_tweens = get_tree().get_processed_tweens()
-		for t in active_tweens:
-			t.kill() 
-
-		camera.zoom = Vector2(1.0, 1.0)
-		camera.global_position = Vector2(1945, 0) 
 
 func calculeaza_scor_sos():
 	var picaturi_bune = get_tree().get_nodes_in_group("sos_pe_lipie")
@@ -174,10 +168,7 @@ func calculeaza_scor_sos():
 	var scor_final = scor_topping - penalizare_mizerie
 	scor_final = clamp(scor_final, 0, 100)
 	
-	print("--- REZULTAT FINAL SOS ---")
-	print("Picături pe shaorma: ", nr_bune)
-	print("Picături pe masă: ", nr_rele)
-	print("Scor: ", int(scor_final), "%")
+
 	
 	return scor_final
 	

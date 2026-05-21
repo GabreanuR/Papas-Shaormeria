@@ -3,7 +3,7 @@ extends TextureRect
 @export var nume_ingredient: String = "Cartofi"
 @export var textura_shaorma: Texture2D
 
-func _get_drag_data(at_position):
+func _get_drag_data(_at_position):
 	var preview = TextureRect.new()
 	
 	if textura_shaorma:

@@ -1,6 +1,10 @@
 extends Control
 
 enum DayState { MORNING, NIGHT }
+
+const DEFAULT_DAY_DURATION := 10.0  # 3 minutes average
+const GAMEPLAY_SCENE := "res://scenes/gameplay/master/gameplay_master.tscn"
+
 var _current_state: DayState = DayState.MORNING
 
 # ---------------------------------------------------------
@@ -58,6 +62,7 @@ func _set_state(new_state: DayState) -> void:
 	match _current_state:
 		DayState.MORNING:
 			_night_container.hide()
+			_btn_next_day.hide()
 			_summary_menu.hide()     # Close summary panel from previous night
 			_upgrades_menu.hide()    # Ensure modals are closed on re-entry
 			_customize_menu.hide()
@@ -68,13 +73,14 @@ func _set_state(new_state: DayState) -> void:
 			_morning_container.hide()
 			_night_container.show()
 			_summary_menu.show()     # Auto-open summary at end of day
+			_btn_next_day.show()
 
 # ---------------------------------------------------------
 # SIGNAL CALLBACKS (Fluxul zilelor)
 # ---------------------------------------------------------
 func _on_start_day_pressed() -> void:
-	Global.start_day(30.0)
-	get_tree().change_scene_to_file("res://scenes/gameplay/master/gameplay_master.tscn")
+	Global.start_day(DEFAULT_DAY_DURATION)
+	get_tree().change_scene_to_file(GAMEPLAY_SCENE)
 
 func _on_next_day_pressed() -> void:
 	Global.advance_day()

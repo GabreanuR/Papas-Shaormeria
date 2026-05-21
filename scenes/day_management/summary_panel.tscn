@@ -3,63 +3,85 @@
 [ext_resource type="Script" uid="uid://bkd2sfa3u2w4x" path="res://scripts/day_management/summary_panel.gd" id="1_3d51l"]
 [ext_resource type="Theme" uid="uid://icmwfh7h1jg8" path="res://assets/theme/global_ui_theme.tres" id="1_5nkx8"]
 
-[node name="SummaryPanel" type="Panel" unique_id=1292618273]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_5nkx8"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_yvypu"]
+
+[node name="SummaryPanel" type="PanelContainer" unique_id=1912706860]
+offset_right = 450.0
+offset_bottom = 400.0
 theme = ExtResource("1_5nkx8")
 script = ExtResource("1_3d51l")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1488408892]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="Label" type="Label" parent="VBoxContainer" unique_id=1191741731]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1794016088]
 layout_mode = 2
-text = "Daily Report"
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
 
-[node name="HSeparator" type="HSeparator" parent="VBoxContainer" unique_id=1235095646]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1488408892]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=1379333639]
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1191741731]
+layout_mode = 2
+theme = ExtResource("1_5nkx8")
+theme_type_variation = &"TitleLabel"
+text = "Daily Report:"
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer" unique_id=1235095646]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/separator = SubResource("StyleBoxEmpty_5nkx8")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=1379333639]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer" unique_id=495377399]
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=495377399]
 layout_mode = 2
+size_flags_horizontal = 3
 text = "Customers Served:"
 
-[node name="LblCustomers" type="Label" parent="VBoxContainer/HBoxContainer" unique_id=1864039413]
-unique_name_in_owner = true
-layout_mode = 2
-text = "%Value
-"
-
-[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer" unique_id=313085752]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer2" unique_id=1547771874]
-layout_mode = 2
-text = "Perfect Orders:"
-
-[node name="LblPerfects" type="Label" parent="VBoxContainer/HBoxContainer2" unique_id=97307780]
+[node name="LblCustomers" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=1864039413]
 unique_name_in_owner = true
 layout_mode = 2
 text = "%Value"
+horizontal_alignment = 2
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer" unique_id=21531634]
+[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=313085752]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer3" unique_id=1811907000]
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer2" unique_id=1547771874]
 layout_mode = 2
+size_flags_horizontal = 3
+text = "Perfect Orders:"
+
+[node name="LblPerfects" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer2" unique_id=97307780]
+unique_name_in_owner = true
+layout_mode = 2
+text = "%Value"
+horizontal_alignment = 2
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=21531634]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer3" unique_id=1811907000]
+layout_mode = 2
+size_flags_horizontal = 3
 text = "Tips Earned:"
 
-[node name="LblTips" type="Label" parent="VBoxContainer/HBoxContainer3" unique_id=708629714]
+[node name="LblTips" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer3" unique_id=708629714]
 unique_name_in_owner = true
 layout_mode = 2
 text = "$ %Value"
+horizontal_alignment = 2
 
-[node name="HSeparator2" type="HSeparator" parent="VBoxContainer" unique_id=1881191007]
+[node name="HSeparator2" type="HSeparator" parent="MarginContainer/VBoxContainer" unique_id=1881191007]
 layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/separator = SubResource("StyleBoxEmpty_yvypu")
 
-[node name="LblTotal" type="Label" parent="VBoxContainer" unique_id=1085223181]
+[node name="LblTotal" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1085223181]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Total Profit"

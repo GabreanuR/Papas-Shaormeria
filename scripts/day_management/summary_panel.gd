@@ -1,4 +1,4 @@
-extends Panel
+extends PanelContainer
 
 @onready var lbl_customers: Label = %LblCustomers
 @onready var lbl_perfects: Label = %LblPerfects
@@ -7,18 +7,19 @@ extends Panel
 
 func _ready() -> void:
 	visibility_changed.connect(_on_visibility_changed)
+	
+	# If the panel is already visible when the scene starts, force an update
+	if visible:
+		_refresh_stats()
 
 func _on_visibility_changed() -> void:
 	if visible:
 		_refresh_stats()
 
 func _refresh_stats() -> void:
-	# Citim dicționarul din Global
 	var stats = Global.daily_stats
 	
-	lbl_customers.text = str(stats["customers_served"])
-	lbl_perfects.text = str(stats["perfect_orders"])
-	lbl_tips.text = "$ " + str(stats["tips_earned"])
-	
-	# Folosim daily_earnings, exact cum l-ai denumit în noul Global
-	lbl_total.text = "$ " + str(Global.daily_earnings)
+	lbl_customers.text = str(stats.get("customers_served", 0))
+	lbl_perfects.text = str(stats.get("perfect_orders", 0))
+	lbl_tips.text = "$ %.2f" % stats.get("tips_earned", 0.0)
+	lbl_total.text = "$ %.2f" % Global.daily_earnings

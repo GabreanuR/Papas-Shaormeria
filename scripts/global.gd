@@ -124,7 +124,7 @@ func add_money(amount: float) -> void:
 	daily_earnings += amount
 	daily_earnings_changed.emit(daily_earnings)
 
-## Curăță datele zilnice la începutul fiecărei dimineți
+## Clears daily statistics at the start of each morning
 func reset_daily_stats() -> void:
 	daily_stats = {
 		"customers_served": 0,
@@ -138,7 +138,7 @@ func reset_daily_stats() -> void:
 ## Starts the day timer. Called by DayTransition when the player clicks "Start Day".
 func start_day(duration_seconds: float) -> void:
 	is_night = false
-	reset_daily_stats() # Folosim noua funcție aici!
+	reset_daily_stats() # Call the new reset function here!
 	_day_timer.start(duration_seconds)
 
 ## Advances the day counter by one and resets the night flag.

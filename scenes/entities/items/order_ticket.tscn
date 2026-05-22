@@ -14,8 +14,6 @@ shadow_size = 4
 [node name="OrderTicket" type="Control" unique_id=1253955845]
 layout_mode = 3
 anchors_preset = 0
-offset_right = 600.0
-offset_bottom = 600.0
 script = ExtResource("1_ta5e0")
 
 [node name="TextureRect" type="TextureRect" parent="." unique_id=1241074478]

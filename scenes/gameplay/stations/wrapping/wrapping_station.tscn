@@ -11,10 +11,17 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0cijx"]
 size = Vector2(244.75, 343.75)
 
-[node name="WrappingStation" type="Node2D" unique_id=931503450]
+[node name="WrappingStation" type="Control" unique_id=1569005863]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_0cijx")
 
 [node name="Background" type="TextureRect" parent="." unique_id=1973410820]
+layout_mode = 0
 offset_right = 1920.0
 offset_bottom = 1091.0
 texture = ExtResource("1_ye6o2")
@@ -67,6 +74,7 @@ scale = Vector2(0.4129306, 0.34429064)
 texture = ExtResource("4_xqjmc")
 
 [node name="WrapGestureArea" type="ColorRect" parent="." unique_id=1180051629]
+layout_mode = 0
 offset_left = 725.0
 offset_top = 552.0
 offset_right = 1082.0
@@ -75,6 +83,7 @@ color = Color(1, 0.7118161, 1, 0.19800001)
 script = ExtResource("6_loyu3")
 
 [node name="FadeOverlay" type="ColorRect" parent="." unique_id=1221438709]
+layout_mode = 0
 offset_left = -50.0
 offset_top = -26.0
 offset_right = 2001.0

@@ -1,72 +1,130 @@
-extends HBoxContainer
+extends MarginContainer
 
-# Enumerăm cele două stări posibile ale barei
+# Enum defining the two possible states for the top bar
 enum BarMode { HUB, GAMEPLAY }
 
-# Această variabilă apare în Inspector! O poți schimba din Editor pentru fiecare scenă.
+# This variable appears in the Inspector! You can change it from the Editor for each scene.
 @export var mode: BarMode = BarMode.HUB
 
-@onready var first_label: Label = %FirstLabel # "Day X" or "02:30"
-@onready var second_label: Label = %SecondLabel # "$ 150" (Hub) or "Profit: $ 20" (Gameplay)
+# ---------------------------------------------------------
+# GRAFICI EXPORTATE PENTRU EDITOR
+# ---------------------------------------------------------
+@export_group("Hub Graphics")
+@export var hub_info_style: StyleBox
+@export var hub_btn_normal: Texture2D
+@export var hub_btn_hover: Texture2D
+@export var hub_btn_pressed: Texture2D
+
+@export_group("Gameplay Graphics")
+@export var gameplay_info_style: StyleBox
+@export var gameplay_btn_normal: Texture2D
+@export var gameplay_btn_hover: Texture2D
+@export var gameplay_btn_pressed: Texture2D
+
+# ---------------------------------------------------------
+# REFERINȚE NODURI
+# ---------------------------------------------------------
+@onready var first_label: Label = %LblDay
+@onready var second_label: Label = %LblProfit
 @onready var menu_btn: TextureButton = %MenuBtn
 @onready var quick_menu: CanvasLayer = $QuickMenu
 
-# Stored tween reference to prevent overlapping scale animations
-var _label_tween: Tween
+@onready var info_bg: PanelContainer = %InfoBackground 
+@onready var ticket_bg: PanelContainer = %TicketBackground
 
 func _ready() -> void:
 	menu_btn.pressed.connect(_on_menu_pressed)
 	
 	if mode == BarMode.HUB:
-		# Hub mode (day_transition scene)
-		_update_hub_display()
-		Global.money_changed.connect(_on_global_money_changed)
-		Global.day_changed.connect(_on_day_changed)
-		set_process(false) # No timer to track in hub
-		
+		_setup_hub_mode()
 	elif mode == BarMode.GAMEPLAY:
-		# Gameplay mode (gameplay_master scene)
-		_update_gameplay_display()
-		Global.daily_earnings_changed.connect(_on_daily_money_changed)
-		set_process(true) # Drive the countdown clock via _process
+		_setup_gameplay_mode()
 
-# Drives the countdown clock (GAMEPLAY mode only)
+func _setup_hub_mode() -> void:
+	_update_hub_display()
+	Global.money_changed.connect(_on_global_money_changed)
+	Global.day_changed.connect(_on_day_changed)
+	set_process(false) 
+	
+	# 1. Ascundem invizibil șina de bonuri
+	ticket_bg.modulate.a = 0.0
+	
+	# 2. Aplicăm grafica de fundal pentru informații
+	if hub_info_style:
+		info_bg.add_theme_stylebox_override("panel", hub_info_style)
+		
+	# 3. Aplicăm cele 3 texturi pentru butonul de meniu (Meniul de Hub)
+	menu_btn.texture_normal = hub_btn_normal
+	menu_btn.texture_hover = hub_btn_hover
+	menu_btn.texture_pressed = hub_btn_pressed
+
+func _setup_gameplay_mode() -> void:
+	_update_gameplay_display()
+	Global.daily_earnings_changed.connect(_on_daily_money_changed)
+	set_process(true) 
+	
+	# 1. Arătăm complet șina de bonuri
+	ticket_bg.modulate.a = 1.0
+	
+	# 2. Aplicăm grafica de fundal pentru informații
+	if gameplay_info_style:
+		info_bg.add_theme_stylebox_override("panel", gameplay_info_style)
+		
+	# 3. Aplicăm cele 3 texturi pentru butonul de meniu (Clopoțel/Bon etc.)
+	menu_btn.texture_normal = gameplay_btn_normal
+	menu_btn.texture_hover = gameplay_btn_hover
+	menu_btn.texture_pressed = gameplay_btn_pressed
+
+# ---------------------------------------------------------
+# LOGICA DE TIMER (GAMEPLAY)
+# ---------------------------------------------------------
 func _process(_delta: float) -> void:
-	var time_left: float = Global.day_time_left  # Public property, not private _day_timer
+	var time_left: float = Global.day_time_left
 	var minutes := int(time_left / 60.0)
 	var seconds := int(time_left) % 60
-	# Format as a digital clock: "02:05"
 	first_label.text = "%02d:%02d" % [minutes, seconds]
 
-# --- HUB FUNCTIONS (career totals) ---
+# ---------------------------------------------------------
+# HUB FUNCTIONS 
+# ---------------------------------------------------------
 func _update_hub_display() -> void:
-	first_label.text = "Day " + str(Global.current_save["day"])
-	second_label.text = "$ %d" % int(Global.current_save["money"])
+	first_label.text = "Day " + str(int(Global.current_save["day"]))
+	second_label.text = "$ %.2f" % float(Global.current_save["money"])
 
 func _on_global_money_changed(new_amount: float) -> void:
-	second_label.text = "$ %d" % int(new_amount)
+	second_label.text = "$ %.2f" % new_amount
 	_animate_label(second_label)
 
 func _on_day_changed(new_day: int) -> void:
-	first_label.text = "Day " + str(new_day)
+	first_label.text = "Day " + str(int(new_day))
 	_animate_label(first_label)
 
-# --- GAMEPLAY FUNCTIONS (daily earnings) ---
+# ---------------------------------------------------------
+# GAMEPLAY FUNCTIONS 
+# ---------------------------------------------------------
 func _update_gameplay_display() -> void:
-	second_label.text = "Profit: $ %d" % int(Global.daily_earnings)
+	second_label.text = "Profit: $ %.2f" % Global.daily_earnings
 
 func _on_daily_money_changed(new_amount: float) -> void:
-	second_label.text = "Profit: $ %d" % int(new_amount)
+	second_label.text = "Profit: $ %.2f" % new_amount
 	_animate_label(second_label)
 
-# Scale-pulse effect when values change. Kills any in-progress tween first
-# to prevent overlapping animations when multiple updates fire in quick succession.
+# ---------------------------------------------------------
+# UTILITARE
+# ---------------------------------------------------------
 func _animate_label(lbl: Label) -> void:
-	if _label_tween:
-		_label_tween.kill()
-	_label_tween = create_tween()
-	_label_tween.tween_property(lbl, "scale", Vector2(1.2, 1.2), 0.1)
-	_label_tween.tween_property(lbl, "scale", Vector2(1.0, 1.0), 0.1)
+	lbl.pivot_offset = lbl.size / 2.0
+	
+	if lbl.has_meta("tween"):
+		var old_tween: Tween = lbl.get_meta("tween")
+		if old_tween and old_tween.is_valid():
+			old_tween.kill()
+			
+	var tween := create_tween()
+	lbl.set_meta("tween", tween)
+	
+	tween.tween_property(lbl, "scale", Vector2(1.2, 1.2), 0.1)
+	tween.tween_property(lbl, "scale", Vector2(1.0, 1.0), 0.1)
 
 func _on_menu_pressed() -> void:
 	if is_instance_valid(quick_menu):

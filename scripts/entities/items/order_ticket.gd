@@ -1,22 +1,18 @@
-extends Control # Sau TextureRect, depinde ce tip de nod e radacina biletului tau
+extends Control
 
 signal comanda_gata
 
-# Legam codul de containerul tau vizual (ca sa stim unde sa bagam pozele)
-@onready var container_ingrediente = $VBoxContainer 
+@onready var container_ingrediente: VBoxContainer = $VBoxContainer 
+@onready var label_numar: Label = $Number
 
-@onready var label_numar = $Number
+const SMALL_SCALE := Vector2(0.25, 0.25)
+const LARGE_SCALE := Vector2(1.0, 1.0)
 
-# Variabile pentru Drag & Drop
-var e_pe_sfoara: bool = false
-var se_trage: bool = false
-var offset_mouse: Vector2 = Vector2.ZERO
-var nod_carlig: Control = null
-var sfoara_parent: BoxContainer = null
+var is_locked_large := false
+var _zoom_tween: Tween
 
-# 1. Dictionarul de traducere (Cuvant -> Poza)
-# ATENTIE: Verifica ca caile sa fie exact ca in folderele tale!
-var imagini_ingrediente = {
+# Dictionarul de traducere (Cuvant -> Poza) rămâne neatins!
+var imagini_ingrediente := {
 	"lipie": preload("res://assets/graphics/ingredients/lipie.png"), 
 	"carne_pui": preload("res://assets/graphics/ingredients/carne_pui.png"),
 	"carne_vita": preload("res://assets/graphics/ingredients/carne_vita.png"),
@@ -36,19 +32,53 @@ var imagini_ingrediente = {
 	"jalapenos": preload("res://assets/graphics/ingredients/jalapenos.png")
 }
 
-func _ready():
-	set_process(false)
-
-# 2. Funcția care va fi apelata cand clientul striga comanda
-func primeste_comanda(lista_ingrediente: Array, numar_client: int):
-	# Setăm textul biletului. 
-	# Funcția pad_zeros(2) este un truc genial din Godot: transformă automat numărul 1 în "01", 2 în "02", dar pe 10 îl lasă "10".
-	label_numar.text = str(numar_client).pad_zeros(2)
+func _ready() -> void:
+	hide()
 	
-	# Biletul devine vizibil
+	# Setăm punctul de pivot în centru ca să se mărească frumos din mijloc!
+	pivot_offset = size / 2.0
+	
+	mouse_entered.connect(_on_mouse_hover_start)
+	mouse_exited.connect(_on_mouse_hover_end)
+
+# ==========================================
+# GESTIONAREA MĂRIMII ȘI A HOVER-ULUI
+# ==========================================
+
+func set_locked_large(locked: bool) -> void:
+	is_locked_large = locked
+	if is_locked_large:
+		scale = LARGE_SCALE
+	else:
+		scale = SMALL_SCALE
+
+func _on_mouse_hover_start() -> void:
+	if is_locked_large: return
+	
+	z_index = 50 
+	_animate_size(LARGE_SCALE)
+
+func _on_mouse_hover_end() -> void:
+	if is_locked_large: return
+	
+	z_index = 0
+	_animate_size(SMALL_SCALE)
+
+func _animate_size(target_scale: Vector2) -> void:
+	if _zoom_tween and _zoom_tween.is_valid():
+		_zoom_tween.kill()
+		
+	_zoom_tween = create_tween()
+	_zoom_tween.tween_property(self, "scale", target_scale, 0.15).set_ease(Tween.EASE_OUT)
+
+# ==========================================
+# POPULARE ȘI DRAG & DROP
+# ==========================================
+
+func primeste_comanda(lista_ingrediente: Array, numar_client: int) -> void:
+	label_numar.text = str(numar_client).pad_zeros(2)
 	show()
 	
-	# CERINȚA 1: Pauză de 0.5 secunde înainte să apară primul ingredient
 	await get_tree().create_timer(0.5).timeout
 	
 	for ingredient in lista_ingrediente:
@@ -58,68 +88,37 @@ func primeste_comanda(lista_ingrediente: Array, numar_client: int):
 			iconita_noua.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 			iconita_noua.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 			
-			# CERINȚA 2: Am mărit ingredientele de la 40 la 100. (Te poți juca cu cifrele astea!)
-			iconita_noua.custom_minimum_size = Vector2(48, 48) 
+			# REVENIM la dimensiunea fixă, fără să le forțăm să se întindă vertical!
+			iconita_noua.custom_minimum_size = Vector2(48, 48)
 			
-			# Adăugăm ingredientul în container
 			container_ingrediente.add_child(iconita_noua)
-			
-			# CERINȚA 3: Trucul pentru stivuire de jos în sus!
-			# Mutăm noul ingredient adăugat la indexul 0 (adică deasupra celorlalte)
 			container_ingrediente.move_child(iconita_noua, 0)
 			
-			# Pauza dintre ingrediente
 			await get_tree().create_timer(0.5).timeout
 			
-	# Mai așteptăm o secundă ca jucătorul să apuce să citească comanda finală
-	await get_tree().create_timer(1.5).timeout 
-	# Ascundem biletul
-	hide() 
-	# Strigăm către scenă că am terminat!
 	comanda_gata.emit()
 
-# Această funcție citește click-urile direct pe bilet
-func _gui_input(event):
-	if not e_pe_sfoara:
-		return
-
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
-		if event.pressed:
-			# Începem să tragem biletul
-			se_trage = true
-			set_process(true)
-			offset_mouse = global_position - get_global_mouse_position()
-			
-			# Rupem biletul de pe cârlig
-			if get_parent() == nod_carlig:
-				# Folosim funcția reparent (nativă în Godot 4) pentru o mutare mai curată
-				reparent(sfoara_parent.get_parent())
-				nod_carlig.queue_free()
-				
-			global_position = get_global_mouse_position() + offset_mouse 
-				
-		elif not event.pressed: 
-			# Dacă prinde semnalul normal de release, îl eliberăm
-			elibereaza_bilet()
-
-# Verificăm constant mișcarea
-func _process(_delta):
-	if se_trage:
-		global_position = get_global_mouse_position() + offset_mouse
-		
-		# TRUCUL SALVATOR: 
-		# Dacă biletul crede că e tras, dar fizic mouse-ul nu mai e apăsat, îl forțăm să dea drumul!
-		if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-			elibereaza_bilet()
-
-# Logica unde se așază biletul am pus-o separat ca să fie ordonată
-func elibereaza_bilet():
-	se_trage = false
-	set_process(false)
+func _get_drag_data(_at_position: Vector2) -> Variant:
+	var date_bilet = {
+		"este_bilet_comanda": true,
+		"nod_bilet": self,
+		"numar_client": label_numar.text
+	}
 	
-	if global_position.y > 150: 
-		scale = Vector2(1.2, 1.2) 
-		position = Vector2(1202, 124) 
-	else:
-		scale = Vector2(0.4, 0.4) 
-		global_position.y = 55
+	var drag_preview = Control.new()
+	var clona_bilet = self.duplicate()
+	
+	# Forțăm clona să fie mare cât e în mână!
+	clona_bilet.scale = LARGE_SCALE 
+	clona_bilet.position = -(clona_bilet.size * clona_bilet.scale) / 2.0 
+	
+	drag_preview.add_child(clona_bilet)
+	set_drag_preview(drag_preview)
+	
+	modulate.a = 0.4
+	return date_bilet
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_DRAG_END:
+		modulate.a = 1.0
+		_on_mouse_hover_end()

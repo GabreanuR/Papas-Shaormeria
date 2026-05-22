@@ -86,6 +86,11 @@ func _ready() -> void:
 	_btn_wrapping.pressed.connect(_go_to_wrapping)
 	_assembly_camera = _assembly_station.find_child("Camera2D", true, false)
 
+	# Fix: Mutăm TopBar-ul în CanvasLayer ca să rămână mereu pe ecran, indiferent unde se duce camera!
+	var top_bar = get_node_or_null("TopBar")
+	if top_bar and $CanvasLayer:
+		top_bar.reparent($CanvasLayer)
+
 	_create_assembly_buttons()
 	_create_sauce_finish_timer()
 

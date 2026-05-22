@@ -6,8 +6,8 @@ extends Node2D
 @onready var buton_comanda = $Customer/TextureButton # Asigură-te că TextureButton e scris exact așa!
 @onready var client = $Customer
 @onready var poza_client = $Customer/Sprite2D
-@onready var bilet = $"../CanvasLayer/OrderTicket"
-@onready var sfoara = $"../CanvasLayer/OrderRope"
+const OrderTicketScene = preload("res://scenes/entities/items/order_ticket.tscn")
+@onready var sfoara = $"../TopBar/HBoxContainer/TicketBackground/TicketZone"
 var contor_clienti: int = 1
 
 # 2. ADAUGĂ în locul lor această listă de "Profiluri" (Dicționare):
@@ -76,42 +76,51 @@ func _on_customer_a_fost_apasat(comanda):
 	client.position = Vector2(800, 55) # 960 cu 540 este fix centrul ecranului
 	client.scale = Vector2(1.3, 1.3)
 	
+	# Creăm biletul vizual și îl punem pe tejghea (în fundal_comanda)
+	var tichet_nou = OrderTicketScene.instantiate()
+	fundal_comanda.add_child(tichet_nou)
+	tichet_nou.position = Vector2(150, 150) # Coordonate de probă pentru tejghea
+	tichet_nou.set_locked_large(true) # Îl ținem mare pe tejghea
+	
 	await get_tree().create_timer(0.5).timeout
 	
 	# Trimitem atât comanda, cât și numărul curent!
-	bilet.primeste_comanda(comanda, contor_clienti)
+	tichet_nou.primeste_comanda(comanda, contor_clienti)
+	
+	# Ne legăm de semnal și transmitem și referința biletului
+	tichet_nou.comanda_gata.connect(_on_order_ticket_comanda_gata.bind(tichet_nou))
 	
 	# După ce am dat comanda biletului, creștem contorul pentru următorul client
 	contor_clienti += 1
 
 # Această funcție se apelează automat când biletul strigă "comanda_gata"
-func _on_order_ticket_comanda_gata():
-	# 1. Cream o copie a biletului
-	var bilet_mic = bilet.duplicate()
-	bilet_mic.show()
-	bilet_mic.position = Vector2(80, 5)
-
+func _on_order_ticket_comanda_gata(tichet_rezolvat):
+	# 1. Deblocăm biletul ca să devină mic (scale = 0.4)
+	tichet_rezolvat.set_locked_large(false)
+	tichet_rezolvat.get_parent().remove_child(tichet_rezolvat)
 	
-	# 2. TRUCUL: Creăm un "cârlig" invizibil care va sta pe sfoară
+	# 2. Creăm un "cârlig" invizibil care va sta pe șina HBoxContainer
 	var carlig = Control.new()
-	# Îi spunem cârligului să rezerve exact 30% din lățimea/înălțimea biletului
-	carlig.custom_minimum_size = bilet.size * 0.4
+	carlig.mouse_filter = Control.MOUSE_FILTER_IGNORE # CRITIC: Ca să nu blocheze click-urile (Drag & Drop)
 	
-	# 3. Micșorăm biletul doar vizual (ingredientele nu se mai strivesc)
-	bilet_mic.scale = Vector2(0.4, 0.4)
-	bilet_mic.e_pe_sfoara = true
-	bilet_mic.nod_carlig = carlig
-	bilet_mic.sfoara_parent = sfoara
+	# Cârligul dictează spațiul ocupat pe șină! (Ajustat pentru scale = 0.25)
+	carlig.custom_minimum_size = Vector2(45, 65) 
 	
-	# 4. Asamblăm: Punem biletul pe cârlig, și cârligul pe sfoară!
-	carlig.add_child(bilet_mic)
+	# 3. Leagă viața cârligului de viața biletului: când biletul e preluat, ștergem și cârligul.
+	tichet_rezolvat.tree_exited.connect(carlig.queue_free)
+	
+	# 4. Punem biletul în cârlig, și cârligul pe șină
+	carlig.add_child(tichet_rezolvat)
 	sfoara.add_child(carlig)
+	
+	# Ca să arate centrat în cârlig
+	tichet_rezolvat.position = carlig.custom_minimum_size / 2.0
 	
 	# 5. SCHIMBĂM CADRUL ÎNAPOI
 	fundal_comanda.hide()
 	fundal_lobby.show()
 	
-	# 2. READUCEM CLIENTUL LA NORMAL
+	# 4. READUCEM CLIENTUL LA NORMAL
 	poza_client.texture = client_curent_lobby # Îi dăm înapoi poza întreagă
 	client.scale = Vector2(1, 1)     # Îl facem la loc mic
 	client.position = Vector2(200, 313)

@@ -2,7 +2,7 @@ extends Control
 
 enum DayState { MORNING, NIGHT }
 
-const DEFAULT_DAY_DURATION := 10.0  # 3 minutes average
+const DEFAULT_DAY_DURATION := 180.0  # 3 minutes average
 const GAMEPLAY_SCENE := "res://scenes/gameplay/master/gameplay_master.tscn"
 
 var _current_state: DayState = DayState.MORNING
@@ -12,7 +12,9 @@ var _current_state: DayState = DayState.MORNING
 # ---------------------------------------------------------
 @onready var _morning_container: Control = %MorningMenusContainer
 @onready var _night_container: Control = %NightContainer
-@onready var _top_bar: Control = $TopBar
+
+# Am actualizat clasa de bază aici pentru a se potrivi cu noul nod rădăcină:
+@onready var _top_bar: MarginContainer = $TopBar
 
 # ---------------------------------------------------------
 # BUTOANE DIMINEAȚA
@@ -36,6 +38,11 @@ var _current_state: DayState = DayState.MORNING
 @onready var _achievements_menu: Control = %AchievementsMenu
 
 func _ready() -> void:
+	# NOU: Forțăm starea TopBar-ului pentru HUB direct din cod.
+	# Ne definește nevoia de rigoare, fără să depindem exclusiv de Inspector.
+	if "mode" in _top_bar:
+		_top_bar.mode = _top_bar.BarMode.HUB
+
 	# Conectăm butoanele principale de flux
 	_btn_start_day.pressed.connect(_on_start_day_pressed)
 	_btn_next_day.pressed.connect(_on_next_day_pressed)
@@ -45,7 +52,7 @@ func _ready() -> void:
 	_btn_upgrades.pressed.connect(func(): _upgrades_menu.show())
 	_btn_achievements.pressed.connect(func(): _achievements_menu.show())
 
-	# --- NOU: Inițializăm efectul de glow pentru toate butoanele ---
+	# Inițializăm efectul de glow pentru toate butoanele
 	_setup_button_glow(_btn_start_day)
 	_setup_button_glow(_btn_customize)
 	_setup_button_glow(_btn_upgrades)

@@ -2,58 +2,70 @@
 
 [ext_resource type="Script" uid="uid://0m6pr8h8kb5e" path="res://scripts/ui/top_bar.gd" id="1_xsohi"]
 [ext_resource type="Theme" uid="uid://icmwfh7h1jg8" path="res://assets/theme/global_ui_theme.tres" id="2_k450f"]
+[ext_resource type="PackedScene" uid="uid://wdtlxc2q14j6" path="res://scenes/entities/items/order_ticket.tscn" id="3_kef68"]
 [ext_resource type="Texture2D" uid="uid://jpal250o0ncj" path="res://assets/graphics/ui/day_transition_buttons/menu_button_normal.png" id="3_wgqcq"]
 [ext_resource type="Texture2D" uid="uid://blhuo6rt2sbvf" path="res://assets/graphics/ui/day_transition_buttons/menu_button_hover.png" id="4_5315t"]
 [ext_resource type="PackedScene" uid="uid://c5mogaceh21um" path="res://scenes/ui/quick_menu.tscn" id="5_5315t"]
 
-[node name="TopBar" type="HBoxContainer" unique_id=1361950912]
+[node name="TopBar" type="MarginContainer" unique_id=85575296]
 process_mode = 3
 z_index = 100
 custom_minimum_size = Vector2(0, 100)
 anchors_preset = 10
 anchor_right = 1.0
+offset_bottom = 128.0
 grow_horizontal = 2
 script = ExtResource("1_xsohi")
+hub_btn_normal = ExtResource("4_5315t")
+hub_btn_hover = ExtResource("3_wgqcq")
+hub_btn_pressed = ExtResource("4_5315t")
+gameplay_btn_normal = ExtResource("3_wgqcq")
+gameplay_btn_hover = ExtResource("4_5315t")
+gameplay_btn_pressed = ExtResource("3_wgqcq")
 
-[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1142004349]
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=333342226]
 layout_mode = 2
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 20
 
-[node name="FirstLabel" type="Label" parent="MarginContainer" unique_id=865317842]
+[node name="InfoBackground" type="PanelContainer" parent="HBoxContainer" unique_id=986015479]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="InfoContainer" type="VBoxContainer" parent="HBoxContainer/InfoBackground" unique_id=1251281708]
+layout_mode = 2
+
+[node name="LblDay" type="Label" parent="HBoxContainer/InfoBackground/InfoContainer" unique_id=865317842]
 unique_name_in_owner = true
 layout_mode = 2
 theme = ExtResource("2_k450f")
 theme_type_variation = &"TitleLabel"
 text = "Day 1"
 
-[node name="MarginContainer2" type="MarginContainer" parent="." unique_id=760393245]
-layout_mode = 2
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 20
-
-[node name="SecondLabel" type="Label" parent="MarginContainer2" unique_id=252668843]
+[node name="LblProfit" type="Label" parent="HBoxContainer/InfoBackground/InfoContainer" unique_id=252668843]
 unique_name_in_owner = true
 layout_mode = 2
 theme = ExtResource("2_k450f")
 theme_type_variation = &"TitleLabel"
 text = "$ 100"
 
-[node name="Spacer" type="Control" parent="." unique_id=775244565]
+[node name="TicketBackground" type="PanelContainer" parent="HBoxContainer" unique_id=2022500742]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="MenuBtn" type="TextureButton" parent="." unique_id=800234697]
+[node name="TicketZone" type="HBoxContainer" parent="HBoxContainer/TicketBackground" unique_id=1136075644]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OrderTicket" parent="HBoxContainer/TicketBackground/TicketZone" unique_id=1253955845 instance=ExtResource("3_kef68")]
+layout_mode = 2
+
+[node name="MenuBtn" type="TextureButton" parent="HBoxContainer" unique_id=800234697]
 unique_name_in_owner = true
 layout_mode = 2
 texture_normal = ExtResource("3_wgqcq")
+texture_pressed = ExtResource("3_wgqcq")
 texture_hover = ExtResource("4_5315t")
-stretch_mode = 0
+stretch_mode = 5
 
 [node name="QuickMenu" parent="." unique_id=1018791316 instance=ExtResource("5_5315t")]
 layer = 99
-visible = false

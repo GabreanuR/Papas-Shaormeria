@@ -23,11 +23,13 @@ theme_override_constants/margin_bottom = 20
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1488408892]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1191741731]
+[node name="LblTitle" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1191741731]
+unique_name_in_owner = true
 layout_mode = 2
 theme = ExtResource("1_5nkx8")
 theme_type_variation = &"TitleLabel"
 text = "Daily Report:"
+horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer" unique_id=1235095646]
 layout_mode = 2

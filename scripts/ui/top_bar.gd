@@ -9,6 +9,7 @@ enum BarMode { HUB, GAMEPLAY }
 @onready var first_label: Label = %FirstLabel # "Day X" or "02:30"
 @onready var second_label: Label = %SecondLabel # "$ 150" (Hub) or "Profit: $ 20" (Gameplay)
 @onready var menu_btn: TextureButton = %MenuBtn
+@onready var quick_menu: CanvasLayer = $QuickMenu
 
 # Stored tween reference to prevent overlapping scale animations
 var _label_tween: Tween
@@ -68,5 +69,5 @@ func _animate_label(lbl: Label) -> void:
 	_label_tween.tween_property(lbl, "scale", Vector2(1.0, 1.0), 0.1)
 
 func _on_menu_pressed() -> void:
-	## TODO: Emit a signal or show the pause/settings panel here.
-	pass
+	if is_instance_valid(quick_menu):
+		quick_menu.toggle_menu()

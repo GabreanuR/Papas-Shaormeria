@@ -12,6 +12,7 @@ var _current_state: DayState = DayState.MORNING
 # ---------------------------------------------------------
 @onready var _morning_container: Control = %MorningMenusContainer
 @onready var _night_container: Control = %NightContainer
+@onready var _top_bar: Control = $TopBar
 
 # ---------------------------------------------------------
 # BUTOANE DIMINEAȚA
@@ -68,12 +69,14 @@ func _set_state(new_state: DayState) -> void:
 			_customize_menu.hide()
 			_achievements_menu.hide()
 			_morning_container.show()
+			_top_bar.show()
 
 		DayState.NIGHT:
 			_morning_container.hide()
 			_night_container.show()
 			_summary_menu.show()     # Auto-open summary at end of day
 			_btn_next_day.show()
+			_top_bar.hide()
 
 # ---------------------------------------------------------
 # SIGNAL CALLBACKS (Fluxul zilelor)

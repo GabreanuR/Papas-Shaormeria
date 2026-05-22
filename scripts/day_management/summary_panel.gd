@@ -1,5 +1,6 @@
 extends PanelContainer
 
+@onready var lbl_title: Label = %LblTitle
 @onready var lbl_customers: Label = %LblCustomers
 @onready var lbl_perfects: Label = %LblPerfects
 @onready var lbl_tips: Label = %LblTips
@@ -18,6 +19,9 @@ func _on_visibility_changed() -> void:
 
 func _refresh_stats() -> void:
 	var stats = Global.daily_stats
+	
+	if is_instance_valid(lbl_title):
+		lbl_title.text = "Day " + str(int(Global.current_save["day"])) + " Report"
 	
 	lbl_customers.text = str(stats.get("customers_served", 0))
 	lbl_perfects.text = str(stats.get("perfect_orders", 0))

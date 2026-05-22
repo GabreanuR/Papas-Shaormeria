@@ -60,6 +60,7 @@ text = "Settings
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="SettingsPanel/MarginContainer/VBoxContainer" unique_id=1064312950]
+process_mode = 3
 layout_mode = 2
 theme_override_constants/separation = 100
 theme_override_styles/separator = SubResource("StyleBoxEmpty_eoonq")

@@ -4,8 +4,11 @@
 [ext_resource type="Theme" uid="uid://icmwfh7h1jg8" path="res://assets/theme/global_ui_theme.tres" id="2_k450f"]
 [ext_resource type="Texture2D" uid="uid://jpal250o0ncj" path="res://assets/graphics/ui/day_transition_buttons/menu_button_normal.png" id="3_wgqcq"]
 [ext_resource type="Texture2D" uid="uid://blhuo6rt2sbvf" path="res://assets/graphics/ui/day_transition_buttons/menu_button_hover.png" id="4_5315t"]
+[ext_resource type="PackedScene" uid="uid://c5mogaceh21um" path="res://scenes/ui/quick_menu.tscn" id="5_5315t"]
 
 [node name="TopBar" type="HBoxContainer" unique_id=1361950912]
+process_mode = 3
+z_index = 100
 custom_minimum_size = Vector2(0, 100)
 anchors_preset = 10
 anchor_right = 1.0
@@ -14,6 +17,10 @@ script = ExtResource("1_xsohi")
 
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=1142004349]
 layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
 
 [node name="FirstLabel" type="Label" parent="MarginContainer" unique_id=865317842]
 unique_name_in_owner = true
@@ -24,6 +31,10 @@ text = "Day 1"
 
 [node name="MarginContainer2" type="MarginContainer" parent="." unique_id=760393245]
 layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
 
 [node name="SecondLabel" type="Label" parent="MarginContainer2" unique_id=252668843]
 unique_name_in_owner = true
@@ -42,3 +53,7 @@ layout_mode = 2
 texture_normal = ExtResource("3_wgqcq")
 texture_hover = ExtResource("4_5315t")
 stretch_mode = 0
+
+[node name="QuickMenu" parent="." unique_id=1018791316 instance=ExtResource("5_5315t")]
+layer = 99
+visible = false

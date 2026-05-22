@@ -1,0 +1,72 @@
+[gd_scene format=3 uid="uid://c5mogaceh21um"]
+
+[ext_resource type="Script" uid="uid://co3i6sjqetsbs" path="res://scripts/ui/quick_menu.gd" id="1_05v3b"]
+[ext_resource type="PackedScene" uid="uid://cjexmeym01onb" path="res://scenes/components/modal_overlay.tscn" id="1_x1mhw"]
+[ext_resource type="PackedScene" uid="uid://c5up32xja71ff" path="res://scenes/menus/settings_menu.tscn" id="3_0dcgk"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0dcgk"]
+
+[node name="QuickMenu" type="CanvasLayer" unique_id=1018791316]
+process_mode = 3
+layer = 100
+script = ExtResource("1_05v3b")
+
+[node name="ModalOverlay" parent="." unique_id=1739728802 instance=ExtResource("1_x1mhw")]
+unique_name_in_owner = true
+
+[node name="MenuBox" type="PanelContainer" parent="." unique_id=1419334722]
+unique_name_in_owner = true
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -26.0
+offset_top = -26.0
+offset_right = 26.0
+offset_bottom = 26.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MenuBox" unique_id=1901079910]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MenuBox/MarginContainer" unique_id=651492160]
+layout_mode = 2
+
+[node name="LblTitle" type="Label" parent="MenuBox/MarginContainer/VBoxContainer" unique_id=1028967120]
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
+text = "PAUSED"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="MenuBox/MarginContainer/VBoxContainer" unique_id=1382862082]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 32
+theme_override_styles/separator = SubResource("StyleBoxEmpty_0dcgk")
+
+[node name="BtnResume" type="Button" parent="MenuBox/MarginContainer/VBoxContainer" unique_id=708833743]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Resume
+"
+
+[node name="BtnSettings" type="Button" parent="MenuBox/MarginContainer/VBoxContainer" unique_id=1768008424]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Settings"
+
+[node name="BtnQuit" type="Button" parent="MenuBox/MarginContainer/VBoxContainer" unique_id=1467371709]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Quit to Main Menu"
+
+[node name="SettingsMenu" parent="." unique_id=1186632622 instance=ExtResource("3_0dcgk")]
+unique_name_in_owner = true
+process_mode = 3
+visible = true

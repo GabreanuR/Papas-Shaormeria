@@ -4,7 +4,7 @@ signal wrap_step_changed(step_index: int)
 signal wrap_completed(quality: float)
 
 @export var min_swipe_distance := 80.0
-@export var required_swipes: Array[String] = ["right", "left", "up", "up"]
+@export var required_swipes: Array[String] = ["right", "left", "up"]
 
 var start_pos: Vector2 = Vector2.ZERO
 var is_dragging := false
@@ -40,7 +40,6 @@ func _handle_swipe(delta: Vector2) -> void:
 			wrap_completed.emit(quality)
 	else:
 		mistakes += 1
-		reset_wrap()
 
 func get_swipe_direction(delta: Vector2) -> String:
 	if abs(delta.x) > abs(delta.y):

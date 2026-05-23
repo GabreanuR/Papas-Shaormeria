@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bsjf325nddwoo"
-path="res://.godot/imported/shaorma_4.png-9125dd25fd30846e16074550146a52d8.ctex"
+uid="uid://b4j8i2oe3vjj2"
+path="res://.godot/imported/beef_paper_piece.png-53dc58ec53f37158dd44faadd376f8d2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/graphics/wrapping_station/shaorma_4.png"
-dest_files=["res://.godot/imported/shaorma_4.png-9125dd25fd30846e16074550146a52d8.ctex"]
+source_file="res://assets/graphics/wrapping_station/beef_paper_piece.png"
+dest_files=["res://.godot/imported/beef_paper_piece.png-53dc58ec53f37158dd44faadd376f8d2.ctex"]
 
 [params]
 

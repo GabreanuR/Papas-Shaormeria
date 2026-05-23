@@ -13,7 +13,10 @@
 [ext_resource type="Script" uid="uid://bejuej8hpb2uu" path="res://scripts/gameplay/stations/wrapping/wrap_gesture.gd" id="6_loyu3"]
 [ext_resource type="Texture2D" uid="uid://b4j8i2oe3vjj2" path="res://assets/graphics/wrapping_station/beef_paper_piece.png" id="7_ihsbg"]
 [ext_resource type="Texture2D" uid="uid://bwtnq6lnphik5" path="res://assets/graphics/wrapping_station/shaorma_4_beef.png" id="8_adlnp"]
+[ext_resource type="Texture2D" uid="uid://wmmcwy2a5f5u" path="res://assets/graphics/ingredients/drink_1.png" id="9_48yro"]
+[ext_resource type="Texture2D" uid="uid://dxs2kk23rcj64" path="res://assets/graphics/ingredients/drink_2.png" id="10_66sca"]
 [ext_resource type="Texture2D" uid="uid://c1prke56jshct" path="res://assets/graphics/wrapping_station/chicken_paper_pile.png" id="11_adlnp"]
+[ext_resource type="Texture2D" uid="uid://bdqmybnjb3yus" path="res://assets/graphics/ingredients/drink_3.png" id="11_gwaiu"]
 [ext_resource type="Texture2D" uid="uid://dnb4yhqgbowrx" path="res://assets/graphics/wrapping_station/beef_paper_pile.png" id="12_gfg1q"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0cijx"]
@@ -32,6 +35,9 @@ paper_1_texture = ExtResource("6_8sqnr")
 paper_2_texture = ExtResource("7_ihsbg")
 wrapped_with_paper_1_texture = ExtResource("5_8sqnr")
 wrapped_with_paper_2_texture = ExtResource("8_adlnp")
+drink_1_texture = ExtResource("9_48yro")
+drink_2_texture = ExtResource("10_66sca")
+drink_3_texture = ExtResource("11_gwaiu")
 
 [node name="Background" type="TextureRect" parent="." unique_id=1973410820]
 layout_mode = 0
@@ -100,7 +106,44 @@ position = Vector2(634, 668)
 shape = SubResource("RectangleShape2D_0cijx")
 debug_color = Color(0, 0.60038817, 0.70000815, 0.177)
 
-[node name="Sprite2D2" type="Sprite2D" parent="Tray" unique_id=1414384035]
+[node name="Drink1" type="TextureButton" parent="Tray" unique_id=1633183375]
+offset_left = 11.0
+offset_top = 640.0
+offset_right = 419.0
+offset_bottom = 1252.0
+scale = Vector2(0.5, 0.5)
+texture_normal = ExtResource("9_48yro")
+
+[node name="Drink2" type="TextureButton" parent="Tray" unique_id=733929214]
+offset_left = 153.0
+offset_top = 521.0
+offset_right = 561.0
+offset_bottom = 1133.0
+scale = Vector2(0.5, 0.5)
+texture_normal = ExtResource("10_66sca")
+
+[node name="Drink3" type="TextureButton" parent="Tray" unique_id=1524745537]
+offset_left = 270.0
+offset_top = 355.0
+offset_right = 678.0
+offset_bottom = 967.0
+scale = Vector2(0.5, 0.5)
+texture_normal = ExtResource("11_gwaiu")
+
+[node name="CarriedDrink" type="Sprite2D" parent="Tray" unique_id=1414384035]
+scale = Vector2(0.7, 0.7)
+
+[node name="PlacedDrink" type="Sprite2D" parent="Tray" unique_id=1104360710]
+position = Vector2(1177, 636)
+scale = Vector2(0.5, 0.5)
+
+[node name="DrinkDropArea" type="Control" parent="Tray" unique_id=165438823]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 1071.0
+offset_top = 554.0
+offset_right = 1276.0
+offset_bottom = 847.0
 
 [node name="Ticket" type="Node2D" parent="." unique_id=454856143]
 

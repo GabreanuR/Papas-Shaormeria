@@ -8,6 +8,10 @@ extends Control
 @export var wrapped_with_paper_1_texture: Texture2D
 @export var wrapped_with_paper_2_texture: Texture2D
 
+@export var drink_1_texture: Texture2D
+@export var drink_2_texture: Texture2D
+@export var drink_3_texture: Texture2D
+
 @onready var wrap_area = $WrapGestureArea
 @onready var tray = $Tray
 @onready var ticket = $Ticket
@@ -23,6 +27,13 @@ extends Control
 @onready var paper_pile_2: TextureButton = $Tray/PaperPile2
 @onready var carried_paper: Sprite2D = $Tray/CarriedPaper
 
+@onready var drink_1: TextureButton = $Tray/Drink1
+@onready var drink_2: TextureButton = $Tray/Drink2
+@onready var drink_3: TextureButton = $Tray/Drink3
+@onready var carried_drink: Sprite2D = $Tray/CarriedDrink
+@onready var placed_drink: Sprite2D = $Tray/PlacedDrink
+@onready var drink_drop_area: Control = $Tray/DrinkDropArea
+
 var assembled_pita: Node2D = null
 var wrap_quality: float = 0.0
 var pending_wrap_quality: float = 0.0
@@ -30,6 +41,11 @@ var ticket_placed := false
 var carrying_paper := false
 var paper_applied := false
 var carried_final_texture: Texture2D = null
+
+var carrying_drink := false
+var drink_placed := false
+var selected_drink_button: TextureButton = null
+var selected_drink_texture: Texture2D = null
 
 
 func _ready() -> void:
@@ -44,10 +60,19 @@ func _ready() -> void:
 	carried_paper.hide()
 
 	_set_paper_piles_enabled(true)
+	
+	drink_1.button_down.connect(func(): _pick_drink(drink_1, drink_1_texture))
+	drink_2.button_down.connect(func(): _pick_drink(drink_2, drink_2_texture))
+	drink_3.button_down.connect(func(): _pick_drink(drink_3, drink_3_texture))
+
+	carried_drink.hide()
+	placed_drink.hide()
 
 func _process(_delta: float) -> void:
 	if carrying_paper:
 		carried_paper.global_position = get_global_mouse_position()
+	if carrying_drink:
+		carried_drink.global_position = get_global_mouse_position()
 
 
 func _on_wrap_step_changed(step_index: int) -> void:
@@ -99,6 +124,11 @@ func _input(event: InputEvent) -> void:
 				_apply_paper_to_shaorma()
 			else:
 				_cancel_carried_paper()
+		if carrying_drink:
+			if _is_mouse_over_drink_drop_area(get_global_mouse_position()):
+				_apply_drink_to_tray()
+			else:
+				_cancel_carried_drink()
 
 	if event is InputEventMouseButton \
 			and event.button_index == MOUSE_BUTTON_LEFT \
@@ -118,7 +148,6 @@ func _apply_paper_to_shaorma() -> void:
 	if carried_final_texture != null:
 		wrapped_visual.texture = carried_final_texture
 
-	_set_paper_piles_enabled(false)
 
 func _cancel_carried_paper() -> void:
 	carrying_paper = false
@@ -157,14 +186,19 @@ func _drop_data(_at_position: Vector2, data: Variant) -> void:
 
 	darken.visible = false
 	darken.modulate.a = 0.0
+	
 
 
 func _on_send_pressed() -> void:
 	if not ticket_placed:
 		return
 
+	paper_pile_1.hide()
+	paper_pile_2.hide()
+
 	var tween := create_tween()
 	tween.tween_property(tray, "position:x", tray.position.x + 1800, 0.85)
+	tween.finished.connect(_reset_drinks)
 
 	var fade_tween := create_tween()
 	fade_tween.tween_property(fade, "modulate:a", 1.0, 0.85)
@@ -176,6 +210,15 @@ func is_mouse_over_send(mouse_pos: Vector2) -> bool:
 
 	return mouse_pos.distance_to(send_button.global_position) < 120.0
 
+func _reset_wrap_visual_state() -> void:
+	wrap_quality = 0.0
+	pending_wrap_quality = 0.0
+	paper_applied = false
+	carrying_paper = false
+	carried_final_texture = null
+
+	carried_paper.hide()
+	wrapped_visual.hide()
 
 func receive_pita_from_assembly(source_lipie_container: Node, _pita_state: Dictionary) -> void:
 	if source_lipie_container == null:
@@ -183,6 +226,8 @@ func receive_pita_from_assembly(source_lipie_container: Node, _pita_state: Dicti
 
 	if not source_lipie_container is Node2D:
 		return
+		
+	_reset_wrap_visual_state()
 
 	assembled_pita = source_lipie_container as Node2D
 	assembled_pita.reparent(pita_preview)
@@ -267,3 +312,65 @@ func _get_canvas_item_bounds(item: CanvasItem, root: Node2D) -> Rect2:
 					has_bounds = true
 
 	return bounds
+	
+	
+func _pick_drink(drink_button: TextureButton, drink_texture: Texture2D) -> void:
+	if drink_placed or drink_texture == null:
+		return
+
+	carrying_drink = true
+	selected_drink_button = drink_button
+	selected_drink_texture = drink_texture
+
+	drink_button.hide()
+	carried_drink.texture = drink_texture
+	carried_drink.show()
+
+
+func _apply_drink_to_tray() -> void:
+	carrying_drink = false
+	drink_placed = true
+
+	carried_drink.hide()
+	placed_drink.texture = selected_drink_texture
+	placed_drink.show()
+
+	_disable_drinks()
+
+
+func _cancel_carried_drink() -> void:
+	carrying_drink = false
+	carried_drink.hide()
+
+	if selected_drink_button != null and not drink_placed:
+		selected_drink_button.show()
+
+
+func _is_mouse_over_drink_drop_area(mouse_pos: Vector2) -> bool:
+	return drink_drop_area.get_global_rect().has_point(mouse_pos)
+
+
+func _disable_drinks() -> void:
+	drink_1.disabled = true
+	drink_2.disabled = true
+	drink_3.disabled = true
+	
+	
+func _reset_drinks() -> void:
+	carrying_drink = false
+	drink_placed = false
+	selected_drink_button = null
+	selected_drink_texture = null
+
+	carried_drink.hide()
+	placed_drink.hide()
+
+	drink_1.show()
+	drink_2.show()
+	drink_3.show()
+
+	drink_1.disabled = false
+	drink_2.disabled = false
+	drink_3.disabled = false
+	
+	

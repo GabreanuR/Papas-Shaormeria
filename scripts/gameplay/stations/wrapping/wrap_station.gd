@@ -1,72 +1,80 @@
-extends Control # Rădăcina trebuie să fie Control pentru a accepta Drag & Drop
+extends Control
+
+@export var assembled_pita_scale := Vector2(0.25, 0.25)
+@export var wrap_step_textures: Array[Texture2D]
 
 @onready var wrap_area = $WrapGestureArea
 @onready var tray = $Tray
-@onready var ticket = $Ticket # Acesta este doar un bilet "de fațadă" (placeholder)
+@onready var ticket = $Ticket
 @onready var ticket_slot_sprite = $Tray/TicketSlot/Sprite2D
 @onready var send_button = $Tray/SendButton
 @onready var darken = $Tray/SendButton/Darken
 @onready var fade = $FadeOverlay
 
-var assembled_pita: Node2D = null
+@onready var pita_preview: Node2D = $Tray/PitaPreview
+@onready var wrapped_visual: Sprite2D = $Tray/WrappedVisual
 
+var assembled_pita: Node2D = null
 var wrap_quality: float = 0.0
 var ticket_placed := false
 
+
 func _ready() -> void:
+	wrap_area.wrap_step_changed.connect(_on_wrap_step_changed)
 	wrap_area.wrap_completed.connect(_on_wrap_done)
 
-	# Ascundem biletul local la început; el apare doar când dăm drop cu succes
-	ticket.hide()
-	ticket.z_index = 200
+	wrapped_visual.hide()
+	pita_preview.show()
 
-	send_button.visible = true
-	darken.visible = true
-	darken.modulate.a = 0.65
 
-	fade.modulate.a = 0.0
+func _on_wrap_step_changed(step_index: int) -> void:
+	if step_index < 0:
+		wrapped_visual.hide()
+		pita_preview.show()
+		return
+
+	if step_index >= wrap_step_textures.size():
+		return
+
+	# La primul swipe ascundem pita reală
+	if step_index == 0:
+		pita_preview.hide()
+
+	wrapped_visual.texture = wrap_step_textures[step_index]
+	wrapped_visual.show()
 
 func _on_wrap_done(quality: float) -> void:
 	wrap_quality = quality
-	# Nu mai e nevoie de `can_drag_ticket`. Faptul că wrap_quality > 0 
-	# este suficient pentru a debloca primirea biletului în _can_drop_data.
 
-# ==========================================
-# MAGIA DRAG & DROP NATIV
-# ==========================================
 
 func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
-	# Stația acceptă biletul doar dacă shaorma a fost împachetată 
-	# și dacă datele vin cu adevărat de la un bilet.
-	return wrap_quality > 0.0 and typeof(data) == TYPE_DICTIONARY and data.has("este_bilet_comanda")
+	return wrap_quality > 0.0 \
+		and typeof(data) == TYPE_DICTIONARY \
+		and data.has("este_bilet_comanda")
+
 
 func _drop_data(_at_position: Vector2, data: Variant) -> void:
 	ticket_placed = true
 
-	# 1. Distrugem fizic biletul tridimensional/original de pe șina din TopBar
-	if is_instance_valid(data["nod_bilet"]):
-		print("Se pregătește livrarea pentru clientul: ", data["numar_client"])
-		# TODO: Aici vei extrage ingredientele din data["nod_bilet"] pentru a calcula scorul final
+	if data.has("nod_bilet") and is_instance_valid(data["nod_bilet"]):
 		data["nod_bilet"].queue_free()
 
-	# 2. Arătăm biletul "placeholder" de pe tavă pentru feedback vizual
 	ticket.global_position = ticket_slot_sprite.global_position
 	ticket.reparent(tray)
 	ticket.show()
 
-	# 3. Activăm butonul de trimitere
 	darken.visible = false
 	darken.modulate.a = 0.0
 
-# ==========================================
-# INTERACȚIUNEA CU BUTONUL SEND
-# ==========================================
 
 func _input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+	if event is InputEventMouseButton \
+			and event.button_index == MOUSE_BUTTON_LEFT \
+			and event.pressed:
 		if ticket_placed and is_mouse_over_send(get_global_mouse_position()):
 			get_viewport().set_input_as_handled()
 			_on_send_pressed()
+
 
 func _on_send_pressed() -> void:
 	if not ticket_placed:
@@ -77,33 +85,102 @@ func _on_send_pressed() -> void:
 
 	var fade_tween := create_tween()
 	fade_tween.tween_property(fade, "modulate:a", 1.0, 0.85)
-	
-	# Aici vei emite probabil un semnal către GameplayMaster că s-a finalizat comanda!
+
 
 func is_mouse_over_send(mouse_pos: Vector2) -> bool:
+	if send_button is Control:
+		return send_button.get_global_rect().has_point(mouse_pos)
+
 	return mouse_pos.distance_to(send_button.global_position) < 120.0
 
-# ==========================================
-# TRANSFERUL DE LA ASSEMBLY
-# ==========================================
 
 func receive_pita_from_assembly(source_lipie_container: Node, _pita_state: Dictionary) -> void:
 	if source_lipie_container == null:
 		return
 
-	source_lipie_container.reparent(tray)
-	source_lipie_container.visible = true
+	if not source_lipie_container is Node2D:
+		return
 
-	source_lipie_container.scale = Vector2(0.45, 0.45)
-	source_lipie_container.z_index = 100
+	assembled_pita = source_lipie_container as Node2D
+	assembled_pita.reparent(pita_preview)
 
-	var lipie_sprite := source_lipie_container.find_child("Lipie", true, false)
+	assembled_pita.visible = true
+	assembled_pita.modulate.a = 1.0
+	assembled_pita.z_index = 10
+	assembled_pita.scale = assembled_pita_scale
 
-	if lipie_sprite:
-		var target_global_pos := Vector2(820, 600)
-		var current_lipie_global_pos: Vector2 = lipie_sprite.global_position
-		var offset := target_global_pos - current_lipie_global_pos
+	var visual_bounds := _get_visual_bounds(assembled_pita)
 
-		source_lipie_container.global_position += offset
+	if visual_bounds.size != Vector2.ZERO:
+		assembled_pita.position = -visual_bounds.get_center() * assembled_pita_scale
 	else:
-		source_lipie_container.position = Vector2.ZERO
+		assembled_pita.position = Vector2.ZERO
+
+	pita_preview.visible = true
+	pita_preview.modulate.a = 1.0
+
+
+func _get_visual_bounds(root: Node2D) -> Rect2:
+	var bounds := Rect2()
+	var has_bounds := false
+
+	for child in root.get_children():
+		if child is CanvasItem:
+			var child_bounds := _get_canvas_item_bounds(child, root)
+
+			if child_bounds.size != Vector2.ZERO:
+				if has_bounds:
+					bounds = bounds.merge(child_bounds)
+				else:
+					bounds = child_bounds
+					has_bounds = true
+
+	return bounds
+
+
+func _get_canvas_item_bounds(item: CanvasItem, root: Node2D) -> Rect2:
+	var bounds := Rect2()
+	var has_bounds := false
+
+	if item is Sprite2D:
+		var sprite := item as Sprite2D
+
+		if sprite.texture != null:
+			var size := sprite.texture.get_size()
+			var rect_position := Vector2.ZERO
+
+			if sprite.centered:
+				rect_position = -size * 0.5
+
+			var rect := Rect2(rect_position, size)
+			var transform_to_root := root.global_transform.affine_inverse() * sprite.global_transform
+
+			var points := [
+				transform_to_root * rect.position,
+				transform_to_root * (rect.position + Vector2(rect.size.x, 0)),
+				transform_to_root * (rect.position + Vector2(0, rect.size.y)),
+				transform_to_root * (rect.position + rect.size)
+			]
+
+			var min_point: Vector2 = points[0]
+			var max_point: Vector2 = points[0]
+
+			for point in points:
+				min_point = min_point.min(point)
+				max_point = max_point.max(point)
+
+			bounds = Rect2(min_point, max_point - min_point)
+			has_bounds = true
+
+	for child in item.get_children():
+		if child is CanvasItem:
+			var child_bounds := _get_canvas_item_bounds(child, root)
+
+			if child_bounds.size != Vector2.ZERO:
+				if has_bounds:
+					bounds = bounds.merge(child_bounds)
+				else:
+					bounds = child_bounds
+					has_bounds = true
+
+	return bounds

@@ -99,26 +99,24 @@ func primeste_comanda(lista_ingrediente: Array, numar_client: int) -> void:
 	comanda_gata.emit()
 
 func _get_drag_data(_at_position: Vector2) -> Variant:
+	get_tree().call_group("drop_layer", "start_ticket_drag", self)
+
 	var date_bilet = {
 		"este_bilet_comanda": true,
 		"nod_bilet": self,
 		"numar_client": label_numar.text
 	}
-	
-	var drag_preview = Control.new()
-	var clona_bilet = self.duplicate()
-	
-	# Forțăm clona să fie mare cât e în mână!
-	clona_bilet.scale = LARGE_SCALE 
-	clona_bilet.position = -(clona_bilet.size * clona_bilet.scale) / 2.0 
-	
-	drag_preview.add_child(clona_bilet)
+
+	var drag_preview := ColorRect.new()
+	drag_preview.custom_minimum_size = Vector2(80, 50)
+	drag_preview.color = Color(1, 1, 1, 0.15)
 	set_drag_preview(drag_preview)
-	
+
 	modulate.a = 0.4
 	return date_bilet
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_DRAG_END:
 		modulate.a = 1.0
+		get_tree().call_group("drop_layer", "stop_ticket_drag")
 		_on_mouse_hover_end()

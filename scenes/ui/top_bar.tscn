@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://jpal250o0ncj" path="res://assets/graphics/ui/day_transition_buttons/menu_button_normal.png" id="3_wgqcq"]
 [ext_resource type="Texture2D" uid="uid://blhuo6rt2sbvf" path="res://assets/graphics/ui/day_transition_buttons/menu_button_hover.png" id="4_5315t"]
 [ext_resource type="PackedScene" uid="uid://c5mogaceh21um" path="res://scenes/ui/quick_menu.tscn" id="5_5315t"]
+[ext_resource type="Script" uid="uid://cqtwt5xxywhs1" path="res://scripts/ui/ticket_zone.gd" id="5_kesql"]
 
 [node name="TopBar" type="MarginContainer" unique_id=85575296]
 process_mode = 3
@@ -55,6 +56,7 @@ size_flags_horizontal = 3
 [node name="TicketZone" type="HBoxContainer" parent="HBoxContainer/TicketBackground" unique_id=1136075644]
 layout_mode = 2
 size_flags_horizontal = 3
+script = ExtResource("5_kesql")
 
 [node name="OrderTicket" parent="HBoxContainer/TicketBackground/TicketZone" unique_id=1253955845 instance=ExtResource("3_kef68")]
 layout_mode = 2

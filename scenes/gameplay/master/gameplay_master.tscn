@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://dhip6nndara60" path="res://scenes/gameplay/stations/cutting/MeatSelect.tscn" id="3_6bkqk"]
 [ext_resource type="PackedScene" uid="uid://bbf2c2tprivnc" path="res://scenes/gameplay/stations/assembly/assembly_station.tscn" id="4_twj3c"]
 [ext_resource type="PackedScene" uid="uid://do4jao5ljremp" path="res://scenes/gameplay/stations/wrapping/wrapping_station.tscn" id="5_apmns"]
+[ext_resource type="Script" uid="uid://dx0bfljvbx3gy" path="res://scripts/ui/drop_layer.gd" id="6_1jril"]
 [ext_resource type="PackedScene" uid="uid://poa1kme3gfho" path="res://scenes/ui/top_bar.tscn" id="7_1jril"]
 
 [node name="GameplayMaster" type="Node" unique_id=1025286876]
@@ -49,6 +50,15 @@ text = "Assembly"
 unique_name_in_owner = true
 layout_mode = 2
 text = "Wrapping"
+
+[node name="DropLayer" type="Control" parent="CanvasLayer" unique_id=1737900230]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 1197.0
+offset_top = -1.0
+offset_right = 1935.0
+offset_bottom = 1083.0
+script = ExtResource("6_1jril")
 
 [node name="TopBar" parent="." unique_id=1361950912 instance=ExtResource("7_1jril")]
 mode = 1

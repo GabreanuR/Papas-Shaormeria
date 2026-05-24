@@ -19,7 +19,7 @@ func _ready() -> void:
 	offset_right = 0
 	offset_bottom = 0
 
-	z_index = 9999
+	z_index = 100
 
 
 func start_ticket_drag(_ticket: Control) -> void:
@@ -72,6 +72,7 @@ func _try_pin_ticket(ticket: Control) -> void:
 	ticket.scale = Vector2(0.85, 0.85)
 	ticket.position = Vector2(size.x - 520, 150)
 	ticket.show()
+
 
 func _return_to_ticket_bar(ticket: Control) -> void:
 	if ticket_zone == null:

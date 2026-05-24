@@ -7,7 +7,6 @@
 [ext_resource type="Texture2D" uid="uid://cx2t0uk464cjj" path="res://assets/graphics/wrapping_station/ticketSlot.png" id="3_abibr"]
 [ext_resource type="Texture2D" uid="uid://w1vo5ynyo73u" path="res://assets/graphics/wrapping_station/shaorma_2.png" id="3_iobvn"]
 [ext_resource type="Texture2D" uid="uid://cmk0cqyd2fd2g" path="res://assets/graphics/wrapping_station/shaorma_3.png" id="4_1k0fd"]
-[ext_resource type="Texture2D" uid="uid://kpif8wvatiw4" path="res://assets/graphics/ui/order_ticket.png" id="4_xqjmc"]
 [ext_resource type="Texture2D" uid="uid://bsjf325nddwoo" path="res://assets/graphics/wrapping_station/shaorma_4_chicken.png" id="5_8sqnr"]
 [ext_resource type="Texture2D" uid="uid://c1qhcuari0alv" path="res://assets/graphics/wrapping_station/chicken_paper_piece.png" id="6_8sqnr"]
 [ext_resource type="Script" uid="uid://bejuej8hpb2uu" path="res://scripts/gameplay/stations/wrapping/wrap_gesture.gd" id="6_loyu3"]
@@ -61,18 +60,18 @@ scale = Vector2(0.5, 0.5)
 offset = Vector2(1800, 1400)
 
 [node name="PaperPile1" type="TextureButton" parent="Tray" unique_id=1353262914]
-offset_left = 1349.0
-offset_top = 470.0
-offset_right = 1849.0
-offset_bottom = 970.0
+offset_left = 244.0
+offset_top = 471.0
+offset_right = 744.0
+offset_bottom = 971.0
 scale = Vector2(0.5, 0.5)
 texture_normal = ExtResource("11_adlnp")
 
 [node name="PaperPile2" type="TextureButton" parent="Tray" unique_id=1681747289]
-offset_left = 1565.0
-offset_top = 644.0
-offset_right = 2065.0
-offset_bottom = 1144.0
+offset_left = 82.0
+offset_top = 653.0
+offset_right = 582.0
+offset_bottom = 1153.0
 scale = Vector2(0.5, 0.5)
 texture_normal = ExtResource("12_gfg1q")
 
@@ -99,7 +98,7 @@ position = Vector2(632, 666.00006)
 scale = Vector2(0.46568626, 0.54656863)
 texture = ExtResource("3_abibr")
 
-[node name="Area2D" type="Area2D" parent="Tray/TicketSlot" unique_id=1656402235]
+[node name="Area2D" type="Area2D" parent="Tray/TicketSlot" unique_id=1656402235 groups=["wrapping_ticket_slot"]]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Tray/TicketSlot/Area2D" unique_id=1676468105]
 position = Vector2(634, 668)
@@ -107,26 +106,26 @@ shape = SubResource("RectangleShape2D_0cijx")
 debug_color = Color(0, 0.60038817, 0.70000815, 0.177)
 
 [node name="Drink1" type="TextureButton" parent="Tray" unique_id=1633183375]
-offset_left = 11.0
-offset_top = 640.0
-offset_right = 419.0
-offset_bottom = 1252.0
+offset_left = 1408.0
+offset_top = 653.0
+offset_right = 1816.0
+offset_bottom = 1265.0
 scale = Vector2(0.5, 0.5)
 texture_normal = ExtResource("9_48yro")
 
 [node name="Drink2" type="TextureButton" parent="Tray" unique_id=733929214]
-offset_left = 153.0
-offset_top = 521.0
-offset_right = 561.0
-offset_bottom = 1133.0
+offset_left = 1330.0
+offset_top = 469.0
+offset_right = 1738.0
+offset_bottom = 1081.0
 scale = Vector2(0.5, 0.5)
 texture_normal = ExtResource("10_66sca")
 
 [node name="Drink3" type="TextureButton" parent="Tray" unique_id=1524745537]
-offset_left = 270.0
-offset_top = 355.0
-offset_right = 678.0
-offset_bottom = 967.0
+offset_left = 1248.0
+offset_top = 281.0
+offset_right = 1656.0
+offset_bottom = 893.0
 scale = Vector2(0.5, 0.5)
 texture_normal = ExtResource("11_gwaiu")
 
@@ -144,13 +143,6 @@ offset_left = 1071.0
 offset_top = 554.0
 offset_right = 1276.0
 offset_bottom = 847.0
-
-[node name="Ticket" type="Node2D" parent="." unique_id=454856143]
-
-[node name="Sprite2D" type="Sprite2D" parent="Ticket" unique_id=427844910]
-position = Vector2(1627, 150)
-scale = Vector2(0.4129306, 0.34429064)
-texture = ExtResource("4_xqjmc")
 
 [node name="WrapGestureArea" type="ColorRect" parent="." unique_id=1180051629]
 layout_mode = 0

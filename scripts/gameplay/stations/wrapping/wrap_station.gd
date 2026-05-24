@@ -14,7 +14,7 @@ extends Control
 
 @onready var wrap_area = $WrapGestureArea
 @onready var tray = $Tray
-@onready var ticket = $Ticket
+@onready var ticket_slot_area: Area2D = $Tray/TicketSlot/Area2D
 @onready var ticket_slot_sprite = $Tray/TicketSlot/Sprite2D
 @onready var send_button = $Tray/SendButton
 @onready var darken = $Tray/SendButton/Darken
@@ -166,28 +166,63 @@ func _set_paper_piles_enabled(enabled: bool) -> void:
 	paper_pile_1.disabled = not enabled
 	paper_pile_2.disabled = not enabled
 
-
 func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
 	return paper_applied \
 		and wrap_quality > 0.0 \
+		and not ticket_placed \
 		and typeof(data) == TYPE_DICTIONARY \
-		and data.has("este_bilet_comanda")
+		and data.has("este_bilet_comanda") \
+		and _is_mouse_over_ticket_slot(get_global_mouse_position())
 
 
 func _drop_data(_at_position: Vector2, data: Variant) -> void:
+	if ticket_placed:
+		return
+
+	if not data.has("nod_bilet"):
+		return
+
+	var real_ticket = data["nod_bilet"]
+
+	if not is_instance_valid(real_ticket):
+		return
+
 	ticket_placed = true
 
-	if data.has("nod_bilet") and is_instance_valid(data["nod_bilet"]):
-		data["nod_bilet"].queue_free()
+	real_ticket.modulate.a = 1.0
+	real_ticket.is_locked_large = true
+	real_ticket.is_in_wrapping_slot = true
+	real_ticket.top_level = true
+	real_ticket.scale = Vector2(0.35, 0.35)
+	real_ticket.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	real_ticket.z_index = 100
 
-	ticket.global_position = ticket_slot_sprite.global_position
-	ticket.reparent(tray)
-	ticket.show()
+	real_ticket.global_position = ticket_slot_area.global_position - (real_ticket.size * real_ticket.scale) * 0.5
+
+	ticket_slot_area.set_meta("current_ticket", real_ticket)
 
 	darken.visible = false
 	darken.modulate.a = 0.0
-	
 
+
+func _is_mouse_over_ticket_slot(mouse_pos: Vector2) -> bool:
+	var shape := ticket_slot_area.get_node_or_null("CollisionShape2D")
+
+	if shape == null or shape.shape == null or shape.disabled:
+		return false
+
+	var local_pos: Vector2 = shape.to_local(mouse_pos)
+
+	if shape.shape is RectangleShape2D:
+		var rect_shape := shape.shape as RectangleShape2D
+		var rect := Rect2(-rect_shape.size * 0.5, rect_shape.size)
+		return rect.has_point(local_pos)
+
+	if shape.shape is CircleShape2D:
+		var circle_shape := shape.shape as CircleShape2D
+		return local_pos.length() <= circle_shape.radius
+
+	return false
 
 func _on_send_pressed() -> void:
 	if not ticket_placed:

@@ -11,7 +11,6 @@ const LARGE_SCALE := Vector2(1.0, 1.0)
 var is_locked_large := false
 var _zoom_tween: Tween
 
-# Dictionarul de traducere (Cuvant -> Poza) rămâne neatins!
 var imagini_ingrediente := {
 	"lipie": preload("res://assets/graphics/ingredients/lipie.png"), 
 	"carne_pui": preload("res://assets/graphics/ingredients/carne_pui.png"),
@@ -32,18 +31,14 @@ var imagini_ingrediente := {
 	"jalapenos": preload("res://assets/graphics/ingredients/jalapenos.png")
 }
 
+
 func _ready() -> void:
 	hide()
-	
-	# Setăm punctul de pivot în centru ca să se mărească frumos din mijloc!
 	pivot_offset = size / 2.0
 	
 	mouse_entered.connect(_on_mouse_hover_start)
 	mouse_exited.connect(_on_mouse_hover_end)
 
-# ==========================================
-# GESTIONAREA MĂRIMII ȘI A HOVER-ULUI
-# ==========================================
 
 func set_locked_large(locked: bool) -> void:
 	is_locked_large = locked
@@ -52,17 +47,22 @@ func set_locked_large(locked: bool) -> void:
 	else:
 		scale = SMALL_SCALE
 
+
 func _on_mouse_hover_start() -> void:
-	if is_locked_large: return
+	if is_locked_large:
+		return
 	
 	z_index = 50 
 	_animate_size(LARGE_SCALE)
 
+
 func _on_mouse_hover_end() -> void:
-	if is_locked_large: return
+	if is_locked_large:
+		return
 	
 	z_index = 0
 	_animate_size(SMALL_SCALE)
+
 
 func _animate_size(target_scale: Vector2) -> void:
 	if _zoom_tween and _zoom_tween.is_valid():
@@ -71,9 +71,6 @@ func _animate_size(target_scale: Vector2) -> void:
 	_zoom_tween = create_tween()
 	_zoom_tween.tween_property(self, "scale", target_scale, 0.15).set_ease(Tween.EASE_OUT)
 
-# ==========================================
-# POPULARE ȘI DRAG & DROP
-# ==========================================
 
 func primeste_comanda(lista_ingrediente: Array, numar_client: int) -> void:
 	label_numar.text = str(numar_client).pad_zeros(2)
@@ -87,8 +84,6 @@ func primeste_comanda(lista_ingrediente: Array, numar_client: int) -> void:
 			iconita_noua.texture = imagini_ingrediente[ingredient]
 			iconita_noua.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 			iconita_noua.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-			
-			# REVENIM la dimensiunea fixă, fără să le forțăm să se întindă vertical!
 			iconita_noua.custom_minimum_size = Vector2(48, 48)
 			
 			container_ingrediente.add_child(iconita_noua)
@@ -97,6 +92,7 @@ func primeste_comanda(lista_ingrediente: Array, numar_client: int) -> void:
 			await get_tree().create_timer(0.5).timeout
 			
 	comanda_gata.emit()
+
 
 func _get_drag_data(_at_position: Vector2) -> Variant:
 	get_tree().call_group("drop_layer", "start_ticket_drag", self)
@@ -114,6 +110,7 @@ func _get_drag_data(_at_position: Vector2) -> Variant:
 
 	modulate.a = 0.4
 	return date_bilet
+
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_DRAG_END:

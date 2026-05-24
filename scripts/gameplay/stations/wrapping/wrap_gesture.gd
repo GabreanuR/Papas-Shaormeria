@@ -11,19 +11,32 @@ var is_dragging := false
 var current_swipe_index := 0
 var mistakes := 0
 
-func _input(event):
+
+func _ready() -> void:
+	mouse_filter = Control.MOUSE_FILTER_STOP
+
+
+func _gui_input(event: InputEvent) -> void:
 	if current_swipe_index >= required_swipes.size():
 		return
 
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
-			start_pos = event.position
+			start_pos = get_local_mouse_position()
 			is_dragging = true
+			accept_event()
+
 		else:
 			if is_dragging:
-				_handle_swipe(event.position - start_pos)
+				var end_pos := get_local_mouse_position()
+				_handle_swipe(end_pos - start_pos)
 
 			is_dragging = false
+			accept_event()
+
+	elif event is InputEventMouseMotion and is_dragging:
+		accept_event()
+
 
 func _handle_swipe(delta: Vector2) -> void:
 	if delta.length() < min_swipe_distance:
@@ -38,8 +51,10 @@ func _handle_swipe(delta: Vector2) -> void:
 		if current_swipe_index >= required_swipes.size():
 			var quality: float = max(0.0, 1.0 - mistakes * 0.2)
 			wrap_completed.emit(quality)
+
 	else:
 		mistakes += 1
+
 
 func get_swipe_direction(delta: Vector2) -> String:
 	if abs(delta.x) > abs(delta.y):
@@ -47,6 +62,9 @@ func get_swipe_direction(delta: Vector2) -> String:
 	else:
 		return "up" if delta.y < 0 else "down"
 
+
 func reset_wrap() -> void:
 	current_swipe_index = 0
+	mistakes = 0
+	is_dragging = false
 	wrap_step_changed.emit(-1)

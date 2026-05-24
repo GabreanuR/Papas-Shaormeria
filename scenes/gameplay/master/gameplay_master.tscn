@@ -54,7 +54,7 @@ text = "Wrapping"
 [node name="DropLayer" type="Control" parent="CanvasLayer" unique_id=1737900230]
 layout_mode = 3
 anchors_preset = 0
-offset_left = 1197.0
+offset_left = 1479.0
 offset_top = -1.0
 offset_right = 1935.0
 offset_bottom = 1083.0

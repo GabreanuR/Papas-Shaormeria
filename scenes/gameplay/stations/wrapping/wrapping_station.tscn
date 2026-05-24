@@ -8,8 +8,11 @@
 [ext_resource type="Texture2D" uid="uid://w1vo5ynyo73u" path="res://assets/graphics/wrapping_station/shaorma_2.png" id="3_iobvn"]
 [ext_resource type="Texture2D" uid="uid://cmk0cqyd2fd2g" path="res://assets/graphics/wrapping_station/shaorma_3.png" id="4_1k0fd"]
 [ext_resource type="Texture2D" uid="uid://bsjf325nddwoo" path="res://assets/graphics/wrapping_station/shaorma_4_chicken.png" id="5_8sqnr"]
+[ext_resource type="Texture2D" uid="uid://dw28sire38ql8" path="res://assets/graphics/wrapping_station/arrow_1.png" id="5_66sca"]
 [ext_resource type="Texture2D" uid="uid://c1qhcuari0alv" path="res://assets/graphics/wrapping_station/chicken_paper_piece.png" id="6_8sqnr"]
 [ext_resource type="Script" uid="uid://bejuej8hpb2uu" path="res://scripts/gameplay/stations/wrapping/wrap_gesture.gd" id="6_loyu3"]
+[ext_resource type="Texture2D" uid="uid://6lksmpmknfja" path="res://assets/graphics/wrapping_station/arrow_2.png" id="6_ux0ym"]
+[ext_resource type="Texture2D" uid="uid://c4sj58t0r2l3o" path="res://assets/graphics/wrapping_station/arrow_3.png" id="7_co4ij"]
 [ext_resource type="Texture2D" uid="uid://b4j8i2oe3vjj2" path="res://assets/graphics/wrapping_station/beef_paper_piece.png" id="7_ihsbg"]
 [ext_resource type="Texture2D" uid="uid://bwtnq6lnphik5" path="res://assets/graphics/wrapping_station/shaorma_4_beef.png" id="8_adlnp"]
 [ext_resource type="Texture2D" uid="uid://wmmcwy2a5f5u" path="res://assets/graphics/ingredients/drink_1.png" id="9_48yro"]
@@ -31,6 +34,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_0cijx")
 wrap_step_textures = Array[Texture2D]([ExtResource("2_8l553"), ExtResource("3_iobvn"), ExtResource("4_1k0fd")])
+arrow_step_textures = Array[Texture2D]([ExtResource("5_66sca"), ExtResource("6_ux0ym"), ExtResource("7_co4ij")])
 paper_1_texture = ExtResource("6_8sqnr")
 paper_2_texture = ExtResource("7_ihsbg")
 wrapped_with_paper_1_texture = ExtResource("5_8sqnr")
@@ -59,6 +63,21 @@ scale = Vector2(1.5, 1.5)
 [node name="WrappedVisual" type="Sprite2D" parent="Tray" unique_id=942007189]
 scale = Vector2(0.5, 0.5)
 offset = Vector2(1800, 1400)
+
+[node name="SwipeArrowVisual" type="Sprite2D" parent="Tray" unique_id=1318213566]
+position = Vector2(898, 334)
+scale = Vector2(0.5, 0.5)
+
+[node name="InstructionLabel" type="Label" parent="Tray" unique_id=489871666]
+offset_left = 604.0
+offset_top = 377.0
+offset_right = 1187.0
+offset_bottom = 432.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 34
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 1
 
 [node name="PaperPile1" type="TextureButton" parent="Tray" unique_id=1353262914]
 offset_left = 244.0
@@ -158,7 +177,6 @@ color = Color(1, 0.7118161, 1, 0)
 script = ExtResource("6_loyu3")
 
 [node name="FadeOverlay" type="ColorRect" parent="." unique_id=1221438709]
-visible = false
 layout_mode = 0
 offset_left = -50.0
 offset_top = -26.0

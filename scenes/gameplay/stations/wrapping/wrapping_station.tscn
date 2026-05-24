@@ -17,6 +17,7 @@
 [ext_resource type="Texture2D" uid="uid://c1prke56jshct" path="res://assets/graphics/wrapping_station/chicken_paper_pile.png" id="11_adlnp"]
 [ext_resource type="Texture2D" uid="uid://bdqmybnjb3yus" path="res://assets/graphics/ingredients/drink_3.png" id="11_gwaiu"]
 [ext_resource type="Texture2D" uid="uid://dnb4yhqgbowrx" path="res://assets/graphics/wrapping_station/beef_paper_pile.png" id="12_gfg1q"]
+[ext_resource type="Texture2D" uid="uid://bnrrwi7lnwtw3" path="res://assets/graphics/wrapping_station/send.png" id="16_48yro"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0cijx"]
 size = Vector2(244.75, 343.75)
@@ -78,17 +79,20 @@ texture_normal = ExtResource("12_gfg1q")
 [node name="CarriedPaper" type="Sprite2D" parent="Tray" unique_id=1444360262]
 
 [node name="SendButton" type="Button" parent="Tray" unique_id=1717044819]
-offset_left = 551.0
-offset_top = 780.0
-offset_right = 697.0
-offset_bottom = 838.0
+offset_left = 508.0
+offset_top = 732.0
+offset_right = 1180.0
+offset_bottom = 1160.0
+scale = Vector2(0.35, 0.35)
+icon = ExtResource("16_48yro")
+flat = true
 
 [node name="Darken" type="ColorRect" parent="Tray/SendButton" unique_id=1940635552]
 layout_mode = 0
-offset_left = -3.0
-offset_top = 2.0
-offset_right = 155.0
-offset_bottom = 57.0
+offset_left = 134.28564
+offset_top = 145.71411
+offset_right = 534.2855
+offset_bottom = 274.28564
 color = Color(0.07906392, 0.07906392, 0.07906392, 0.30200002)
 
 [node name="TicketSlot" type="Node2D" parent="Tray" unique_id=1453101842]
@@ -150,7 +154,7 @@ offset_left = 725.0
 offset_top = 552.0
 offset_right = 1082.0
 offset_bottom = 832.0
-color = Color(1, 0.7118161, 1, 0.19800001)
+color = Color(1, 0.7118161, 1, 0)
 script = ExtResource("6_loyu3")
 
 [node name="FadeOverlay" type="ColorRect" parent="." unique_id=1221438709]

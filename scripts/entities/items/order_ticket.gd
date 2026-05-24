@@ -95,6 +95,9 @@ func primeste_comanda(lista_ingrediente: Array, numar_client: int) -> void:
 
 
 func _get_drag_data(_at_position: Vector2) -> Variant:
+	if is_locked_large and mouse_filter == Control.MOUSE_FILTER_IGNORE:
+		return null
+
 	get_tree().call_group("drop_layer", "start_ticket_drag", self)
 
 	var date_bilet = {

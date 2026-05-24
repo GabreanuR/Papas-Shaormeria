@@ -67,6 +67,8 @@ func _ready() -> void:
 
 	carried_drink.hide()
 	placed_drink.hide()
+	
+	add_to_group("wrapping_station")
 
 func _process(_delta: float) -> void:
 	if carrying_paper:
@@ -205,31 +207,14 @@ func _drop_data(_at_position: Vector2, data: Variant) -> void:
 	darken.modulate.a = 0.0
 
 
-func _is_mouse_over_ticket_slot(mouse_pos: Vector2) -> bool:
-	var shape := ticket_slot_area.get_node_or_null("CollisionShape2D")
 
-	if shape == null or shape.shape == null or shape.disabled:
-		return false
-
-	var local_pos: Vector2 = shape.to_local(mouse_pos)
-
-	if shape.shape is RectangleShape2D:
-		var rect_shape := shape.shape as RectangleShape2D
-		var rect := Rect2(-rect_shape.size * 0.5, rect_shape.size)
-		return rect.has_point(local_pos)
-
-	if shape.shape is CircleShape2D:
-		var circle_shape := shape.shape as CircleShape2D
-		return local_pos.length() <= circle_shape.radius
-
-	return false
 
 func _on_send_pressed() -> void:
 	if not ticket_placed:
 		return
 
-	paper_pile_1.hide()
-	paper_pile_2.hide()
+	_keep_paper_piles_on_counter()
+	_hide_remaining_drinks()
 
 	var tween := create_tween()
 	tween.tween_property(tray, "position:x", tray.position.x + 1800, 0.85)
@@ -238,6 +223,26 @@ func _on_send_pressed() -> void:
 	var fade_tween := create_tween()
 	fade_tween.tween_property(fade, "modulate:a", 1.0, 0.85)
 
+
+func _keep_paper_piles_on_counter() -> void:
+	var old_pos_1 := paper_pile_1.global_position
+	var old_pos_2 := paper_pile_2.global_position
+
+	paper_pile_1.reparent(self)
+	paper_pile_2.reparent(self)
+
+	paper_pile_1.global_position = old_pos_1
+	paper_pile_2.global_position = old_pos_2
+
+	paper_pile_1.show()
+	paper_pile_2.show()
+
+
+func _hide_remaining_drinks() -> void:
+	drink_1.hide()
+	drink_2.hide()
+	drink_3.hide()
+	carried_drink.hide()
 
 func is_mouse_over_send(mouse_pos: Vector2) -> bool:
 	if send_button is Control:
@@ -409,3 +414,58 @@ func _reset_drinks() -> void:
 	drink_3.disabled = false
 	
 	
+
+func try_accept_ticket_from_drop(ticket: Control) -> bool:
+	if ticket_placed:
+		return false
+
+	if not paper_applied or wrap_quality <= 0.0:
+		return false
+
+	if not _is_mouse_over_ticket_slot(get_global_mouse_position()):
+		return false
+
+	ticket_placed = true
+
+	ticket.reparent(tray)
+
+	if ticket.has_method("set_locked_large"):
+		ticket.set_locked_large(true)
+
+	ticket.scale = Vector2(0.23, 0.23)
+	ticket.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	ticket.z_index = 100
+	ticket.modulate.a = 1.0
+	ticket.show()
+
+	var slot_center := ticket_slot_area.global_position
+	var ticket_visual_size := ticket.size * ticket.scale
+
+	ticket.global_position = ticket_slot_sprite.global_position + Vector2(-74, -90)
+	ticket.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	darken.visible = false
+	darken.modulate.a = 0.0
+
+	return true
+
+
+func _is_mouse_over_ticket_slot(mouse_pos: Vector2) -> bool:
+	var slot_area := $Tray/TicketSlot/Area2D
+	var shape := slot_area.get_node_or_null("CollisionShape2D")
+
+	if shape == null or shape.shape == null or shape.disabled:
+		return false
+
+	var local_pos: Vector2 = shape.to_local(mouse_pos)
+
+	if shape.shape is RectangleShape2D:
+		var rect_shape := shape.shape as RectangleShape2D
+		var rect := Rect2(-rect_shape.size * 0.5, rect_shape.size)
+		return rect.has_point(local_pos)
+
+	if shape.shape is CircleShape2D:
+		var circle_shape := shape.shape as CircleShape2D
+		return local_pos.length() <= circle_shape.radius
+
+	return false

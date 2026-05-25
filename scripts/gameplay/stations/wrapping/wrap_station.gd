@@ -120,6 +120,7 @@ func _show_wrap_step(step_index: int) -> void:
 
 	instruction_label.text = "Swipe the shaorma!"
 
+
 func _on_wrap_step_changed(step_index: int) -> void:
 	_show_wrap_step(step_index)
 

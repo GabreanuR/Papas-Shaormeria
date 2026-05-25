@@ -1,74 +1,279 @@
 [gd_scene format=3 uid="uid://dhip6nndara60"]
 
 [ext_resource type="Script" uid="uid://cs72x3bg7hb5k" path="res://scripts/gameplay/stations/cutting/meat_select.gd" id="1_kf4k3"]
-[ext_resource type="Texture2D" uid="uid://2chm61ycktj2" path="res://assets/graphics/cutting_station/new_bg.png" id="2_o077c"]
-[ext_resource type="FontFile" uid="uid://bpu1j3ggtme57" path="res://assets/fonts/Oswald-Bold.ttf" id="3_o077c"]
-[ext_resource type="Texture2D" uid="uid://b7l1ensnqab3q" path="res://assets/graphics/cutting_station/final_chick.png" id="4_o077c"]
-[ext_resource type="Texture2D" uid="uid://b6tx574sy2oq1" path="res://assets/graphics/cutting_station/final_beef.png" id="5_5tia3"]
+[ext_resource type="Texture2D" uid="uid://c7a1tufccsqeo" path="res://assets/graphics/cutting_station/new_nackground.png" id="2_nn6tx"]
+[ext_resource type="Texture2D" uid="uid://bcf4qjqtuhwwf" path="res://assets/graphics/cutting_station/ChatGPT_Image_May_25__2026_at_12_48_07_PM-removebg-preview.png" id="3_4uybx"]
+[ext_resource type="Texture2D" uid="uid://cqjg8kawpf2co" path="res://assets/graphics/cutting_station/tortilla_stack.png" id="4_er6o2"]
+[ext_resource type="Texture2D" uid="uid://w4q26i1jap15" path="res://assets/graphics/cutting_station/cooking_level_1.png" id="5_1jelu"]
+[ext_resource type="Script" uid="uid://crmoldwv88ric" path="res://scripts/gameplay/stations/cutting/tortilla.gd" id="5_il7sb"]
+[ext_resource type="Texture2D" uid="uid://c1yjgb2tkjr5m" path="res://assets/graphics/ingredients/lipie.png" id="6_6g2hc"]
+[ext_resource type="Texture2D" uid="uid://dl0k71odvr7xk" path="res://assets/graphics/cutting_station/ChatGPT_Image_May_25__2026_at_12_51_41_PM-removebg-preview.png" id="6_il7sb"]
+[ext_resource type="Texture2D" uid="uid://5ea1beebe2jh" path="res://assets/graphics/cutting_station/heated_shaormas_panel.png" id="7_6g2hc"]
+[ext_resource type="Texture2D" uid="uid://bvktxuefsjtfd" path="res://assets/graphics/cutting_station/meat_on_sharoma_panel.png" id="8_gdssk"]
+[ext_resource type="Texture2D" uid="uid://d2bxna0p6ow45" path="res://assets/graphics/cutting_station/trash_panel.png" id="9_fnm7x"]
+[ext_resource type="Texture2D" uid="uid://bl86qjmq8yt1f" path="res://assets/graphics/cutting_station/send_to_assembly_panel.png" id="10_gjsxq"]
 
-[sub_resource type="LabelSettings" id="LabelSettings_5tia3"]
-font = ExtResource("3_o077c")
-font_size = 38
-font_color = Color(0.8598969, 0.6844726, 0.10950973, 1)
-outline_size = 10
-outline_color = Color(0, 0, 0, 1)
-shadow_size = 4
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kbayl"]
+size = Vector2(222, 165.5)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_50lc3"]
-size = Vector2(381.25, 599.5)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gdssk"]
+size = Vector2(210, 173)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_xi0xo"]
-size = Vector2(373, 571)
+[sub_resource type="CircleShape2D" id="CircleShape2D_n8ni4"]
+radius = 109.55364
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_eylwy"]
+size = Vector2(146.5, 63)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ntwqt"]
+size = Vector2(141.75, 62.875)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bohwe"]
+size = Vector2(138.5, 64)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gjuf8"]
+size = Vector2(149.875, 65)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_b0lkg"]
+size = Vector2(149.75, 62.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fe5an"]
+size = Vector2(242.75, 147)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_tiemt"]
+size = Vector2(379, 153)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3pwus"]
+size = Vector2(228, 142)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1ro0g"]
+size = Vector2(257, 150)
 
 [node name="MeatSelect" type="Node2D" unique_id=1126885329]
 script = ExtResource("1_kf4k3")
 
-[node name="Background" type="TextureRect" parent="." unique_id=615875480]
-offset_right = 1922.0
-offset_bottom = 1087.0
-texture = ExtResource("2_o077c")
+[node name="Background2" type="Sprite2D" parent="." unique_id=129982770]
+position = Vector2(959, 604)
+scale = Vector2(1.3744651, 1.0891266)
+texture = ExtResource("2_nn6tx")
 
-[node name="TitleLabel" type="Label" parent="." unique_id=858306237]
-offset_left = 660.0
-offset_top = 11.0
-offset_right = 1221.0
-offset_bottom = 88.0
-text = "Choose the meat"
-label_settings = SubResource("LabelSettings_5tia3")
-horizontal_alignment = 1
-vertical_alignment = 1
-uppercase = true
+[node name="Rotisor" type="Sprite2D" parent="." unique_id=380288045]
+position = Vector2(887, 428.10785)
+scale = Vector2(1.9052286, 1.6024956)
+texture = ExtResource("3_4uybx")
 
-[node name="Chicken" type="Node2D" parent="." unique_id=1262384515]
+[node name="TortillaStack" type="Area2D" parent="." unique_id=1341426703]
 
-[node name="Sprite2D" type="Sprite2D" parent="Chicken" unique_id=1743906895]
-position = Vector2(681, 547)
-scale = Vector2(1.6619998, 1.599)
-texture = ExtResource("4_o077c")
+[node name="Sprite2D" type="Sprite2D" parent="TortillaStack" unique_id=678023264]
+position = Vector2(344, 698.00006)
+scale = Vector2(0.47759858, 0.40771806)
+texture = ExtResource("4_er6o2")
 
-[node name="Area2D" type="Area2D" parent="Chicken" unique_id=241324252]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TortillaStack" unique_id=979463031]
+position = Vector2(346, 695.25)
+shape = SubResource("RectangleShape2D_kbayl")
+debug_color = Color(0.06908746, 0.268879, 0.25669545, 0)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Chicken/Area2D" unique_id=1853610072]
-position = Vector2(667.625, 518.25)
-shape = SubResource("RectangleShape2D_50lc3")
-debug_color = Color(0, 0.5411765, 0.627451, 0.22352941)
+[node name="SpawnPoint" type="Marker2D" parent="TortillaStack" unique_id=2003353459]
+position = Vector2(345, 694)
 
-[node name="Beef" type="Node2D" parent="." unique_id=1519836628]
+[node name="SpawnedObjects" type="Node2D" parent="." unique_id=1248432186]
 
-[node name="Sprite2D" type="Sprite2D" parent="Beef" unique_id=2009507825]
-position = Vector2(1251, 567.5)
-scale = Vector2(1.6589288, 1.4739496)
-texture = ExtResource("5_5tia3")
+[node name="Tortillas" type="Node2D" parent="SpawnedObjects" unique_id=94313584]
 
-[node name="Area2D" type="Area2D" parent="Beef" unique_id=1585644819]
+[node name="TortillaTemplate" type="Area2D" parent="SpawnedObjects/Tortillas" unique_id=886623637]
+script = ExtResource("5_il7sb")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Beef/Area2D" unique_id=1222670441]
-position = Vector2(1249.5, 523.5)
-shape = SubResource("RectangleShape2D_xi0xo")
-debug_color = Color(0, 0.6, 0.69803923, 0.25490198)
+[node name="Sprite2D" type="Sprite2D" parent="SpawnedObjects/Tortillas/TortillaTemplate" unique_id=658433892]
+position = Vector2(342, 651.99994)
+scale = Vector2(0.6199999, 0.60928965)
+texture = ExtResource("6_6g2hc")
 
-[node name="FadeOverlay" type="ColorRect" parent="." unique_id=51783781]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="SpawnedObjects/Tortillas/TortillaTemplate" unique_id=424600183]
+position = Vector2(343, 688.5)
+shape = SubResource("RectangleShape2D_gdssk")
+
+[node name="MeatContainer" type="Node2D" parent="SpawnedObjects/Tortillas/TortillaTemplate" unique_id=44688533]
+
+[node name="Meat Pieces" type="Node2D" parent="SpawnedObjects" unique_id=47389112]
+
+[node name="RecognitionAreas" type="Node2D" parent="." unique_id=345637851]
+
+[node name="ChickenCutArea" type="Area2D" parent="RecognitionAreas" unique_id=1363137703]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RecognitionAreas/ChickenCutArea" unique_id=1426963115]
+
+[node name="BeefCutArea" type="Area2D" parent="RecognitionAreas" unique_id=240980879]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RecognitionAreas/BeefCutArea" unique_id=1101050668]
+
+[node name="MeatDropPoints" type="Node2D" parent="." unique_id=888927550]
+
+[node name="ChickenDropPoint" type="Marker2D" parent="MeatDropPoints" unique_id=1985257206]
+position = Vector2(535, 577)
+
+[node name="BeefDropPoint" type="Marker2D" parent="MeatDropPoints" unique_id=572640190]
+position = Vector2(1234, 581)
+
+[node name="MeatCookingIndicators" type="Node2D" parent="." unique_id=1535217104]
+
+[node name="ChickenIndicator" type="Sprite2D" parent="MeatCookingIndicators" unique_id=974302047]
+position = Vector2(650, 167.625)
+scale = Vector2(0.1159999, 0.109499976)
+texture = ExtResource("5_1jelu")
+
+[node name="BeefIndicator" type="Sprite2D" parent="MeatCookingIndicators" unique_id=1295227310]
+position = Vector2(1130, 166)
+scale = Vector2(0.111000106, 0.108999945)
+texture = ExtResource("5_1jelu")
+
+[node name="Knife" type="Area2D" parent="." unique_id=1325347212]
+
+[node name="Sprite2D" type="Sprite2D" parent="Knife" unique_id=43863775]
+position = Vector2(304, 453.99997)
+scale = Vector2(0.5263736, 0.48175183)
+texture = ExtResource("6_il7sb")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Knife" unique_id=1255837145]
+position = Vector2(305, 432)
+shape = SubResource("CircleShape2D_n8ni4")
+debug_color = Color(0.69105625, 0.49319035, 0.19136646, 0)
+
+[node name="GrillSlots" type="Node2D" parent="." unique_id=92109863]
+
+[node name="GrillSlot1" type="Area2D" parent="GrillSlots" unique_id=486533923]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GrillSlots/GrillSlot1" unique_id=1259829400]
+position = Vector2(661.25, 662.5)
+shape = SubResource("RectangleShape2D_eylwy")
+debug_color = Color(0.2901961, 0.54509807, 0.58431375, 0)
+
+[node name="TortillaAnchor" type="Marker2D" parent="GrillSlots/GrillSlot1" unique_id=590823264]
+
+[node name="HeatTimeCircle" type="TextureProgressBar" parent="GrillSlots/GrillSlot1" unique_id=864936465]
 offset_right = 40.0
 offset_bottom = 40.0
-size_flags_horizontal = 3
-color = Color(0, 0, 0, 1)
+
+[node name="GrillSlot2" type="Area2D" parent="GrillSlots" unique_id=925909033]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GrillSlots/GrillSlot2" unique_id=1014485877]
+position = Vector2(870, 662.4375)
+shape = SubResource("RectangleShape2D_ntwqt")
+debug_color = Color(0, 0.6, 0.69803923, 0)
+
+[node name="TortillaAnchor" type="Marker2D" parent="GrillSlots/GrillSlot2" unique_id=1173601981]
+
+[node name="HeatTimeCircle" type="TextureProgressBar" parent="GrillSlots/GrillSlot2" unique_id=1895781018]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="GrillSlot3" type="Area2D" parent="GrillSlots" unique_id=1319292438]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GrillSlots/GrillSlot3" unique_id=1987905980]
+position = Vector2(1081, 665)
+shape = SubResource("RectangleShape2D_bohwe")
+debug_color = Color(0, 0.6, 0.69803923, 0)
+
+[node name="TortillaAnchor" type="Marker2D" parent="GrillSlots/GrillSlot3" unique_id=897427861]
+
+[node name="HeatTimeCircle" type="TextureProgressBar" parent="GrillSlots/GrillSlot3" unique_id=979141596]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="GrillSlot4" type="Area2D" parent="GrillSlots" unique_id=1568810292]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GrillSlots/GrillSlot4" unique_id=554331226]
+position = Vector2(747.0625, 743.5)
+shape = SubResource("RectangleShape2D_gjuf8")
+debug_color = Color(0, 0.6, 0.69803923, 0)
+
+[node name="TortillaAnchor" type="Marker2D" parent="GrillSlots/GrillSlot4" unique_id=1357429765]
+
+[node name="HeatTimeCircle" type="TextureProgressBar" parent="GrillSlots/GrillSlot4" unique_id=1964157614]
+offset_left = 120.0
+offset_top = 115.0
+offset_right = 160.0
+offset_bottom = 155.0
+
+[node name="GrillSlot5" type="Area2D" parent="GrillSlots" unique_id=1513828845]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GrillSlots/GrillSlot5" unique_id=16320127]
+position = Vector2(987, 741)
+shape = SubResource("RectangleShape2D_b0lkg")
+debug_color = Color(0, 0.6, 0.69803923, 0)
+
+[node name="TortillaAnchor" type="Marker2D" parent="GrillSlots/GrillSlot5" unique_id=1009204490]
+
+[node name="HeatTimeCircle" type="TextureProgressBar" parent="GrillSlots/GrillSlot5" unique_id=202943444]
+offset_left = 99.0
+offset_top = 168.0
+offset_right = 339.0
+offset_bottom = 277.0
+
+[node name="TortillaDropAreas" type="Node2D" parent="." unique_id=773333605]
+
+[node name="HeatedTortillaArea" type="Area2D" parent="TortillaDropAreas" unique_id=230256666]
+
+[node name="Sprite2D" type="Sprite2D" parent="TortillaDropAreas/HeatedTortillaArea" unique_id=1623876539]
+position = Vector2(446.75, 911.5)
+scale = Vector2(0.5015313, 0.66753924)
+texture = ExtResource("7_6g2hc")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TortillaDropAreas/HeatedTortillaArea" unique_id=826063285]
+position = Vector2(448, 909)
+shape = SubResource("RectangleShape2D_fe5an")
+debug_color = Color(0, 0.6, 0.69803923, 0)
+
+[node name="TortillaAnchirs" type="Node2D" parent="TortillaDropAreas/HeatedTortillaArea" unique_id=3316192]
+
+[node name="Anchor1" type="Marker2D" parent="TortillaDropAreas/HeatedTortillaArea/TortillaAnchirs" unique_id=663377383]
+
+[node name="Anchor2" type="Marker2D" parent="TortillaDropAreas/HeatedTortillaArea/TortillaAnchirs" unique_id=1983895606]
+
+[node name="Anchor3" type="Marker2D" parent="TortillaDropAreas/HeatedTortillaArea/TortillaAnchirs" unique_id=226527091]
+
+[node name="Anchor4" type="Marker2D" parent="TortillaDropAreas/HeatedTortillaArea/TortillaAnchirs" unique_id=1594235433]
+
+[node name="FillingArea" type="Area2D" parent="TortillaDropAreas" unique_id=518981605]
+
+[node name="Sprite2D" type="Sprite2D" parent="TortillaDropAreas/FillingArea" unique_id=816766800]
+position = Vector2(879, 911.49994)
+scale = Vector2(0.49617153, 0.63088983)
+texture = ExtResource("8_gdssk")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TortillaDropAreas/FillingArea" unique_id=35736147]
+position = Vector2(879.5, 910.5)
+shape = SubResource("RectangleShape2D_tiemt")
+debug_color = Color(0, 0.6, 0.69803923, 0)
+
+[node name="TortillaAnchor" type="Marker2D" parent="TortillaDropAreas/FillingArea" unique_id=1904362057]
+
+[node name="DropZones" type="Node2D" parent="." unique_id=896306177]
+
+[node name="TrashZone" type="Area2D" parent="DropZones" unique_id=67255037]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DropZones/TrashZone" unique_id=1864330176]
+position = Vector2(1432, 895)
+shape = SubResource("RectangleShape2D_3pwus")
+
+[node name="Sprite2D" type="Sprite2D" parent="DropZones/TrashZone" unique_id=1598148964]
+position = Vector2(1445.0001, 1040.0001)
+scale = Vector2(0.22816907, 0.3068183)
+texture = ExtResource("9_fnm7x")
+
+[node name="SendToAssemblyZone" type="Area2D" parent="DropZones" unique_id=1933879443]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DropZones/SendToAssemblyZone" unique_id=713181484]
+position = Vector2(1746.5, 913)
+shape = SubResource("RectangleShape2D_1ro0g")
+
+[node name="Sprite2D" type="Sprite2D" parent="DropZones/SendToAssemblyZone" unique_id=1722556262]
+position = Vector2(1746, 926)
+scale = Vector2(0.30199996, 0.266)
+texture = ExtResource("10_gjsxq")
+
+[node name="MessContainer" type="Node2D" parent="." unique_id=1265803472]
+position = Vector2(1077, 941)
+
+[node name="DragLayer" type="Node2D" parent="." unique_id=171173621]
+position = Vector2(651, 923)

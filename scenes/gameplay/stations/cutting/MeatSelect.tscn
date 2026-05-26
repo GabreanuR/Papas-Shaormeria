@@ -3,21 +3,33 @@
 [ext_resource type="Script" uid="uid://cs72x3bg7hb5k" path="res://scripts/gameplay/stations/cutting/meat_select.gd" id="1_kf4k3"]
 [ext_resource type="Texture2D" uid="uid://c7a1tufccsqeo" path="res://assets/graphics/cutting_station/new_nackground.png" id="2_nn6tx"]
 [ext_resource type="Texture2D" uid="uid://bcf4qjqtuhwwf" path="res://assets/graphics/cutting_station/ChatGPT_Image_May_25__2026_at_12_48_07_PM-removebg-preview.png" id="3_4uybx"]
+[ext_resource type="Texture2D" uid="uid://crdqu6djj5jtf" path="res://assets/graphics/ingredients/carne_pui.png" id="3_kbayl"]
 [ext_resource type="Texture2D" uid="uid://cqjg8kawpf2co" path="res://assets/graphics/cutting_station/tortilla_stack.png" id="4_er6o2"]
+[ext_resource type="Texture2D" uid="uid://evlfo7t12smk" path="res://assets/graphics/ingredients/carne_vita.png" id="4_n8ni4"]
 [ext_resource type="Texture2D" uid="uid://w4q26i1jap15" path="res://assets/graphics/cutting_station/cooking_level_1.png" id="5_1jelu"]
 [ext_resource type="Script" uid="uid://crmoldwv88ric" path="res://scripts/gameplay/stations/cutting/tortilla.gd" id="5_il7sb"]
 [ext_resource type="Texture2D" uid="uid://c1yjgb2tkjr5m" path="res://assets/graphics/ingredients/lipie.png" id="6_6g2hc"]
+[ext_resource type="Texture2D" uid="uid://rxea47nwfp2b" path="res://assets/graphics/cutting_station/cooking_level_2.png" id="6_eylwy"]
 [ext_resource type="Texture2D" uid="uid://dl0k71odvr7xk" path="res://assets/graphics/cutting_station/ChatGPT_Image_May_25__2026_at_12_51_41_PM-removebg-preview.png" id="6_il7sb"]
 [ext_resource type="Texture2D" uid="uid://5ea1beebe2jh" path="res://assets/graphics/cutting_station/heated_shaormas_panel.png" id="7_6g2hc"]
+[ext_resource type="Texture2D" uid="uid://ni6tj6obexni" path="res://assets/graphics/cutting_station/cooking_level_3.png" id="7_ntwqt"]
+[ext_resource type="Texture2D" uid="uid://urc02qy62ca4" path="res://assets/graphics/cutting_station/chicken_on_metal.png" id="8_bohwe"]
 [ext_resource type="Texture2D" uid="uid://bvktxuefsjtfd" path="res://assets/graphics/cutting_station/meat_on_sharoma_panel.png" id="8_gdssk"]
 [ext_resource type="Texture2D" uid="uid://d2bxna0p6ow45" path="res://assets/graphics/cutting_station/trash_panel.png" id="9_fnm7x"]
+[ext_resource type="Texture2D" uid="uid://cf7um14aecf8" path="res://assets/graphics/cutting_station/beef_on_metal.png" id="9_gjuf8"]
 [ext_resource type="Texture2D" uid="uid://bl86qjmq8yt1f" path="res://assets/graphics/cutting_station/send_to_assembly_panel.png" id="10_gjsxq"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kbayl"]
 size = Vector2(222, 165.5)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gdssk"]
-size = Vector2(210, 173)
+size = Vector2(210, 178)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_n8ni4"]
+size = Vector2(178.25, 309)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fkow0"]
+size = Vector2(174.5, 302.5)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_n8ni4"]
 radius = 109.55364
@@ -51,6 +63,14 @@ size = Vector2(257, 150)
 
 [node name="MeatSelect" type="Node2D" unique_id=1126885329]
 script = ExtResource("1_kf4k3")
+tortilla_texture = ExtResource("6_6g2hc")
+meat_chicken_texture = ExtResource("3_kbayl")
+meat_beef_texture = ExtResource("4_n8ni4")
+indicator_light = ExtResource("5_1jelu")
+indicator_medium = ExtResource("6_eylwy")
+indicator_burned = ExtResource("7_ntwqt")
+chicken_meat_piece_texture = ExtResource("8_bohwe")
+beef_meat_piece_texture = ExtResource("9_gjuf8")
 
 [node name="Background2" type="Sprite2D" parent="." unique_id=129982770]
 position = Vector2(959, 604)
@@ -85,12 +105,12 @@ position = Vector2(345, 694)
 script = ExtResource("5_il7sb")
 
 [node name="Sprite2D" type="Sprite2D" parent="SpawnedObjects/Tortillas/TortillaTemplate" unique_id=658433892]
-position = Vector2(342, 651.99994)
+position = Vector2(344, 652)
 scale = Vector2(0.6199999, 0.60928965)
 texture = ExtResource("6_6g2hc")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="SpawnedObjects/Tortillas/TortillaTemplate" unique_id=424600183]
-position = Vector2(343, 688.5)
+position = Vector2(343, 686)
 shape = SubResource("RectangleShape2D_gdssk")
 
 [node name="MeatContainer" type="Node2D" parent="SpawnedObjects/Tortillas/TortillaTemplate" unique_id=44688533]
@@ -102,10 +122,14 @@ shape = SubResource("RectangleShape2D_gdssk")
 [node name="ChickenCutArea" type="Area2D" parent="RecognitionAreas" unique_id=1363137703]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RecognitionAreas/ChickenCutArea" unique_id=1426963115]
+position = Vector2(651, 388)
+shape = SubResource("RectangleShape2D_n8ni4")
 
 [node name="BeefCutArea" type="Area2D" parent="RecognitionAreas" unique_id=240980879]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RecognitionAreas/BeefCutArea" unique_id=1101050668]
+position = Vector2(1132.75, 385.75)
+shape = SubResource("RectangleShape2D_fkow0")
 
 [node name="MeatDropPoints" type="Node2D" parent="." unique_id=888927550]
 
@@ -130,7 +154,7 @@ texture = ExtResource("5_1jelu")
 [node name="Knife" type="Area2D" parent="." unique_id=1325347212]
 
 [node name="Sprite2D" type="Sprite2D" parent="Knife" unique_id=43863775]
-position = Vector2(304, 453.99997)
+position = Vector2(300, 453)
 scale = Vector2(0.5263736, 0.48175183)
 texture = ExtResource("6_il7sb")
 

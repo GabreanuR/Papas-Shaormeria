@@ -1,13 +1,31 @@
 extends Node2D
 
+var knife_start_position: Vector2
+var knife_swipe_start_y: float = 0.0
+var knife_is_swiping: bool = false
+var knife_cut_area: String = ""
+var knife_min_swipe_distance: float = 80.0
+var knife_attached: bool = false
+
+var knife_original_parent: Node
+
 @export var tortilla_texture: Texture2D
 @export var meat_chicken_texture: Texture2D
 @export var meat_beef_texture: Texture2D
-@export var mess_texture: Texture2D
 
 @export var indicator_light: Texture2D
 @export var indicator_medium: Texture2D
 @export var indicator_burned: Texture2D
+
+@export var chicken_meat_piece_texture: Texture2D
+@export var beef_meat_piece_texture: Texture2D
+
+const MEAT_STAGE_1_TIME = 10.0
+const MEAT_STAGE_2_TIME = 20.0
+
+@onready var tortilla_template: Area2D = $SpawnedObjects/Tortillas/TortillaTemplate
+
+var knife_has_cut = false
 
 const TORTILLA_HEAT_TIME := 20.0
 const TORTILLA_BURN_TIME := 30.0
@@ -68,8 +86,14 @@ func _ready() -> void:
 				"tortilla": null,
 				"heat_time": 0.0
 			}
+	knife_start_position = knife.global_position
 
 	make_draggable(knife)
+	knife_start_position = knife.global_position
+	chicken_indicator.texture = indicator_light
+	beef_indicator.texture = indicator_light
+	knife_original_parent = knife.get_parent()
+	knife_start_position = knife.global_position
 
 
 func _process(delta: float) -> void:
@@ -81,11 +105,25 @@ func _process(delta: float) -> void:
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
-			if dragged_object != null:
-				handle_drop(dragged_object)
-				dragged_object = null
+		if event.button_index != MOUSE_BUTTON_LEFT:
+			return
 
+		if event.pressed:
+			if dragged_object == knife:
+				var mouse_pos: Vector2 = get_global_mouse_position()
+				if not is_inside_area(mouse_pos, chicken_cut_area) and not is_inside_area(mouse_pos, beef_cut_area):
+					reset_knife()
+			return
+
+		if not event.pressed:
+			if dragged_object == null:
+				return
+
+			if dragged_object == knife:
+				return
+
+			handle_drop(dragged_object)
+			dragged_object = null
 
 func _on_tortilla_stack_input(_viewport, event, _shape_idx) -> void:
 	if event is InputEventMouseButton:
@@ -95,32 +133,16 @@ func _on_tortilla_stack_input(_viewport, event, _shape_idx) -> void:
 
 
 func create_tortilla() -> Area2D:
-	var tortilla := Area2D.new()
-	tortilla.name = "Tortilla"
+	var tortilla: Area2D = tortilla_template.duplicate()
+	tortilla.visible = true
 	tortilla.global_position = tortilla_spawn_point.global_position
+
 	tortilla.set_meta("object_type", "tortilla")
 	tortilla.set_meta("heat_state", "raw")
 	tortilla.set_meta("has_meat", false)
 	tortilla.set_meta("meat_type", "")
 	tortilla.set_meta("meat_quality", "")
 	tortilla.set_meta("cutting_score", 0)
-
-	var sprite := Sprite2D.new()
-	sprite.name = "Sprite2D"
-	sprite.texture = tortilla_texture
-	sprite.scale = Vector2(0.18, 0.18)
-	tortilla.add_child(sprite)
-
-	var collision := CollisionShape2D.new()
-	collision.name = "CollisionShape2D"
-	var shape := CircleShape2D.new()
-	shape.radius = 55
-	collision.shape = shape
-	tortilla.add_child(collision)
-
-	var meat_container := Node2D.new()
-	meat_container.name = "MeatContainer"
-	tortilla.add_child(meat_container)
 
 	tortillas_container.add_child(tortilla)
 	make_draggable(tortilla)
@@ -174,18 +196,35 @@ func _on_draggable_input(_viewport, event, _shape_idx, obj: Area2D) -> void:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 			start_drag(obj)
 
-
 func start_drag(obj: Area2D) -> void:
 	dragged_object = obj
-	drag_offset = obj.global_position - get_global_mouse_position()
+	drag_offset = Vector2.ZERO
 
 	if obj.get_parent() != drag_layer:
 		obj.reparent(drag_layer, true)
 
+	obj.global_position = get_global_mouse_position()
+
+func reset_knife() -> void:
+	dragged_object = null
+	knife_is_swiping = false
+	knife_cut_area = ""
+
+	if knife.get_parent() != knife_original_parent:
+		knife.reparent(knife_original_parent, true)
+
+	knife.global_position = knife_start_position
+	knife.visible = true
 
 func update_dragged_object() -> void:
-	if dragged_object != null:
-		dragged_object.global_position = get_global_mouse_position() + drag_offset
+	if dragged_object == null:
+		return
+
+	if dragged_object == knife:
+		dragged_object.global_position = get_global_mouse_position()
+	else:
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+			dragged_object.global_position = get_global_mouse_position()
 
 
 func handle_drop(obj: Area2D) -> void:
@@ -202,32 +241,72 @@ func handle_drop(obj: Area2D) -> void:
 
 
 func handle_tortilla_drop(tortilla: Area2D) -> void:
-	var free_grill_slot := get_free_grill_slot_at_position(tortilla.global_position)
+	var heat_state: String = tortilla.get_meta("heat_state", "raw")
+	var has_meat: bool = tortilla.get_meta("has_meat", false)
 
-	if free_grill_slot != null:
-		place_tortilla_on_grill(tortilla, free_grill_slot)
+	if is_inside_area(tortilla.global_position, trash_zone):
+		clear_tortilla_from_grill(tortilla)
+		heated_tortillas.erase(tortilla)
+
+		if filling_tortilla == tortilla:
+			filling_tortilla = null
+
+		tortilla.queue_free()
 		return
 
-	if is_inside_area(tortilla.global_position, heated_area):
-		place_tortilla_in_heated_area(tortilla)
+	if has_meat:
+		if is_inside_area(tortilla.global_position, send_zone):
+			send_tortilla_to_assembly(tortilla)
+		else:
+			return_tortilla_to_valid_place(tortilla)
 		return
 
-	if is_inside_area(tortilla.global_position, filling_area):
-		place_tortilla_in_filling_area(tortilla)
+	if heat_state == "raw" or heat_state == "heating":
+		var free_grill_slot: Area2D = get_free_grill_slot_at_position(tortilla.global_position)
+		if free_grill_slot != null:
+			place_tortilla_on_grill(tortilla, free_grill_slot)
+		else:
+			tortilla.queue_free()
 		return
 
-	if is_inside_area(tortilla.global_position, send_zone):
-		send_tortilla_to_assembly(tortilla)
-		return
-
+	if heat_state == "ready":
+		if is_inside_area(tortilla.global_position, heated_area):
+			place_tortilla_in_heated_area(tortilla)
+		elif is_inside_area(tortilla.global_position, filling_area):
+			place_tortilla_in_filling_area(tortilla)
+		else:
+			return_tortilla_to_valid_place(tortilla)
 
 func handle_meat_drop(meat: Area2D) -> void:
 	if filling_tortilla != null and is_inside_area(meat.global_position, filling_area):
 		add_meat_to_tortilla(meat, filling_tortilla)
 	else:
-		create_mess(meat.global_position)
-		meat.queue_free()
+		create_mess_from_meat(meat)
+		
+		
+func return_tortilla_to_valid_place(tortilla: Area2D) -> void:
+	for slot in grill_data.keys():
+		if grill_data[slot]["tortilla"] == tortilla:
+			var anchor: Marker2D = slot.get_node("TortillaAnchor")
+			tortilla.global_position = anchor.global_position
+			return
 
+	if filling_tortilla == tortilla:
+		var anchor: Marker2D = filling_area.get_node("TortillaAnchor")
+		tortilla.global_position = anchor.global_position
+		return
+
+	if heated_tortillas.has(tortilla):
+		var anchor: Marker2D = get_next_heated_anchor()
+		if anchor != null:
+			tortilla.global_position = anchor.global_position
+
+
+func create_mess_from_meat(meat: Area2D) -> void:
+	cutting_score_data["mess"] += 1
+
+	meat.reparent(mess_container, true)
+	meat.set_meta("object_type", "mess")
 
 func get_free_grill_slot_at_position(pos: Vector2) -> Area2D:
 	for slot in grill_data.keys():
@@ -256,9 +335,11 @@ func place_tortilla_in_heated_area(tortilla: Area2D) -> void:
 	if heat_state != "ready":
 		return
 
+	clear_tortilla_from_grill(tortilla)
+
 	tortilla.reparent(tortillas_container, true)
 
-	var anchor := get_next_heated_anchor()
+	var anchor: Marker2D = get_next_heated_anchor()
 	if anchor != null:
 		tortilla.global_position = anchor.global_position
 
@@ -274,7 +355,9 @@ func place_tortilla_in_filling_area(tortilla: Area2D) -> void:
 	if heat_state != "ready":
 		return
 
-	var anchor := filling_area.get_node("TortillaAnchor") as Marker2D
+	clear_tortilla_from_grill(tortilla)
+
+	var anchor: Marker2D = filling_area.get_node("TortillaAnchor") as Marker2D
 
 	tortilla.reparent(tortillas_container, true)
 	tortilla.global_position = anchor.global_position
@@ -282,6 +365,15 @@ func place_tortilla_in_filling_area(tortilla: Area2D) -> void:
 	filling_tortilla = tortilla
 	heated_tortillas.erase(tortilla)
 
+func clear_tortilla_from_grill(tortilla: Area2D) -> void:
+	for slot in grill_data.keys():
+		if grill_data[slot]["tortilla"] == tortilla:
+			grill_data[slot]["tortilla"] = null
+			grill_data[slot]["heat_time"] = 0.0
+
+			var timer_circle: TextureProgressBar = slot.get_node_or_null("HeatTimerCircle")
+			if timer_circle != null:
+				timer_circle.value = 0
 
 func add_meat_to_tortilla(meat: Area2D, tortilla: Area2D) -> void:
 	if tortilla.get_meta("has_meat", false):
@@ -361,11 +453,22 @@ func calculate_tortilla_score(tortilla: Area2D) -> int:
 
 func update_grill(delta: float) -> void:
 	for slot in grill_data.keys():
-		var tortilla: Area2D = grill_data[slot]["tortilla"]
+		var tortilla = grill_data[slot]["tortilla"]
 
 		if tortilla == null:
+			grill_data[slot]["heat_time"] = 0.0
 			continue
 
+		if not is_instance_valid(tortilla):
+			grill_data[slot]["tortilla"] = null
+			grill_data[slot]["heat_time"] = 0.0
+			continue
+
+		if tortilla == null or not is_instance_valid(tortilla):
+			grill_data[slot]["tortilla"] = null
+			grill_data[slot]["heat_time"] = 0.0
+			continue
+		
 		grill_data[slot]["heat_time"] += delta
 		var heat_time: float = grill_data[slot]["heat_time"]
 
@@ -418,16 +521,19 @@ func update_meat_cooking(delta: float) -> void:
 
 
 func update_meat_indicator(meat_type: String) -> void:
-	var cook_time := chicken_cook_time
-	var indicator := chicken_indicator
+	var cook_time: float
+	var indicator: Sprite2D
 
-	if meat_type == "beef":
+	if meat_type == "chicken":
+		cook_time = chicken_cook_time
+		indicator = chicken_indicator
+	else:
 		cook_time = beef_cook_time
 		indicator = beef_indicator
 
-	if cook_time < MEAT_BURN_TIME * 0.5:
+	if cook_time < MEAT_STAGE_1_TIME:
 		indicator.texture = indicator_light
-	elif cook_time < MEAT_BURN_TIME:
+	elif cook_time < MEAT_STAGE_2_TIME:
 		indicator.texture = indicator_medium
 	else:
 		indicator.texture = indicator_burned
@@ -435,55 +541,47 @@ func update_meat_indicator(meat_type: String) -> void:
 
 func get_meat_quality(meat_type: String) -> String:
 	if meat_type == "chicken":
-		if chicken_cook_time >= MEAT_BURN_TIME:
-			return "burned"
-		return "good"
+		return "burned" if chicken_cook_time >= MEAT_STAGE_2_TIME else "good"
 
-	if beef_cook_time >= MEAT_BURN_TIME:
-		return "burned"
-
-	return "good"
+	return "burned" if beef_cook_time >= MEAT_STAGE_2_TIME else "good"
 
 
 func check_knife_cutting() -> void:
 	if dragged_object != knife:
 		return
 
-	if is_inside_area(knife.global_position, chicken_cut_area):
-		spawn_meat_from_knife("chicken")
+	var over_chicken: bool = is_inside_area(knife.global_position, chicken_cut_area)
+	var over_beef: bool = is_inside_area(knife.global_position, beef_cut_area)
 
-	if is_inside_area(knife.global_position, beef_cut_area):
-		spawn_meat_from_knife("beef")
+	if not knife_is_swiping:
+		if over_chicken:
+			knife_is_swiping = true
+			knife_swipe_start_y = knife.global_position.y
+			knife_cut_area = "chicken"
+		elif over_beef:
+			knife_is_swiping = true
+			knife_swipe_start_y = knife.global_position.y
+			knife_cut_area = "beef"
+		return
 
+	var swipe_distance: float = knife.global_position.y - knife_swipe_start_y
 
-var last_chicken_cut_time := 0.0
-var last_beef_cut_time := 0.0
-
-func spawn_meat_from_knife(meat_type: String) -> void:
-	var now := Time.get_ticks_msec() / 1000.0
-
+	if swipe_distance >= knife_min_swipe_distance:
+		if knife_cut_area == "chicken" and over_chicken:
+			finish_knife_cut("chicken")
+		elif knife_cut_area == "beef" and over_beef:
+			finish_knife_cut("beef")
+			
+func finish_knife_cut(meat_type: String) -> void:
 	if meat_type == "chicken":
-		if now - last_chicken_cut_time < 0.6:
-			return
-		last_chicken_cut_time = now
 		create_meat_piece("chicken", chicken_drop_point.global_position)
 	else:
-		if now - last_beef_cut_time < 0.6:
-			return
-		last_beef_cut_time = now
 		create_meat_piece("beef", beef_drop_point.global_position)
 
+	reset_knife()
 
-func create_mess(pos: Vector2) -> void:
-	cutting_score_data["mess"] += 1
 
-	var mess := Sprite2D.new()
-	mess.name = "MeatMess"
-	mess.global_position = pos
-	mess.texture = mess_texture
-	mess.scale = Vector2(0.12, 0.12)
 
-	mess_container.add_child(mess)
 
 
 func get_next_heated_anchor() -> Marker2D:

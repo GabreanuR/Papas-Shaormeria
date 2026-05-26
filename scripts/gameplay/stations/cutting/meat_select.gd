@@ -14,7 +14,8 @@ var knife_attached: bool = false
 
 var knife_original_parent: Node
 var drag_anchor_local := Vector2.ZERO
-
+@export var chicken_meat_pile: Texture2D
+@export var beef_meat_pile: Texture2D
 
 
 const RAW_TORTILLA_COLOR := Color(1.25, 1.18, 0.85, 1.0)
@@ -253,9 +254,19 @@ func attach_knife_to_mouse() -> void:
 
 func start_drag(obj: Area2D) -> void:
 	if heated_tortillas.has(obj):
-		if obj != heated_tortillas[heated_tortillas.size() - 1]:
+		var top_tortilla: Area2D = heated_tortillas[heated_tortillas.size() - 1]
+
+		if obj != top_tortilla:
 			return
+
 		heated_tortillas.erase(obj)
+		obj.input_pickable = true
+
+		var collision := obj.get_node_or_null("CollisionShape2D") as CollisionShape2D
+		if collision != null:
+			collision.disabled = false
+
+		refresh_heated_tortilla_stack_interaction()
 
 	if obj.get_meta("object_type", "") == "meat":
 		meat_start_positions[obj] = obj.global_position
@@ -606,6 +617,8 @@ func place_tortilla_in_heated_area(tortilla: Area2D) -> void:
 		var t := heated_tortillas[i]
 		t.z_index = 20 + i
 
+	refresh_heated_tortilla_stack_interaction()
+
 
 func place_tortilla_in_filling_area(tortilla: Area2D) -> void:
 	if filling_tortilla != null:
@@ -625,6 +638,7 @@ func place_tortilla_in_filling_area(tortilla: Area2D) -> void:
 
 	filling_tortilla = tortilla
 	heated_tortillas.erase(tortilla)
+	refresh_heated_tortilla_stack_interaction()
 
 func clear_tortilla_from_grill(tortilla: Area2D, reset_timer := true) -> void:
 	for slot in grill_data.keys():
@@ -640,7 +654,7 @@ func clear_tortilla_from_grill(tortilla: Area2D, reset_timer := true) -> void:
 
 func add_meat_to_tortilla(meat: Area2D, tortilla: Area2D) -> void:
 	if tortilla.get_meta("has_meat", false):
-		return_meat_to_start(meat)
+		meat.queue_free()
 		return
 
 	var meat_type: String = meat.get_meta("meat_type", "")
@@ -654,16 +668,24 @@ func add_meat_to_tortilla(meat: Area2D, tortilla: Area2D) -> void:
 	meat_sprite.name = "MeatSprite"
 
 	if meat_type == "chicken":
-		meat_sprite.texture = chicken_meat_piece_texture
+		if chicken_meat_pile:
+			meat_sprite.texture = chicken_meat_pile
+		else:
+			meat_sprite.texture = meat_chicken_texture
 	else:
-		meat_sprite.texture = beef_meat_piece_texture
+		if beef_meat_pile:
+			meat_sprite.texture = beef_meat_pile
+		else:
+			meat_sprite.texture = meat_beef_texture
 
-	meat_sprite.scale = Vector2(0.18, 0.18)
-	meat_sprite.position = Vector2.ZERO
+	meat_sprite.scale = Vector2(0.08, 0.08)
 	meat_sprite.z_index = 100
 
-	var container := tortilla.get_node("MeatContainer") as Node2D
-	container.add_child(meat_sprite)
+	var meat_container := tortilla.get_node("MeatContainer") as Node2D
+	meat_container.add_child(meat_sprite)
+
+	# pozitie noua
+	meat_sprite.position = Vector2(-160, -78)
 
 	if meat_quality == "burned":
 		cutting_score_data["burned_meat"] += 1
@@ -671,6 +693,21 @@ func add_meat_to_tortilla(meat: Area2D, tortilla: Area2D) -> void:
 		cutting_score_data["good_meat"] += 1
 
 	meat.queue_free()
+	
+func refresh_heated_tortilla_stack_interaction() -> void:
+	for i in range(heated_tortillas.size()):
+		var tortilla: Area2D = heated_tortillas[i]
+		if not is_instance_valid(tortilla):
+			continue
+
+		var is_top := i == heated_tortillas.size() - 1
+
+		tortilla.input_pickable = is_top
+
+		var collision := tortilla.get_node_or_null("CollisionShape2D") as CollisionShape2D
+		if collision != null:
+			collision.disabled = not is_top
+
 
 func send_tortilla_to_assembly(tortilla: Area2D) -> void:
 	if not tortilla.get_meta("has_meat", false):
@@ -698,6 +735,7 @@ func send_tortilla_to_assembly(tortilla: Area2D) -> void:
 		filling_tortilla = null
 
 	heated_tortillas.erase(tortilla)
+	refresh_heated_tortilla_stack_interaction()
 	tortilla.queue_free()
 
 

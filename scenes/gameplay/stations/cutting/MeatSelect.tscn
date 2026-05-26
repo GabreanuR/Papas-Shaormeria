@@ -63,6 +63,8 @@ size = Vector2(257, 150)
 
 [node name="MeatSelect" type="Node2D" unique_id=1126885329]
 script = ExtResource("1_kf4k3")
+chicken_meat_pile = ExtResource("3_kbayl")
+beef_meat_pile = ExtResource("4_n8ni4")
 tortilla_texture = ExtResource("6_6g2hc")
 meat_chicken_texture = ExtResource("8_bohwe")
 meat_beef_texture = ExtResource("9_gjuf8")
@@ -114,11 +116,11 @@ position = Vector2(324.5, 667)
 shape = SubResource("RectangleShape2D_gdssk")
 
 [node name="MeatContainer" type="Node2D" parent="SpawnedObjects/Tortillas/TortillaTemplate" unique_id=44688533]
-position = Vector2(882, 916)
-scale = Vector2(1.5, 1.5)
+position = Vector2(883, 916)
+scale = Vector2(3.5, 3.5)
 
 [node name="Meat Pieces" type="Node2D" parent="SpawnedObjects" unique_id=47389112]
-position = Vector2(13, 11)
+position = Vector2(6, 5)
 
 [node name="RecognitionAreas" type="Node2D" parent="." unique_id=345637851]
 

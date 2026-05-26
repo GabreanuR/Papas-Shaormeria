@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://cs72x3bg7hb5k" path="res://scripts/gameplay/stations/cutting/meat_select.gd" id="1_kf4k3"]
 [ext_resource type="Texture2D" uid="uid://c7a1tufccsqeo" path="res://assets/graphics/cutting_station/new_nackground.png" id="2_nn6tx"]
 [ext_resource type="Texture2D" uid="uid://bcf4qjqtuhwwf" path="res://assets/graphics/cutting_station/ChatGPT_Image_May_25__2026_at_12_48_07_PM-removebg-preview.png" id="3_4uybx"]
+[ext_resource type="Texture2D" uid="uid://cl5qov7x2b7e" path="res://assets/graphics/cutting_station/red_circle.png" id="3_eylwy"]
 [ext_resource type="Texture2D" uid="uid://crdqu6djj5jtf" path="res://assets/graphics/ingredients/carne_pui.png" id="3_kbayl"]
 [ext_resource type="Texture2D" uid="uid://cqjg8kawpf2co" path="res://assets/graphics/cutting_station/tortilla_stack.png" id="4_er6o2"]
 [ext_resource type="Texture2D" uid="uid://evlfo7t12smk" path="res://assets/graphics/ingredients/carne_vita.png" id="4_n8ni4"]
@@ -18,6 +19,7 @@
 [ext_resource type="Texture2D" uid="uid://d2bxna0p6ow45" path="res://assets/graphics/cutting_station/trash_panel.png" id="9_fnm7x"]
 [ext_resource type="Texture2D" uid="uid://cf7um14aecf8" path="res://assets/graphics/cutting_station/beef_on_metal.png" id="9_gjuf8"]
 [ext_resource type="Texture2D" uid="uid://bl86qjmq8yt1f" path="res://assets/graphics/cutting_station/send_to_assembly_panel.png" id="10_gjsxq"]
+[ext_resource type="Texture2D" uid="uid://galg2m0ldqgn" path="res://assets/graphics/cutting_station/dark_circle.png" id="15_n8ni4"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kbayl"]
 size = Vector2(174, 127.5)
@@ -63,6 +65,8 @@ size = Vector2(257, 150)
 
 [node name="MeatSelect" type="Node2D" unique_id=1126885329]
 script = ExtResource("1_kf4k3")
+grill_timer_progress_texture = ExtResource("7_ntwqt")
+grill_timer_burned_texture = ExtResource("3_eylwy")
 chicken_meat_pile = ExtResource("3_kbayl")
 beef_meat_pile = ExtResource("4_n8ni4")
 tortilla_texture = ExtResource("6_6g2hc")
@@ -139,11 +143,11 @@ shape = SubResource("RectangleShape2D_fkow0")
 [node name="MeatDropPoints" type="Node2D" parent="." unique_id=888927550]
 
 [node name="ChickenDropPoint" type="Marker2D" parent="MeatDropPoints" unique_id=1985257206]
-position = Vector2(535, 577)
-scale = Vector2(1.5, 1.5)
+position = Vector2(659, 573)
+scale = Vector2(3, 3)
 
 [node name="BeefDropPoint" type="Marker2D" parent="MeatDropPoints" unique_id=572640190]
-position = Vector2(1234, 581)
+position = Vector2(1129, 577)
 scale = Vector2(1.5, 1.5)
 
 [node name="MeatCookingIndicators" type="Node2D" parent="." unique_id=1535217104]
@@ -180,11 +184,17 @@ shape = SubResource("RectangleShape2D_eylwy")
 debug_color = Color(0.2901961, 0.54509807, 0.58431375, 0)
 
 [node name="TortillaAnchor" type="Marker2D" parent="GrillSlots/GrillSlot1" unique_id=590823264]
-position = Vector2(658, 659)
+position = Vector2(658, 664)
 
 [node name="HeatTimeCircle" type="TextureProgressBar" parent="GrillSlots/GrillSlot1" unique_id=864936465]
-offset_right = 126.0
-offset_bottom = 90.0
+offset_left = 1228.0001
+offset_top = 645.0
+offset_right = 1728.0001
+offset_bottom = 1145.0
+scale = Vector2(0.08, 0.08)
+fill_mode = 4
+texture_under = ExtResource("15_n8ni4")
+texture_progress = ExtResource("7_ntwqt")
 
 [node name="GrillSlot2" type="Area2D" parent="GrillSlots" unique_id=925909033]
 
@@ -197,10 +207,14 @@ debug_color = Color(0, 0.6, 0.69803923, 0)
 position = Vector2(868, 665)
 
 [node name="HeatTimeCircle" type="TextureProgressBar" parent="GrillSlots/GrillSlot2" unique_id=1895781018]
-offset_left = 843.0
-offset_top = 873.0
-offset_right = 964.0
-offset_bottom = 958.0
+offset_left = 1289.0001
+offset_top = 644.00006
+offset_right = 1789.0001
+offset_bottom = 1144.0
+scale = Vector2(0.08, 0.08)
+fill_mode = 4
+texture_under = ExtResource("15_n8ni4")
+texture_progress = ExtResource("7_ntwqt")
 
 [node name="GrillSlot3" type="Area2D" parent="GrillSlots" unique_id=1319292438]
 
@@ -213,10 +227,14 @@ debug_color = Color(0, 0.6, 0.69803923, 0)
 position = Vector2(1079, 668)
 
 [node name="HeatTimeCircle" type="TextureProgressBar" parent="GrillSlots/GrillSlot3" unique_id=979141596]
-offset_left = 7.0
-offset_top = 57.0
-offset_right = 47.0
-offset_bottom = 97.0
+offset_left = 1349.9996
+offset_top = 643.9999
+offset_right = 1849.9996
+offset_bottom = 1144.0
+scale = Vector2(0.08, 0.08)
+fill_mode = 4
+texture_under = ExtResource("15_n8ni4")
+texture_progress = ExtResource("7_ntwqt")
 
 [node name="GrillSlot4" type="Area2D" parent="GrillSlots" unique_id=1568810292]
 
@@ -229,10 +247,14 @@ debug_color = Color(0, 0.6, 0.69803923, 0)
 position = Vector2(747, 748)
 
 [node name="HeatTimeCircle" type="TextureProgressBar" parent="GrillSlots/GrillSlot4" unique_id=1964157614]
-offset_left = 604.0
-offset_top = 747.0
-offset_right = 644.0
-offset_bottom = 787.0
+offset_left = 1260.0
+offset_top = 689.0
+offset_right = 1760.0
+offset_bottom = 1189.0
+scale = Vector2(0.08, 0.08)
+fill_mode = 4
+texture_under = ExtResource("15_n8ni4")
+texture_progress = ExtResource("7_ntwqt")
 
 [node name="GrillSlot5" type="Area2D" parent="GrillSlots" unique_id=1513828845]
 position = Vector2(979, 742)
@@ -246,10 +268,14 @@ debug_color = Color(0, 0.6, 0.69803923, 0)
 position = Vector2(6, 0)
 
 [node name="HeatTimeCircle" type="TextureProgressBar" parent="GrillSlots/GrillSlot5" unique_id=202943444]
-offset_left = 99.0
-offset_top = 168.0
-offset_right = 339.0
-offset_bottom = 277.0
+offset_left = 345.0
+offset_top = -52.0
+offset_right = 845.0
+offset_bottom = 448.0
+scale = Vector2(0.08, 0.08)
+fill_mode = 4
+texture_under = ExtResource("15_n8ni4")
+texture_progress = ExtResource("7_ntwqt")
 
 [node name="TortillaDropAreas" type="Node2D" parent="." unique_id=773333605]
 

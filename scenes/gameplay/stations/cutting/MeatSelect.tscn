@@ -20,10 +20,10 @@
 [ext_resource type="Texture2D" uid="uid://bl86qjmq8yt1f" path="res://assets/graphics/cutting_station/send_to_assembly_panel.png" id="10_gjsxq"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kbayl"]
-size = Vector2(222, 165.5)
+size = Vector2(174, 127.5)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gdssk"]
-size = Vector2(210, 178)
+size = Vector2(173, 140)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_n8ni4"]
 size = Vector2(178.25, 309)
@@ -64,13 +64,13 @@ size = Vector2(257, 150)
 [node name="MeatSelect" type="Node2D" unique_id=1126885329]
 script = ExtResource("1_kf4k3")
 tortilla_texture = ExtResource("6_6g2hc")
-meat_chicken_texture = ExtResource("3_kbayl")
-meat_beef_texture = ExtResource("4_n8ni4")
+meat_chicken_texture = ExtResource("8_bohwe")
+meat_beef_texture = ExtResource("9_gjuf8")
 indicator_light = ExtResource("5_1jelu")
 indicator_medium = ExtResource("6_eylwy")
 indicator_burned = ExtResource("7_ntwqt")
-chicken_meat_piece_texture = ExtResource("8_bohwe")
-beef_meat_piece_texture = ExtResource("9_gjuf8")
+chicken_meat_piece_texture = ExtResource("3_kbayl")
+beef_meat_piece_texture = ExtResource("4_n8ni4")
 
 [node name="Background2" type="Sprite2D" parent="." unique_id=129982770]
 position = Vector2(959, 604)
@@ -85,12 +85,12 @@ texture = ExtResource("3_4uybx")
 [node name="TortillaStack" type="Area2D" parent="." unique_id=1341426703]
 
 [node name="Sprite2D" type="Sprite2D" parent="TortillaStack" unique_id=678023264]
-position = Vector2(344, 698.00006)
-scale = Vector2(0.47759858, 0.40771806)
+position = Vector2(324.375, 682.4375)
+scale = Vector2(0.40725806, 0.338087)
 texture = ExtResource("4_er6o2")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="TortillaStack" unique_id=979463031]
-position = Vector2(346, 695.25)
+position = Vector2(322, 676.25)
 shape = SubResource("RectangleShape2D_kbayl")
 debug_color = Color(0.06908746, 0.268879, 0.25669545, 0)
 
@@ -105,17 +105,20 @@ position = Vector2(345, 694)
 script = ExtResource("5_il7sb")
 
 [node name="Sprite2D" type="Sprite2D" parent="SpawnedObjects/Tortillas/TortillaTemplate" unique_id=658433892]
-position = Vector2(344, 652)
-scale = Vector2(0.6199999, 0.60928965)
+position = Vector2(323, 647.5)
+scale = Vector2(0.52571434, 0.47540984)
 texture = ExtResource("6_6g2hc")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="SpawnedObjects/Tortillas/TortillaTemplate" unique_id=424600183]
-position = Vector2(343, 686)
+position = Vector2(324.5, 667)
 shape = SubResource("RectangleShape2D_gdssk")
 
 [node name="MeatContainer" type="Node2D" parent="SpawnedObjects/Tortillas/TortillaTemplate" unique_id=44688533]
+position = Vector2(882, 916)
+scale = Vector2(1.5, 1.5)
 
 [node name="Meat Pieces" type="Node2D" parent="SpawnedObjects" unique_id=47389112]
+position = Vector2(13, 11)
 
 [node name="RecognitionAreas" type="Node2D" parent="." unique_id=345637851]
 
@@ -135,9 +138,11 @@ shape = SubResource("RectangleShape2D_fkow0")
 
 [node name="ChickenDropPoint" type="Marker2D" parent="MeatDropPoints" unique_id=1985257206]
 position = Vector2(535, 577)
+scale = Vector2(1.5, 1.5)
 
 [node name="BeefDropPoint" type="Marker2D" parent="MeatDropPoints" unique_id=572640190]
 position = Vector2(1234, 581)
+scale = Vector2(1.5, 1.5)
 
 [node name="MeatCookingIndicators" type="Node2D" parent="." unique_id=1535217104]
 
@@ -173,10 +178,11 @@ shape = SubResource("RectangleShape2D_eylwy")
 debug_color = Color(0.2901961, 0.54509807, 0.58431375, 0)
 
 [node name="TortillaAnchor" type="Marker2D" parent="GrillSlots/GrillSlot1" unique_id=590823264]
+position = Vector2(658, 659)
 
 [node name="HeatTimeCircle" type="TextureProgressBar" parent="GrillSlots/GrillSlot1" unique_id=864936465]
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 126.0
+offset_bottom = 90.0
 
 [node name="GrillSlot2" type="Area2D" parent="GrillSlots" unique_id=925909033]
 
@@ -186,10 +192,13 @@ shape = SubResource("RectangleShape2D_ntwqt")
 debug_color = Color(0, 0.6, 0.69803923, 0)
 
 [node name="TortillaAnchor" type="Marker2D" parent="GrillSlots/GrillSlot2" unique_id=1173601981]
+position = Vector2(868, 665)
 
 [node name="HeatTimeCircle" type="TextureProgressBar" parent="GrillSlots/GrillSlot2" unique_id=1895781018]
-offset_right = 40.0
-offset_bottom = 40.0
+offset_left = 843.0
+offset_top = 873.0
+offset_right = 964.0
+offset_bottom = 958.0
 
 [node name="GrillSlot3" type="Area2D" parent="GrillSlots" unique_id=1319292438]
 
@@ -199,10 +208,13 @@ shape = SubResource("RectangleShape2D_bohwe")
 debug_color = Color(0, 0.6, 0.69803923, 0)
 
 [node name="TortillaAnchor" type="Marker2D" parent="GrillSlots/GrillSlot3" unique_id=897427861]
+position = Vector2(1079, 668)
 
 [node name="HeatTimeCircle" type="TextureProgressBar" parent="GrillSlots/GrillSlot3" unique_id=979141596]
-offset_right = 40.0
-offset_bottom = 40.0
+offset_left = 7.0
+offset_top = 57.0
+offset_right = 47.0
+offset_bottom = 97.0
 
 [node name="GrillSlot4" type="Area2D" parent="GrillSlots" unique_id=1568810292]
 
@@ -212,21 +224,24 @@ shape = SubResource("RectangleShape2D_gjuf8")
 debug_color = Color(0, 0.6, 0.69803923, 0)
 
 [node name="TortillaAnchor" type="Marker2D" parent="GrillSlots/GrillSlot4" unique_id=1357429765]
+position = Vector2(747, 748)
 
 [node name="HeatTimeCircle" type="TextureProgressBar" parent="GrillSlots/GrillSlot4" unique_id=1964157614]
-offset_left = 120.0
-offset_top = 115.0
-offset_right = 160.0
-offset_bottom = 155.0
+offset_left = 604.0
+offset_top = 747.0
+offset_right = 644.0
+offset_bottom = 787.0
 
 [node name="GrillSlot5" type="Area2D" parent="GrillSlots" unique_id=1513828845]
+position = Vector2(979, 742)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="GrillSlots/GrillSlot5" unique_id=16320127]
-position = Vector2(987, 741)
+position = Vector2(0, -3)
 shape = SubResource("RectangleShape2D_b0lkg")
 debug_color = Color(0, 0.6, 0.69803923, 0)
 
 [node name="TortillaAnchor" type="Marker2D" parent="GrillSlots/GrillSlot5" unique_id=1009204490]
+position = Vector2(6, 0)
 
 [node name="HeatTimeCircle" type="TextureProgressBar" parent="GrillSlots/GrillSlot5" unique_id=202943444]
 offset_left = 99.0
@@ -251,12 +266,16 @@ debug_color = Color(0, 0.6, 0.69803923, 0)
 [node name="TortillaAnchirs" type="Node2D" parent="TortillaDropAreas/HeatedTortillaArea" unique_id=3316192]
 
 [node name="Anchor1" type="Marker2D" parent="TortillaDropAreas/HeatedTortillaArea/TortillaAnchirs" unique_id=663377383]
+position = Vector2(444, 942)
 
 [node name="Anchor2" type="Marker2D" parent="TortillaDropAreas/HeatedTortillaArea/TortillaAnchirs" unique_id=1983895606]
+position = Vector2(445, 914)
 
 [node name="Anchor3" type="Marker2D" parent="TortillaDropAreas/HeatedTortillaArea/TortillaAnchirs" unique_id=226527091]
+position = Vector2(445, 888)
 
 [node name="Anchor4" type="Marker2D" parent="TortillaDropAreas/HeatedTortillaArea/TortillaAnchirs" unique_id=1594235433]
+position = Vector2(447, 864)
 
 [node name="FillingArea" type="Area2D" parent="TortillaDropAreas" unique_id=518981605]
 
@@ -266,11 +285,12 @@ scale = Vector2(0.49617153, 0.63088983)
 texture = ExtResource("8_gdssk")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="TortillaDropAreas/FillingArea" unique_id=35736147]
-position = Vector2(879.5, 910.5)
+position = Vector2(881, 910)
 shape = SubResource("RectangleShape2D_tiemt")
 debug_color = Color(0, 0.6, 0.69803923, 0)
 
 [node name="TortillaAnchor" type="Marker2D" parent="TortillaDropAreas/FillingArea" unique_id=1904362057]
+position = Vector2(885, 913)
 
 [node name="DropZones" type="Node2D" parent="." unique_id=896306177]
 

@@ -25,6 +25,7 @@ var current_pita_state: Dictionary = _new_pita_state()
 
 static func _new_pita_state() -> Dictionary:
 	return {
+		"lipie_quality": "ready",
 		"meat_type": "",
 		"is_cut": false,
 		"sauces": [],
@@ -142,10 +143,22 @@ func _go_to_assembly() -> void:
 		_assembly_camera.enabled = true
 		_assembly_camera.position = ASSEMBLY_INGREDIENTS_CAMERA_POS
 		_assembly_camera.make_current()
+	
+	if has_meta("prepared_shaormas_queue"):
+		var queue: Array = get_meta("prepared_shaormas_queue")
+		if queue.size() > 0:
+			var prepared_data: Dictionary = queue.pop_front()
+			set_meta("prepared_shaormas_queue", queue)
 
+			current_pita_state["lipie_quality"] = prepared_data.get("lipie_quality", "ready")
+			current_pita_state["meat_type"] = prepared_data.get("meat_type", "")
+			current_pita_state["is_cut"] = true
+			current_pita_state["scores"]["cutting"] = prepared_data.get("cutting_score", 0)
+		
 	var lipie = _assembly_station.find_child("Lipie", true, false)
 	if lipie and lipie.has_method("update_from_cutting"):
 		lipie.update_from_cutting()
+	apply_lipie_quality_visual(lipie, current_pita_state.get("lipie_quality", "ready"))
 	
 	var lipie_container = _assembly_station.find_child("LipieContainer", true, false)
 	var lipie_sprite = _assembly_station.find_child("Lipie", true, false)
@@ -159,6 +172,18 @@ func _go_to_assembly() -> void:
 
 	if _go_to_wrapping_button:
 		_go_to_wrapping_button.visible = false
+
+func apply_lipie_quality_visual(lipie_node: Node, lipie_quality: String) -> void:
+	if lipie_node == null:
+		return
+
+	var color := Color(1, 1, 1, 1)
+
+	if lipie_quality == "burned":
+		color = Color(0.45, 0.25, 0.12, 1.0)
+
+	if lipie_node is CanvasItem:
+		(lipie_node as CanvasItem).modulate = color
 
 
 func _go_to_wrapping() -> void:

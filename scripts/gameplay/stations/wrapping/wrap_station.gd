@@ -4,6 +4,8 @@ extends Control
 @export var wrap_step_textures: Array[Texture2D]
 @export var arrow_step_textures: Array[Texture2D]
 
+var current_lipie_quality := "ready"
+
 @export var paper_1_texture: Texture2D
 @export var paper_2_texture: Texture2D
 @export var wrapped_with_paper_1_texture: Texture2D
@@ -108,6 +110,7 @@ func _show_wrap_step(step_index: int) -> void:
 
 	if wrap_step_textures[safe_index] != null:
 		wrapped_visual.texture = wrap_step_textures[safe_index]
+		wrapped_visual.modulate = get_lipie_quality_color(current_lipie_quality)
 		wrapped_visual.show()
 
 	var arrow_index: int = safe_index + 1
@@ -226,6 +229,7 @@ func _apply_paper_to_shaorma() -> void:
 
 	if carried_final_texture != null:
 		wrapped_visual.texture = carried_final_texture
+		wrapped_visual.modulate = get_lipie_quality_color(current_lipie_quality)
 
 
 func _cancel_carried_paper() -> void:
@@ -360,8 +364,11 @@ func receive_pita_from_assembly(source_lipie_container: Node, _pita_state: Dicti
 		return
 
 	_reset_wrap_visual_state()
+	current_lipie_quality = _pita_state.get("lipie_quality", "ready")
 
 	assembled_pita = source_lipie_container as Node2D
+	var lipie := assembled_pita.find_child("Lipie", true, false)
+	apply_lipie_quality_to_node(lipie, current_lipie_quality)
 	assembled_pita.reparent(pita_preview)
 
 	assembled_pita.visible = true
@@ -390,7 +397,21 @@ func receive_pita_from_assembly(source_lipie_container: Node, _pita_state: Dicti
 	instruction_label.text = "Swipe the shaorma!"
 	instruction_label.show()
 		
-		
+func get_lipie_quality_color(lipie_quality: String) -> Color:
+	if lipie_quality == "burned":
+		return Color(0.45, 0.25, 0.12, 1.0)
+
+	return Color(1, 1, 1, 1)
+
+
+func apply_lipie_quality_to_node(root: Node, lipie_quality: String) -> void:
+	if root == null:
+		return
+
+	var color := get_lipie_quality_color(lipie_quality)
+
+	if root is CanvasItem:
+		(root as CanvasItem).modulate = color
 
 func _get_visual_bounds(root: Node2D) -> Rect2:
 	var bounds := Rect2()

@@ -1,5 +1,6 @@
 extends Node2D
-
+@onready var message_label: Label = $MessageLabel
+var message_tween: Tween = null
 
 const MAX_HEATED_TORTILLAS := 4
 
@@ -118,6 +119,7 @@ func _ready() -> void:
 	set_tortilla_stack_raw_visual()
 	set_tortilla_stack_visual()
 	set_tortilla_raw_visual(tortilla_template)
+	message_label.visible = false
 
 func set_tortilla_stack_visual() -> void:
 	var sprite := tortilla_stack.get_node("Sprite2D") as Sprite2D
@@ -127,6 +129,24 @@ func set_tortilla_stack_visual() -> void:
 func set_tortilla_stack_raw_visual() -> void:
 	var sprite := tortilla_stack.get_node("Sprite2D") as Sprite2D
 	sprite.modulate = Color(0.88, 0.875, 0.86, 1.0)
+
+func show_message(text: String) -> void:
+	if message_label == null:
+		return
+
+	message_label.text = text
+	message_label.visible = true
+	message_label.modulate.a = 1.0
+
+	if message_tween != null:
+		message_tween.kill()
+
+	message_tween = create_tween()
+	message_tween.tween_interval(1.2)
+	message_tween.tween_property(message_label, "modulate:a", 0.0, 0.4)
+	message_tween.tween_callback(func():
+		message_label.visible = false
+	)
 
 func _process(delta: float) -> void:
 	update_dragged_object()
@@ -143,12 +163,24 @@ func _input(event: InputEvent) -> void:
 		if event.pressed:
 			if knife_attached:
 				var knife_pos := knife.to_global(get_drag_anchor_local(knife))
+
 				var over_chicken := is_inside_area(knife_pos, chicken_cut_area)
 				var over_beef := is_inside_area(knife_pos, beef_cut_area)
+
+				if over_chicken and get_meat_quality("chicken") != "good":
+					show_message("Meat not cooked yet!")
+					reset_knife()
+					return
+
+				if over_beef and get_meat_quality("beef") != "good":
+					show_message("Meat not cooked yet!")
+					reset_knife()
+					return
 
 				if not over_chicken and not over_beef:
 					reset_knife()
 					return
+
 			return
 
 		if not event.pressed:
@@ -387,6 +419,11 @@ func handle_tortilla_drop(tortilla: Area2D) -> void:
 	var has_meat: bool = tortilla.get_meta("has_meat", false)
 	var drop_pos := tortilla.to_global(get_drag_anchor_local(tortilla))
 
+	if not has_meat and is_inside_area(drop_pos, send_zone):
+		show_message("You can't send a tortilla without meat!")
+		return_tortilla_to_valid_place(tortilla)
+		return
+
 	if has_meat:
 		if is_inside_area(drop_pos, send_zone):
 			send_tortilla_to_assembly(tortilla)
@@ -400,6 +437,9 @@ func handle_tortilla_drop(tortilla: Area2D) -> void:
 		if free_slot != null:
 			place_tortilla_on_grill(tortilla, free_slot)
 		else:
+			if is_inside_area(drop_pos, heated_area) or is_inside_area(drop_pos, filling_area):
+				show_message("Not heated yet!")
+
 			return_tortilla_to_previous_grill_slot(tortilla)
 
 		return
@@ -420,7 +460,6 @@ func handle_tortilla_drop(tortilla: Area2D) -> void:
 			return
 
 		return_tortilla_to_valid_place(tortilla)
-		
 		
 func return_tortilla_to_previous_grill_slot(tortilla: Area2D) -> void:
 	if tortilla_previous_grill_slot.has(tortilla):
@@ -483,20 +522,36 @@ func get_area_center_global(area: Area2D) -> Vector2:
 	return collision.global_position
 
 func handle_meat_drop(meat: Area2D) -> void:
-	if filling_tortilla == null:
+	var meat_pos := meat.to_global(get_drag_anchor_local(meat))
+
+	if filling_tortilla != null and is_inside_area(meat_pos, filling_area):
+		if filling_tortilla.get_meta("has_meat", false):
+			show_message("You can't add more meat!")
+			return_meat_to_start(meat)
+			return
+
+		add_meat_to_tortilla(meat, filling_tortilla)
+		return
+
+	if filling_tortilla == null and is_inside_area(meat_pos, filling_area):
+		show_message("You need a tortilla to place the meat!")
 		return_meat_to_start(meat)
 		return
 
-	var meat_pos := meat.to_global(get_drag_anchor_local(meat))
-	var tortilla_pos := filling_tortilla.to_global(get_drag_anchor_local(filling_tortilla))
-
-	if is_inside_area(meat_pos, filling_area):
-		add_meat_to_tortilla(meat, filling_tortilla)
-
-		if meat_pos.distance_to(tortilla_pos) > 90:
-			create_meat_mess_at(meat_pos)
-	else:
+	if is_inside_area(meat_pos, tortilla_stack):
 		return_meat_to_start(meat)
+		return
+
+	if is_inside_area(meat_pos, heated_area):
+		return_meat_to_start(meat)
+		return
+
+	for slot in grill_data.keys():
+		if is_inside_area(meat_pos, slot):
+			return_meat_to_start(meat)
+			return
+
+	create_mess_from_meat(meat)
 		
 func return_meat_to_start(meat: Area2D) -> void:
 	if meat.get_parent() != meat_pieces_container:
@@ -575,8 +630,21 @@ func get_current_heated_anchor_for(tortilla: Area2D) -> Marker2D:
 func create_mess_from_meat(meat: Area2D) -> void:
 	cutting_score_data["mess"] += 1
 
-	meat.reparent(mess_container, true)
+	if meat.get_parent() != mess_container:
+		meat.reparent(mess_container, true)
+
 	meat.set_meta("object_type", "mess")
+
+	var sprite := meat.get_node_or_null("Sprite2D") as Sprite2D
+	if sprite != null:
+		sprite.modulate = Color(0.55, 0.45, 0.38, 1.0)
+
+	meat.z_index = 10
+	meat.input_pickable = false
+
+	var collision := meat.get_node_or_null("CollisionShape2D") as CollisionShape2D
+	if collision != null:
+		collision.disabled = true
 
 func get_free_grill_slot_at_position(pos: Vector2) -> Area2D:
 	for slot in grill_data.keys():
@@ -960,12 +1028,15 @@ func check_knife_cutting() -> void:
 		elif knife_cut_area == "beef" and over_beef:
 			finish_knife_cut("beef")
 			
+			
 func finish_knife_cut(meat_type: String) -> void:
 	if has_cut_meat_waiting_of_type(meat_type):
+		show_message("You have to use the meat below first!")
 		reset_knife()
 		return
 
 	if get_meat_quality(meat_type) != "good":
+		show_message("Meat not cooked yet!")
 		reset_knife()
 		return
 
@@ -979,7 +1050,6 @@ func finish_knife_cut(meat_type: String) -> void:
 		beef_indicator.texture = indicator_light
 
 	reset_knife()
-
 
 func get_next_heated_anchor() -> Marker2D:
 	var anchors_parent := heated_area.get_node_or_null("TortillaAnchirs")

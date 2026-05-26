@@ -224,7 +224,7 @@ shape = SubResource("RectangleShape2D_bohwe")
 debug_color = Color(0, 0.6, 0.69803923, 0)
 
 [node name="TortillaAnchor" type="Marker2D" parent="GrillSlots/GrillSlot3" unique_id=897427861]
-position = Vector2(1079, 668)
+position = Vector2(1079, 664)
 
 [node name="HeatTimeCircle" type="TextureProgressBar" parent="GrillSlots/GrillSlot3" unique_id=979141596]
 offset_left = 1349.9996
@@ -239,12 +239,12 @@ texture_progress = ExtResource("7_ntwqt")
 [node name="GrillSlot4" type="Area2D" parent="GrillSlots" unique_id=1568810292]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="GrillSlots/GrillSlot4" unique_id=554331226]
-position = Vector2(747.0625, 743.5)
+position = Vector2(747.0625, 748.5)
 shape = SubResource("RectangleShape2D_gjuf8")
 debug_color = Color(0, 0.6, 0.69803923, 0)
 
 [node name="TortillaAnchor" type="Marker2D" parent="GrillSlots/GrillSlot4" unique_id=1357429765]
-position = Vector2(747, 748)
+position = Vector2(747, 746)
 
 [node name="HeatTimeCircle" type="TextureProgressBar" parent="GrillSlots/GrillSlot4" unique_id=1964157614]
 offset_left = 1260.0
@@ -260,12 +260,12 @@ texture_progress = ExtResource("7_ntwqt")
 position = Vector2(979, 742)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="GrillSlots/GrillSlot5" unique_id=16320127]
-position = Vector2(0, -3)
+position = Vector2(0, 4)
 shape = SubResource("RectangleShape2D_b0lkg")
 debug_color = Color(0, 0.6, 0.69803923, 0)
 
 [node name="TortillaAnchor" type="Marker2D" parent="GrillSlots/GrillSlot5" unique_id=1009204490]
-position = Vector2(6, 0)
+position = Vector2(6, 4)
 
 [node name="HeatTimeCircle" type="TextureProgressBar" parent="GrillSlots/GrillSlot5" unique_id=202943444]
 offset_left = 345.0
@@ -349,3 +349,13 @@ position = Vector2(1077, 941)
 
 [node name="DragLayer" type="Node2D" parent="." unique_id=171173621]
 position = Vector2(651, 923)
+
+[node name="MessageLabel" type="Label" parent="." unique_id=559029857]
+offset_left = 531.0
+offset_top = 309.0
+offset_right = 1254.0
+offset_bottom = 453.0
+theme_override_colors/font_color = Color(18.061918, 18.061918, 18.061914, 1)
+theme_override_font_sizes/font_size = 45
+horizontal_alignment = 1
+vertical_alignment = 1

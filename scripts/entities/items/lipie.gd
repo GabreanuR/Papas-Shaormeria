@@ -173,12 +173,21 @@ func calculeaza_scor_sos():
 	return scor_final
 	
 	
-func update_from_cutting():
+func update_from_cutting(prepared_data: Dictionary = {}) -> void:
 	var gameplay_master = get_tree().current_scene
-	var pita_state = gameplay_master.current_pita_state
+	var pita_state: Dictionary = prepared_data
+
+	if pita_state.is_empty() and gameplay_master and "current_pita_state" in gameplay_master:
+		pita_state = gameplay_master.current_pita_state
 
 	var meat_type = pita_state.get("meat_type", "")
-	var is_cut = pita_state.get("is_cut", false)
+	var is_cut = pita_state.get("is_cut", true)
+
+	for child in container_lipie.get_children():
+		child.queue_free()
+
+	meat_sprite = null
+	ingrediente_puse.clear()
 
 	if meat_type == "" or not is_cut:
 		get_parent().visible = false
@@ -189,14 +198,13 @@ func update_from_cutting():
 	if not meat_on_pita.has(meat_type):
 		return
 
-	if meat_sprite == null:
-		meat_sprite = Sprite2D.new()
-		meat_sprite.name = "GeneratedMeatOnPita"
-		container_lipie.add_child(meat_sprite)
+	meat_sprite = Sprite2D.new()
+	meat_sprite.name = "GeneratedMeatOnPita"
 
 	var meat_data = meat_on_pita[meat_type]
-
 	meat_sprite.texture = meat_data["texture"]
 	meat_sprite.position = meat_data["position"]
 	meat_sprite.scale = meat_data["scale"]
 	meat_sprite.visible = true
+
+	container_lipie.add_child(meat_sprite)

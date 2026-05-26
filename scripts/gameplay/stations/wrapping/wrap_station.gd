@@ -363,13 +363,22 @@ func receive_pita_from_assembly(source_lipie_container: Node, _pita_state: Dicti
 	if not source_lipie_container is Node2D:
 		return
 
-	_reset_wrap_visual_state()
-	current_lipie_quality = _pita_state.get("lipie_quality", "ready")
+	if assembled_pita and is_instance_valid(assembled_pita):
+		assembled_pita.queue_free()
+		assembled_pita = null
 
+	for child in pita_preview.get_children():
+		child.queue_free()
+
+	_reset_wrap_visual_state()
+
+	current_lipie_quality = _pita_state.get("lipie_quality", "ready")
 	assembled_pita = source_lipie_container as Node2D
+
+	pita_preview.add_child(assembled_pita)
+
 	var lipie := assembled_pita.find_child("Lipie", true, false)
 	apply_lipie_quality_to_node(lipie, current_lipie_quality)
-	assembled_pita.reparent(pita_preview)
 
 	assembled_pita.visible = true
 	assembled_pita.modulate.a = 1.0
@@ -385,7 +394,6 @@ func receive_pita_from_assembly(source_lipie_container: Node, _pita_state: Dicti
 
 	pita_preview.visible = true
 	pita_preview.modulate.a = 1.0
-
 	wrapped_visual.hide()
 
 	if arrow_step_textures.size() > 0 and arrow_step_textures[0] != null:

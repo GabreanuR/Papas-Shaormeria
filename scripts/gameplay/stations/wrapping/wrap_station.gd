@@ -229,7 +229,7 @@ func _apply_paper_to_shaorma() -> void:
 
 	if carried_final_texture != null:
 		wrapped_visual.texture = carried_final_texture
-		wrapped_visual.modulate = get_lipie_quality_color(current_lipie_quality)
+		#wrapped_visual.modulate = get_lipie_quality_color(current_lipie_quality)
 
 
 func _cancel_carried_paper() -> void:
@@ -295,6 +295,12 @@ func _drop_data(_at_position: Vector2, data: Variant) -> void:
 func _on_send_pressed() -> void:
 	if not ticket_placed:
 		return
+
+	var gm = get_tree().current_scene
+	if gm and gm.has_method("save_current_pita"):
+		gm.save_current_pita()
+		if "is_current_pita_wrapping" in gm:
+			gm.is_current_pita_wrapping = false 
 
 	_keep_paper_piles_on_counter()
 	_hide_remaining_drinks()
@@ -362,6 +368,24 @@ func receive_pita_from_assembly(source_lipie_container: Node, _pita_state: Dicti
 
 	if not source_lipie_container is Node2D:
 		return
+		
+	#BUBU	
+	var a_inceput_impachetarea := false
+	if wrap_area and "current_swipe_index" in wrap_area and wrap_area.current_swipe_index > 0:
+		a_inceput_impachetarea = true
+	if paper_applied or wrap_quality > 0.0:
+		a_inceput_impachetarea = true
+
+	if a_inceput_impachetarea:
+		if assembled_pita and is_instance_valid(assembled_pita):
+			assembled_pita.queue_free()
+		assembled_pita = source_lipie_container as Node2D
+		pita_preview.add_child(assembled_pita)
+		
+		if paper_applied:
+			assembled_pita.hide()
+		return
+		
 
 	if assembled_pita and is_instance_valid(assembled_pita):
 		assembled_pita.queue_free()
@@ -371,6 +395,10 @@ func receive_pita_from_assembly(source_lipie_container: Node, _pita_state: Dicti
 		child.queue_free()
 
 	_reset_wrap_visual_state()
+	
+	# BUBU
+	if wrap_area and wrap_area.has_method("reset_wrap"):
+		wrap_area.reset_wrap()
 
 	current_lipie_quality = _pita_state.get("lipie_quality", "ready")
 	assembled_pita = source_lipie_container as Node2D
@@ -447,13 +475,13 @@ func _get_canvas_item_bounds(item: CanvasItem, root: Node2D) -> Rect2:
 		var sprite := item as Sprite2D
 
 		if sprite.texture != null:
-			var size := sprite.texture.get_size()
+			var texture_size := sprite.texture.get_size()
 			var rect_position := Vector2.ZERO
 
 			if sprite.centered:
-				rect_position = -size * 0.5
+				rect_position = -texture_size * 0.5
 
-			var rect := Rect2(rect_position, size)
+			var rect := Rect2(rect_position, texture_size)
 			var transform_to_root := root.global_transform.affine_inverse() * sprite.global_transform
 
 			var points := [

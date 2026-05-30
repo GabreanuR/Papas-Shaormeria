@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bnn8xgqdyc0am"
-path="res://.godot/imported/maioneza.png-8238c1c455ad5e1b26fb12630f520e2c.ctex"
+uid="uid://2x2nud5h7h6f"
+path="res://.godot/imported/spicy_ketch.png-787712af2be21275aba8dab19f502116.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/graphics/ingredients/maioneza.png"
-dest_files=["res://.godot/imported/maioneza.png-8238c1c455ad5e1b26fb12630f520e2c.ctex"]
+source_file="res://assets/graphics/ingredients/spicy_ketch.png"
+dest_files=["res://.godot/imported/spicy_ketch.png-787712af2be21275aba8dab19f502116.ctex"]
 
 [params]
 

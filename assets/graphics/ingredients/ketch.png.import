@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://djtis7wbfbxvg"
-path="res://.godot/imported/ketchup_dulce.png-76d7730556f7b87340e264a720195b10.ctex"
+uid="uid://d3sxuw3l758k7"
+path="res://.godot/imported/ketch.png-20e75f8d0ac0a678740d10069f028ccd.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/graphics/ingredients/ketchup_dulce.png"
-dest_files=["res://.godot/imported/ketchup_dulce.png-76d7730556f7b87340e264a720195b10.ctex"]
+source_file="res://assets/graphics/ingredients/ketch.png"
+dest_files=["res://.godot/imported/ketch.png-20e75f8d0ac0a678740d10069f028ccd.ctex"]
 
 [params]
 

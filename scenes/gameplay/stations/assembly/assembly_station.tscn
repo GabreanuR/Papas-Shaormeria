@@ -17,12 +17,12 @@
 [ext_resource type="Texture2D" uid="uid://cv3co1ams6isq" path="res://assets/graphics/ingredients/castraveti_murati.png" id="15_18cai"]
 [ext_resource type="Texture2D" uid="uid://bqukyy6kw40wd" path="res://assets/graphics/ingredients/cartofi.png" id="16_7idnn"]
 [ext_resource type="Texture2D" uid="uid://rb71c0j7e2wn" path="res://assets/graphics/ingredients/rosii.png" id="17_losc5"]
-[ext_resource type="Texture2D" uid="uid://dqjjengbmiot3" path="res://assets/graphics/ingredients/maioneza_picanta.png" id="18_8gpwh"]
+[ext_resource type="Texture2D" uid="uid://bt2iotu7u5vkl" path="res://assets/graphics/ingredients/spicy_mayo.png" id="18_tg0qi"]
 [ext_resource type="Script" uid="uid://citcuryn5c0kn" path="res://scripts/gameplay/stations/assembly/stcila_sos.gd" id="19_l6s25"]
-[ext_resource type="Texture2D" uid="uid://b8xt31oo1afe7" path="res://assets/graphics/ingredients/maioneza_usturoi.png" id="20_carrk"]
-[ext_resource type="Texture2D" uid="uid://djtis7wbfbxvg" path="res://assets/graphics/ingredients/ketchup_dulce.png" id="21_gv47u"]
-[ext_resource type="Texture2D" uid="uid://dmhlhhhk6cxyf" path="res://assets/graphics/ingredients/ketchup_picant.png" id="22_xim16"]
-[ext_resource type="Texture2D" uid="uid://bnn8xgqdyc0am" path="res://assets/graphics/ingredients/maioneza.png" id="23_ilsy8"]
+[ext_resource type="Texture2D" uid="uid://dqx3x6xb80v6e" path="res://assets/graphics/ingredients/garlic.png" id="20_h1lyx"]
+[ext_resource type="Texture2D" uid="uid://d3sxuw3l758k7" path="res://assets/graphics/ingredients/ketch.png" id="21_sabh7"]
+[ext_resource type="Texture2D" uid="uid://2x2nud5h7h6f" path="res://assets/graphics/ingredients/spicy_ketch.png" id="22_ukq8c"]
+[ext_resource type="Texture2D" uid="uid://e5xd34u043g" path="res://assets/graphics/ingredients/mayo.png" id="23_mxqg5"]
 [ext_resource type="Texture2D" uid="uid://c1yjgb2tkjr5m" path="res://assets/graphics/ingredients/lipie.png" id="24_flkcu"]
 [ext_resource type="Script" uid="uid://c7n3pbgn4r67d" path="res://scripts/entities/items/lipie.gd" id="25_2p4ma"]
 
@@ -171,51 +171,51 @@ nume_ingredient = "Rosii"
 position = Vector2(1414.7368, -352.6316)
 
 [node name="Maioneza Picanta" type="TextureRect" parent="all_items/SaucesStation" unique_id=56911007]
-offset_left = 1840.0001
-offset_top = 753.0
-offset_right = 1960.0001
-offset_bottom = 1073.0
-texture = ExtResource("18_8gpwh")
+offset_left = 1840.0
+offset_top = 820.0
+offset_right = 1945.0
+offset_bottom = 1125.0
+texture = ExtResource("18_tg0qi")
 expand_mode = 1
 script = ExtResource("19_l6s25")
 culoare_sos = Color(1, 0.54901963, 0.24705882, 1)
 
 [node name="Maioneza Usturoi" type="TextureRect" parent="all_items/SaucesStation" unique_id=2029653113]
-offset_left = 1968.0001
-offset_top = 753.0
-offset_right = 2088.0
-offset_bottom = 1073.0
-texture = ExtResource("20_carrk")
+offset_left = 1968.0
+offset_top = 820.0
+offset_right = 2073.0
+offset_bottom = 1125.0
+texture = ExtResource("20_h1lyx")
 expand_mode = 1
 script = ExtResource("19_l6s25")
 culoare_sos = Color(1, 0.9490196, 0.8, 1)
 
 [node name="Ketchup Dulce" type="TextureRect" parent="all_items/SaucesStation" unique_id=511835954]
 offset_left = 2096.0
-offset_top = 753.0
-offset_right = 2216.0
-offset_bottom = 1073.0
-texture = ExtResource("21_gv47u")
+offset_top = 820.0
+offset_right = 2201.0
+offset_bottom = 1125.0
+texture = ExtResource("21_sabh7")
 expand_mode = 1
 script = ExtResource("19_l6s25")
 culoare_sos = Color(0.69803923, 0, 0, 1)
 
 [node name="Ketchup Picant" type="TextureRect" parent="all_items/SaucesStation" unique_id=73236650]
 offset_left = 2224.0
-offset_top = 753.0
-offset_right = 2344.0
-offset_bottom = 1073.0
-texture = ExtResource("22_xim16")
+offset_top = 820.0
+offset_right = 2329.0
+offset_bottom = 1125.0
+texture = ExtResource("22_ukq8c")
 expand_mode = 1
 script = ExtResource("19_l6s25")
 culoare_sos = Color(0.5019608, 0, 0, 1)
 
 [node name="Maioneza" type="TextureRect" parent="all_items/SaucesStation" unique_id=676601657]
-offset_left = 1712.0002
-offset_top = 753.0
-offset_right = 1832.0002
-offset_bottom = 1073.0
-texture = ExtResource("23_ilsy8")
+offset_left = 1712.0
+offset_top = 820.0
+offset_right = 1817.0
+offset_bottom = 1125.0
+texture = ExtResource("23_mxqg5")
 expand_mode = 1
 script = ExtResource("19_l6s25")
 culoare_sos = Color(0.9490196, 0.9490196, 0.9490196, 1)

@@ -54,6 +54,7 @@ func save_current_pita() -> void:
 	current_pita_state = _new_pita_state()
 
 var completed_pitas: Array[Dictionary] = []
+var is_current_pita_wrapping := false
 # ---------------------------------------------------------
 # 5. PRIVATE VARIABLES
 # ---------------------------------------------------------
@@ -91,6 +92,10 @@ func _ready() -> void:
 	var top_bar = get_node_or_null("TopBar")
 	if top_bar and $CanvasLayer:
 		top_bar.reparent($CanvasLayer)
+		
+	var wrap_area = _wrapping_station.find_child("WrapGestureArea", true, false)
+	if wrap_area:
+		wrap_area.wrap_step_changed.connect(_on_wrapping_started)
 
 	_create_assembly_buttons()
 	_create_sauce_finish_timer()
@@ -143,25 +148,30 @@ func _go_to_assembly() -> void:
 		_assembly_camera.enabled = true
 		_assembly_camera.position = ASSEMBLY_INGREDIENTS_CAMERA_POS
 		_assembly_camera.make_current()
+	
+	if current_pita_state.get("meat_type", "") == "":
+		var queue: Array = get_meta("prepared_shaormas_queue", [])
+		if queue.size() > 0:
+			var prepared_data: Dictionary = queue.pop_front()
+			set_meta("prepared_shaormas_queue", queue)
 
-	var queue: Array = get_meta("prepared_shaormas_queue", [])
+			current_pita_state = _new_pita_state()
+			current_pita_state["lipie_quality"] = prepared_data.get("lipie_quality", "ready")
+			current_pita_state["meat_type"] = prepared_data.get("meat_type", "")
+			current_pita_state["is_cut"] = true
+			current_pita_state["scores"]["cutting"] = prepared_data.get("cutting_score", 0)
 
-	if queue.size() > 0:
-		var prepared_data: Dictionary = queue.pop_front()
-		set_meta("prepared_shaormas_queue", queue)
+			var lipie = _assembly_station.find_child("Lipie", true, false)
+			if lipie and lipie.has_method("update_from_cutting"):
+				lipie.update_from_cutting(prepared_data)
+				apply_lipie_quality_visual(lipie, current_pita_state.get("lipie_quality", "ready"))
 
-		current_pita_state = _new_pita_state()
-		current_pita_state["lipie_quality"] = prepared_data.get("lipie_quality", "ready")
-		current_pita_state["meat_type"] = prepared_data.get("meat_type", "")
-		current_pita_state["is_cut"] = true
-		current_pita_state["scores"]["cutting"] = prepared_data.get("cutting_score", 0)
-
-		var lipie = _assembly_station.find_child("Lipie", true, false)
-		if lipie and lipie.has_method("update_from_cutting"):
-			lipie.update_from_cutting(prepared_data)
-			apply_lipie_quality_visual(lipie, current_pita_state.get("lipie_quality", "ready"))
-
+	var are_carne = current_pita_state.get("meat_type", "") != ""
+	
 	var lipie_container = _assembly_station.find_child("LipieContainer", true, false)
+	if lipie_container:
+		lipie_container.visible = (are_carne and not is_current_pita_wrapping)
+	
 	var lipie_sprite = _assembly_station.find_child("Lipie", true, false)
 
 	if lipie_container and lipie_sprite:
@@ -196,11 +206,13 @@ func _go_to_wrapping() -> void:
 	var lipie_container = _assembly_station.find_child("LipieContainer", true, false)
 
 	if lipie_container and _wrapping_station.has_method("receive_pita_from_assembly"):
-		var lipie_copy = lipie_container.duplicate(
-			Node.DUPLICATE_SIGNALS | Node.DUPLICATE_GROUPS | Node.DUPLICATE_SCRIPTS
-		)
-
-		_wrapping_station.receive_pita_from_assembly(lipie_copy, current_pita_state.duplicate(true))
+		if current_pita_state.get("meat_type", "") != "":
+			var lipie_copy = lipie_container.duplicate(
+				Node.DUPLICATE_SIGNALS | Node.DUPLICATE_GROUPS | Node.DUPLICATE_SCRIPTS
+			)
+			_wrapping_station.receive_pita_from_assembly(lipie_copy, current_pita_state.duplicate(true))
+		else:
+			_wrapping_station.receive_pita_from_assembly(null, current_pita_state.duplicate(true))
 
 	_show_only(_wrapping_station)
 	_activate_camera_for(_wrapping_station)
@@ -336,3 +348,16 @@ func finish_sauce_mode() -> void:
 
 	if _go_to_wrapping_button:
 		_go_to_wrapping_button.visible = true
+
+
+func _on_wrapping_started(step_index: int) -> void:
+	if step_index >= 0:
+		is_current_pita_wrapping = true
+		var lipie_container = _assembly_station.find_child("LipieContainer", true, false)
+		if lipie_container:
+			var lipie = lipie_container.get_node_or_null("Lipie")
+			if lipie and lipie.has_method("calculeaza_scor_assembly"):
+				var reteta = current_pita_state.get("vegetables", [])
+				var assembly_score = lipie.calculeaza_scor_assembly(reteta)
+				update_station_score("assembly", assembly_score)
+			lipie_container.visible = false

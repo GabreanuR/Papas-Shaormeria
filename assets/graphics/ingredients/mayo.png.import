@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dqjjengbmiot3"
-path="res://.godot/imported/maioneza_picanta.png-180d070efa50b6b8b57bb4910efe90fd.ctex"
+uid="uid://e5xd34u043g"
+path="res://.godot/imported/mayo.png-4e167a8b569c80a287e5e6efd7370493.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/graphics/ingredients/maioneza_picanta.png"
-dest_files=["res://.godot/imported/maioneza_picanta.png-180d070efa50b6b8b57bb4910efe90fd.ctex"]
+source_file="res://assets/graphics/ingredients/mayo.png"
+dest_files=["res://.godot/imported/mayo.png-4e167a8b569c80a287e5e6efd7370493.ctex"]
 
 [params]
 

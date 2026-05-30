@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dmhlhhhk6cxyf"
-path="res://.godot/imported/ketchup_picant.png-0b866aeec3df6befedbe1e97be0fb679.ctex"
+uid="uid://dqx3x6xb80v6e"
+path="res://.godot/imported/garlic.png-f2af651a29fe1b01efd20d5272611996.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/graphics/ingredients/ketchup_picant.png"
-dest_files=["res://.godot/imported/ketchup_picant.png-0b866aeec3df6befedbe1e97be0fb679.ctex"]
+source_file="res://assets/graphics/ingredients/garlic.png"
+dest_files=["res://.godot/imported/garlic.png-f2af651a29fe1b01efd20d5272611996.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b8xt31oo1afe7"
-path="res://.godot/imported/maioneza_usturoi.png-9fcd799ec985e5fb1472e4020f48905a.ctex"
+uid="uid://bt2iotu7u5vkl"
+path="res://.godot/imported/spicy_mayo.png-15ebfd741af4bd9b6bb21b6442a15eed.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/graphics/ingredients/maioneza_usturoi.png"
-dest_files=["res://.godot/imported/maioneza_usturoi.png-9fcd799ec985e5fb1472e4020f48905a.ctex"]
+source_file="res://assets/graphics/ingredients/spicy_mayo.png"
+dest_files=["res://.godot/imported/spicy_mayo.png-15ebfd741af4bd9b6bb21b6442a15eed.ctex"]
 
 [params]
 

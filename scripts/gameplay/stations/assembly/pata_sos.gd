@@ -58,12 +58,27 @@ func creeaza_picatura():
 		if distanta < sauce_distance_threshold:
 			lipie.add_child(pic)
 			pic.global_position = m_pos
-			pic.modulate = culoare_sos
+			
+			if lipie.modulate != Color(1, 1, 1, 1) and lipie.modulate.r > 0:
+				pic.modulate = Color(
+					culoare_sos.r / lipie.modulate.r,
+					culoare_sos.g / lipie.modulate.g,
+					culoare_sos.b / lipie.modulate.b,
+					culoare_sos.a
+				)
+			else:
+				pic.modulate = culoare_sos
+			
 			pic.z_index = 5
 			pic.add_to_group("sos_pe_lipie")
 		else:
-			get_tree().current_scene.add_child(pic)
-			pic.global_position = m_pos
+			if lipie and "container_mizerie" in lipie and lipie.container_mizerie:
+				lipie.container_mizerie.add_child(pic)
+				pic.position = lipie.container_mizerie.to_local(m_pos)
+			else:
+				get_tree().current_scene.add_child(pic)
+				pic.global_position = m_pos
+			
 			pic.modulate = culoare_sos.darkened(0.2)
 			pic.z_index = 1
 			pic.add_to_group("sos_pe_masa")

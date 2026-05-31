@@ -93,6 +93,7 @@ func _on_start_day_pressed() -> void:
 	get_tree().change_scene_to_file(GAMEPLAY_SCENE)
 
 func _on_next_day_pressed() -> void:
+	Global.reset_daily_stats() # Această funcție o ai deja în Global.gd!
 	Global.advance_day()
 	_set_state(DayState.MORNING)
 

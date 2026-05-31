@@ -68,7 +68,7 @@ func _toggle_shop_lights(turning_off: bool) -> void:
 				light.turn_on()
 
 func _start_new_game(save_path: String, shop_name: String) -> void:
-	var data := Global.get_default_save_data(shop_name)
+	var data = Global.get_default_save_data(shop_name)
 	var file := FileAccess.open(save_path, FileAccess.WRITE)
 
 	if not file:

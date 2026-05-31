@@ -4,12 +4,13 @@ signal comanda_gata
 
 @onready var container_ingrediente: VBoxContainer = $VBoxContainer 
 @onready var label_numar: Label = $Number
+@onready var iconita_suc: TextureRect = $IconitaSuc # <--- Nodul nou creat de noi!
 
-const SMALL_SCALE := Vector2(0.25, 0.25)
-const LARGE_SCALE := Vector2(1.0, 1.0)
+const SMALL_SCALE := Vector2(0.35, 0.35)
+const LARGE_SCALE := Vector2(1.3, 1.3)
 
 var is_locked_large := false
-var _zoom_tween: Tween
+var dimensiune_originala: Vector2
 
 var imagini_ingrediente := {
 	"lipie": preload("res://assets/graphics/ingredients/lipie.png"), 
@@ -28,17 +29,17 @@ var imagini_ingrediente := {
 	"salata": preload("res://assets/graphics/ingredients/salata.png"),
 	"varza": preload("res://assets/graphics/ingredients/varza.png"),
 	"falafel": preload("res://assets/graphics/ingredients/falafel.png"),
-	"jalapenos": preload("res://assets/graphics/ingredients/jalapenos.png")
+	"jalapenos": preload("res://assets/graphics/ingredients/jalapenos.png"),
+	
+	"suc_cola": preload("res://assets/graphics/ingredients/drink_1.png"),
+	"suc_portocale": preload("res://assets/graphics/ingredients/drink_2.png"),
+	"suc_lamaie": preload("res://assets/graphics/ingredients/drink_3.png")
 }
-
 
 func _ready() -> void:
 	hide()
 	pivot_offset = size / 2.0
-	
-	mouse_entered.connect(_on_mouse_hover_start)
-	mouse_exited.connect(_on_mouse_hover_end)
-
+	dimensiune_originala = size
 
 func set_locked_large(locked: bool) -> void:
 	is_locked_large = locked
@@ -46,31 +47,6 @@ func set_locked_large(locked: bool) -> void:
 		scale = LARGE_SCALE
 	else:
 		scale = SMALL_SCALE
-
-
-func _on_mouse_hover_start() -> void:
-	if is_locked_large:
-		return
-	
-	z_index = 50 
-	_animate_size(LARGE_SCALE)
-
-
-func _on_mouse_hover_end() -> void:
-	if is_locked_large:
-		return
-	
-	z_index = 0
-	_animate_size(SMALL_SCALE)
-
-
-func _animate_size(target_scale: Vector2) -> void:
-	if _zoom_tween and _zoom_tween.is_valid():
-		_zoom_tween.kill()
-		
-	_zoom_tween = create_tween()
-	_zoom_tween.tween_property(self, "scale", target_scale, 0.15).set_ease(Tween.EASE_OUT)
-
 
 func primeste_comanda(lista_ingrediente: Array, numar_client: int) -> void:
 	label_numar.text = str(numar_client).pad_zeros(2)
@@ -80,20 +56,30 @@ func primeste_comanda(lista_ingrediente: Array, numar_client: int) -> void:
 	
 	for ingredient in lista_ingrediente:
 		if imagini_ingrediente.has(ingredient):
-			var iconita_noua = TextureRect.new()
-			iconita_noua.texture = imagini_ingrediente[ingredient]
-			iconita_noua.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-			iconita_noua.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-			iconita_noua.custom_minimum_size = Vector2(48, 48)
 			
-			container_ingrediente.add_child(iconita_noua)
-			container_ingrediente.move_child(iconita_noua, 0)
-			
-			await get_tree().create_timer(0.5).timeout
+			# VERIFICĂM DACĂ E SUC:
+			if ingredient.begins_with("suc_"):
+				iconita_suc.texture = imagini_ingrediente[ingredient]
+				iconita_suc.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+				iconita_suc.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+				iconita_suc.show()
+				await get_tree().create_timer(0.5).timeout
+				
+			else:
+				# PENTRU RESTUL INGREDIENTELOR (Carne, Legume, Sosuri)
+				var iconita_noua = TextureRect.new()
+				iconita_noua.texture = imagini_ingrediente[ingredient]
+				iconita_noua.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+				iconita_noua.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+				iconita_noua.custom_minimum_size = Vector2(48, 48)
+				
+				container_ingrediente.add_child(iconita_noua)
+				container_ingrediente.move_child(iconita_noua, 0)
+				await get_tree().create_timer(0.5).timeout
 			
 	comanda_gata.emit()
 
-
+# Funcția nativă pentru când ÎNCEPI să tragi
 func _get_drag_data(_at_position: Vector2) -> Variant:
 	if is_locked_large and mouse_filter == Control.MOUSE_FILTER_IGNORE:
 		return null
@@ -106,17 +92,26 @@ func _get_drag_data(_at_position: Vector2) -> Variant:
 		"numar_client": label_numar.text
 	}
 
-	var drag_preview := ColorRect.new()
-	drag_preview.custom_minimum_size = Vector2(80, 50)
-	drag_preview.color = Color(1, 1, 1, 0.15)
-	set_drag_preview(drag_preview)
+	# --- PREVIEW-UL MARE DE DRAG & DROP ---
+	var preview_container = Control.new()
+	
+	var copie_vizuala = self.duplicate(0)
+	copie_vizuala.size = dimensiune_originala
+	copie_vizuala.scale = LARGE_SCALE # Cât timp îl ții în mână, e MARE
+	copie_vizuala.show()
+	
+	# Aliniem imaginea exact în punctul în care ai înfipt mouse-ul!
+	copie_vizuala.position = -_at_position * LARGE_SCALE	
+	
+	preview_container.add_child(copie_vizuala)
+	set_drag_preview(preview_container)
+	# --------------------------------------
 
-	modulate.a = 0.4
+	modulate.a = 0.4 # Biletul care rămâne fizic pe sfoară se face un pic transparent
 	return date_bilet
 
-
+# Funcția nativă pentru când LAȘI biletul din mână
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_DRAG_END:
-		modulate.a = 1.0
+		modulate.a = 1.0 # Readucem biletul la opacitate normală
 		get_tree().call_group("drop_layer", "stop_ticket_drag")
-		_on_mouse_hover_end()

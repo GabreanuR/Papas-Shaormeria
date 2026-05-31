@@ -154,9 +154,19 @@ func advance_day() -> void:
 ## still have sensible values (forward-compatible saves).
 func load_save_data(slot_id: int, parsed_data: Dictionary) -> void:
 	active_slot_id = slot_id
-	var defaults := Global.get_default_save_data()
+	var defaults = Global.get_default_save_data()
 	defaults.merge(parsed_data, true)  # parsed_data wins on conflicts
 	current_save = defaults
+	
+## Finalizează ziua, adaugă câștigul de azi la totalul permanent
+func end_day_and_save_earnings() -> void:
+	current_save["money"] += daily_earnings
+	# Aici poți apela funcția de salvare pe disc dacă ai una:
+	# save_game_to_disk() 
+	
+	# Resetăm câștigul zilei pentru a o lua de la capăt mâine
+	daily_earnings = 0.0
+	daily_earnings_changed.emit(daily_earnings)
 
 # ---------------------------------------------------------
 # 9. PRIVATE FUNCTIONS

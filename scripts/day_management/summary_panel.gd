@@ -18,12 +18,14 @@ func _on_visibility_changed() -> void:
 		_refresh_stats()
 
 func _refresh_stats() -> void:
+	# Luăm datele din Global
 	var stats = Global.daily_stats
 	
-	if is_instance_valid(lbl_title):
-		lbl_title.text = "Day " + str(int(Global.current_save["day"])) + " Report"
-	
+	# Actualizăm etichetele din interfață
 	lbl_customers.text = str(stats.get("customers_served", 0))
 	lbl_perfects.text = str(stats.get("perfect_orders", 0))
 	lbl_tips.text = "$ %.2f" % stats.get("tips_earned", 0.0)
-	lbl_total.text = "$ %.2f" % Global.daily_earnings
+	
+	# Profitul total pe ziua respectivă
+	var bani_total_actualizati = Global.current_save.get("money", 0.0)
+	lbl_total.text = "$ %.2f" % bani_total_actualizati

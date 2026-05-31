@@ -22,6 +22,7 @@ const LIPIE_SAUCES_POS := Vector2(2630, 570)
 # Aceasta este lipia fizică pe care o prepari ACUM. 
 # Când o livrezi, o resetezi.
 var current_pita_state: Dictionary = _new_pita_state()
+var profit_ziua_curenta: float = 0.0
 
 static func _new_pita_state() -> Dictionary:
 	return {
@@ -50,6 +51,14 @@ func update_station_score(station_name: String, score: int) -> void:
 
 
 func save_current_pita() -> void:
+	# 1. Numărăm dacă șaorma e "Perfectă" 
+	if current_pita_state["total_score"] == 100:
+		Global.daily_stats["perfect_orders"] += 1
+	
+	# 2. Numărăm clientul (fiecare salvare e un client servit)
+	Global.daily_stats["customers_served"] += 1
+	
+	# 3. Adăugăm la istoric
 	completed_pitas.append(current_pita_state.duplicate(true))
 	current_pita_state = _new_pita_state()
 
@@ -133,7 +142,6 @@ func _show_only(station: Node) -> void:
 	station.show()
 
 func _go_to_order() -> void:
-	_reset_current_pita_state()
 	_show_only(_order_station)
 	_activate_camera_for(_order_station)
 
@@ -221,8 +229,15 @@ func _go_to_wrapping() -> void:
 # 10. SIGNAL CALLBACKS
 # ---------------------------------------------------------
 func _on_day_ended() -> void:
+	# 1. Calculăm tot ce e de calculat
+	Global.daily_stats["tips_earned"] = profit_ziua_curenta
+	
+	# 2. Îi spunem lui Global să adauge banii la contul total (cel de 150$)
+	Global.end_day_and_save_earnings()
+	
+	# 3. Schimbăm scena
 	get_tree().change_scene_to_file("res://scenes/day_management/day_transition.tscn")
-
+	
 
 func _create_assembly_buttons() -> void:
 	_go_to_sauces_button = Button.new()
@@ -361,3 +376,56 @@ func _on_wrapping_started(step_index: int) -> void:
 				var assembly_score = lipie.calculeaza_scor_assembly(reteta)
 				update_station_score("assembly", assembly_score)
 			lipie_container.visible = false
+
+
+func arata_evaluarea_la_client(nota_finala: int) -> void:
+	# 1. Trecem fizic pe ecranul stației de comenzi
+	_go_to_order()
+	
+	# 2. Îi spunem stației să pună fundalul de tejghea (close-up)
+	if _order_station and _order_station.has_method("pregateste_tejgheaua_pentru_evaluare"):
+		_order_station.pregateste_tejgheaua_pentru_evaluare()
+		
+	# 3. Căutăm pozele cu lipia și sucul la Wrapping Station
+	var wrap_station = get_tree().get_first_node_in_group("wrapping_station")
+	var t_lipie = null
+	var t_suc = null
+	
+	if wrap_station != null:
+		if "carried_final_texture" in wrap_station:
+			t_lipie = wrap_station.carried_final_texture
+		if "selected_drink_texture" in wrap_station:
+			t_suc = wrap_station.selected_drink_texture
+			
+	# Trimitem absolut tot (nota, lipia, sucul) spre Order Station!
+	if _order_station and _order_station.has_method("arata_evaluare_finala"):
+		_order_station.arata_evaluare_finala(nota_finala, t_lipie, t_suc)
+
+func seteaza_stare_butoane_statii(active: bool) -> void:
+	if _btn_cutting:
+		_btn_cutting.disabled = not active
+	if _btn_assembly:
+		_btn_assembly.disabled = not active
+	if _btn_wrapping:
+		_btn_wrapping.disabled = not active
+
+# Funcție care primește bacșișul și actualizează textul
+func adauga_bacsis(suma: float) -> void:
+	profit_ziua_curenta += suma
+	
+	# Căutăm label-ul de profit oriunde ar fi el în scenă
+	# (Caută nodurile care conțin cuvântul "Profit")
+	var label_profit = _gaseste_label_profit(self)
+	if label_profit:
+		# Formatăm textul cu 2 zecimale (ex: 4.50)
+		label_profit.text = "Profit: $ %.2f" % profit_ziua_curenta
+
+# Funcție utilitară pentru a găsi Label-ul din TopBar
+func _gaseste_label_profit(nod: Node) -> Label:
+	if nod is Label and nod.text.begins_with("Profit:"):
+		return nod
+	for copil in nod.get_children():
+		var gasit = _gaseste_label_profit(copil)
+		if gasit:
+			return gasit
+	return null

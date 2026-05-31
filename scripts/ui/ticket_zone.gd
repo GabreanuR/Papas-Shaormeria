@@ -12,6 +12,15 @@ func _drop_data(_pos: Vector2, data: Variant) -> void:
 
 	get_tree().call_group("drop_layer", "clear_pinned_ticket", ticket)
 
+	# --- Prevenim bug-ul cârligelor goale! ---
+	var parinte = ticket.get_parent()
+	if parinte != null and parinte.get_parent() == self:
+		# Lăsăm biletul fix cum era nativ
+		if ticket.has_method("set_locked_large"):
+			ticket.set_locked_large(false)
+		return 
+	# ----------------------------------------------
+
 	var hook := Control.new()
 	hook.custom_minimum_size = Vector2(45, 65)
 	hook.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -22,6 +31,5 @@ func _drop_data(_pos: Vector2, data: Variant) -> void:
 	if ticket.has_method("set_locked_large"):
 		ticket.set_locked_large(false)
 
-	ticket.scale = Vector2(0.25, 0.25)
 	ticket.position = hook.custom_minimum_size / 2.0
 	ticket.show()

@@ -113,7 +113,7 @@ func _try_pin_ticket(ticket: Control) -> void:
 	if ticket.has_method("set_locked_large"):
 		ticket.set_locked_large(true)
 
-	ticket.scale = Vector2(0.85, 0.85)
+	ticket.scale = Vector2(1.1, 1.1)
 	ticket.position = Vector2(size.x - 520, 150)
 	ticket.show()
 
@@ -131,7 +131,7 @@ func _restore_ticket_to_original_place(ticket: Control) -> void:
 	if ticket.has_method("set_locked_large"):
 		ticket.set_locked_large(false)
 
-	ticket.scale = Vector2(0.25, 0.25)
+	ticket.scale = Vector2(0.4, 0.4)
 	ticket.position = original_position
 	ticket.show()
 

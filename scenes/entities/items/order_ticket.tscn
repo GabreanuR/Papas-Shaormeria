@@ -39,3 +39,10 @@ offset_right = 251.0
 offset_bottom = 122.0
 text = "01"
 label_settings = SubResource("LabelSettings_ta5e0")
+
+[node name="IconitaSuc" type="TextureRect" parent="." unique_id=1765441783]
+layout_mode = 0
+offset_left = 265.0
+offset_top = 48.0
+offset_right = 340.0
+offset_bottom = 120.0

@@ -297,21 +297,81 @@ func _on_send_pressed() -> void:
 		return
 
 	var gm = get_tree().current_scene
+	var nota_totala = 0
+
+	# --- 1. CALCULĂM SCORUL FINAL (HÂRTIE + SUC + SWIPE) ---
+	if gm and "current_pita_state" in gm:
+		# A) Puncte pentru gestul de swipe (Maxim 50 puncte)
+		var scor_swipe = int(wrap_quality * 50)
+		
+		# B) Verificăm hârtia în funcție de carne (25 puncte)
+		var scor_hartie = 0
+		var carne_folosita = gm.current_pita_state.get("meat_type", "")
+		
+		if carne_folosita == "carne_pui" and carried_final_texture == wrapped_with_paper_1_texture:
+			scor_hartie = 25
+		elif carne_folosita == "carne_vita" and carried_final_texture == wrapped_with_paper_2_texture:
+			scor_hartie = 25
+			
+		# C) Verificăm dacă sucul pus coincide cu cel cerut de client (25 puncte)
+		var scor_suc = 0
+		var suc_cerut = ""
+		
+		# Luăm biletul direct de la clientul care așteaptă la OrderStation
+		var order_st = gm._order_station
+		if order_st and order_st.client:
+			# Căutăm în comanda lui care ingredient începe cu "suc_"
+			for ingredient in order_st.client.comanda_mea:
+				if ingredient.begins_with("suc_"):
+					suc_cerut = ingredient
+					break
+					
+		# Vedem ce suc a pus efectiv jucătorul pe tavă
+		var suc_oferit = ""
+		if selected_drink_texture == drink_1_texture:
+			suc_oferit = "suc_cola"
+		elif selected_drink_texture == drink_2_texture:
+			suc_oferit = "suc_portocale"
+		elif selected_drink_texture == drink_3_texture:
+			suc_oferit = "suc_lamaie"
+			
+		# Dacă s-au potrivit (sau dacă clientul nu a vrut suc și jucătorul nu a pus nimic)
+		if suc_oferit == suc_cerut:
+			scor_suc = 25
+			
+		# Adunăm cele trei componente pentru nota finală de la Wrapping Station
+		var scor_wrapping_total = scor_swipe + scor_hartie + scor_suc
+		gm.update_station_score("wrapping", scor_wrapping_total)
+		
+		# D) Actualizăm și restul sistemului (Waiting score)
+		if order_st and order_st.client != null:
+			var c = order_st.client
+			var waiting_score = int((c.rabdare_curenta / c.rabdare_maxima) * 100)
+			gm.update_station_score("waiting", waiting_score)
+		
+		nota_totala = gm.current_pita_state.get("total_score", 0)
+
+	# --- 2. SALVĂM ȘAORMA ÎN ISTORIC (Acum conține și Waiting Score!) ---
 	if gm and gm.has_method("save_current_pita"):
 		gm.save_current_pita()
 		if "is_current_pita_wrapping" in gm:
-			gm.is_current_pita_wrapping = false 
+			gm.is_current_pita_wrapping = false
 
-	_keep_paper_piles_on_counter()
-	_hide_remaining_drinks()
-
+	# --- 3. ANIMAȚIA TĂVII CARE PLEACĂ ---
 	var tween := create_tween()
 	tween.tween_property(tray, "position:x", tray.position.x + 1800, 0.85)
-	tween.finished.connect(_reset_drinks)
-
+	
+	# --- TRANZIȚIA SPRE NEGRU ---
+	fade.visible = true
 	var fade_tween := create_tween()
 	fade_tween.tween_property(fade, "modulate:a", 1.0, 0.85)
 	
+	# Așteptăm să se termine animația de negru complet
+	await fade_tween.finished
+
+	# Așteptăm o secundă să plece tava, apoi mutăm camera!
+	if gm and gm.has_method("arata_evaluarea_la_client"):
+		gm.arata_evaluarea_la_client(nota_totala)
 
 
 
@@ -395,6 +455,7 @@ func receive_pita_from_assembly(source_lipie_container: Node, _pita_state: Dicti
 		child.queue_free()
 
 	_reset_wrap_visual_state()
+	_reset_drinks()
 	
 	# BUBU
 	if wrap_area and wrap_area.has_method("reset_wrap"):

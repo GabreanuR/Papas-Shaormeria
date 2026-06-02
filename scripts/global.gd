@@ -18,7 +18,7 @@ signal day_changed(new_day: int)
 # 3. CONSTANTS
 # ---------------------------------------------------------
 const SAVE_DIR := "user://saves/"
-const SAVE_FILE_TEMPLATE := "user://save_slot_%d.json"
+const SAVE_FILE_TEMPLATE := "user://saves/save_slot_%d.json"
 const MAX_SAVE_SLOTS := 3
 const DEFAULT_STARTING_MONEY := 150.0
 
@@ -69,11 +69,26 @@ var day_time_left: float:
 # 7. GODOT ENGINE FUNCTIONS
 # ---------------------------------------------------------
 func _ready() -> void:
-	current_save = get_default_save_data()
+	# Creăm folderul de salvări dacă nu există
+	if not DirAccess.dir_exists_absolute(SAVE_DIR):
+		DirAccess.make_dir_absolute(SAVE_DIR)
+		
 	_day_timer = Timer.new()
 	_day_timer.one_shot = true
 	_day_timer.timeout.connect(_on_day_timer_ended)
 	add_child(_day_timer)
+	
+	# Încărcăm automat Salvarea 1 la deschiderea jocului (pentru debugging)
+	var path_salvare = SAVE_FILE_TEMPLATE % 1
+	if FileAccess.file_exists(path_salvare):
+		var file = FileAccess.open(path_salvare, FileAccess.READ)
+		var json = JSON.new()
+		if json.parse(file.get_as_text()) == OK:
+			var data = json.get_data()
+			load_save_data(1, data)
+		file.close()
+	else:
+		current_save = get_default_save_data()
 
 # ---------------------------------------------------------
 # 8. PUBLIC FUNCTIONS
@@ -147,6 +162,7 @@ func start_day(duration_seconds: float) -> void:
 func advance_day() -> void:
 	current_save["day"] += 1
 	is_night = false
+	save_game_to_disk() # Salvăm faptul că am trecut la o zi nouă!
 	day_changed.emit(current_save["day"])
 
 ## Called from the Main Menu when creating or loading a game.
@@ -161,12 +177,23 @@ func load_save_data(slot_id: int, parsed_data: Dictionary) -> void:
 ## Finalizează ziua, adaugă câștigul de azi la totalul permanent
 func end_day_and_save_earnings() -> void:
 	current_save["money"] += daily_earnings
-	# Aici poți apela funcția de salvare pe disc dacă ai una:
-	# save_game_to_disk() 
 	
-	# Resetăm câștigul zilei pentru a o lua de la capăt mâine
+	# Acum chemăm salvarea reală!
+	save_game_to_disk() 
+	
 	daily_earnings = 0.0
 	daily_earnings_changed.emit(daily_earnings)
+	
+## Salvează datele curente fizic pe hard disk
+func save_game_to_disk() -> void:
+	# Salvăm mereu pe slotul activ (sau pe slotul 1 default)
+	var slot = active_slot_id if active_slot_id > 0 else 1
+	var path = SAVE_FILE_TEMPLATE % slot
+	
+	var file = FileAccess.open(path, FileAccess.WRITE)
+	if file:
+		file.store_string(JSON.stringify(current_save))
+		file.close()
 
 # ---------------------------------------------------------
 # 9. PRIVATE FUNCTIONS

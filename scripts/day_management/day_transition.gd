@@ -40,8 +40,8 @@ var _current_state: DayState = DayState.MORNING
 func _ready() -> void:
 	# NOU: Forțăm starea TopBar-ului pentru HUB direct din cod.
 	# Ne definește nevoia de rigoare, fără să depindem exclusiv de Inspector.
-	if "mode" in _top_bar:
-		_top_bar.mode = _top_bar.BarMode.HUB
+	if _top_bar and _top_bar.has_method("_setup_hub_mode"):
+		_top_bar._setup_hub_mode()
 
 	# Conectăm butoanele principale de flux
 	_btn_start_day.pressed.connect(_on_start_day_pressed)

@@ -101,6 +101,10 @@ func _ready() -> void:
 	var top_bar = get_node_or_null("TopBar")
 	if top_bar and $CanvasLayer:
 		top_bar.reparent($CanvasLayer)
+		if "mode" in top_bar:
+			top_bar.mode = top_bar.BarMode.GAMEPLAY
+			if top_bar.has_method("_setup_gameplay_mode"):
+				top_bar._setup_gameplay_mode()
 		
 	var wrap_area = _wrapping_station.find_child("WrapGestureArea", true, false)
 	if wrap_area:
@@ -109,11 +113,11 @@ func _ready() -> void:
 	_create_assembly_buttons()
 	_create_sauce_finish_timer()
 
-	# Navigate to the day transition screen when the day ends.
-	Global.day_ended.connect(_on_day_ended)
-
 	# Start on the order station by default.
 	_go_to_order()
+	
+	if _order_station:
+		actualizeaza_text_clienti(_order_station.clienti_serviti, _order_station.total_clienti_zi)
 
 # ---------------------------------------------------------
 # 8. PUBLIC FUNCTIONS
@@ -213,6 +217,12 @@ func _go_to_wrapping() -> void:
 
 	var lipie_container = _assembly_station.find_child("LipieContainer", true, false)
 
+	if lipie_container:
+		var lipie_orig = lipie_container.find_child("Lipie", true, false)
+		if lipie_orig:
+			current_pita_state["ingrediente_salvate"] = lipie_orig.ingrediente_puse.duplicate()
+			current_pita_state["scor_sos_salvat"] = lipie_orig.calculeaza_scor_sos()
+
 	if lipie_container and _wrapping_station.has_method("receive_pita_from_assembly"):
 		if current_pita_state.get("meat_type", "") != "":
 			var lipie_copy = lipie_container.duplicate(
@@ -229,13 +239,17 @@ func _go_to_wrapping() -> void:
 # 10. SIGNAL CALLBACKS
 # ---------------------------------------------------------
 func _on_day_ended() -> void:
-	# 1. Calculăm tot ce e de calculat
+	# 1. Calculăm tot ce e de calculat și transferăm în Global
+	Global.daily_earnings = profit_ziua_curenta
 	Global.daily_stats["tips_earned"] = profit_ziua_curenta
 	
-	# 2. Îi spunem lui Global să adauge banii la contul total (cel de 150$)
+	# 2. Îi spunem lui Global să adauge banii la contul total
 	Global.end_day_and_save_earnings()
 	
-	# 3. Schimbăm scena
+	# 3. SETĂM FLAG-UL DE NOAPTE! Astfel, day_transition va ști să afișeze raportul.
+	Global.is_night = true
+	
+	# 4. Schimbăm scena
 	get_tree().change_scene_to_file("res://scenes/day_management/day_transition.tscn")
 	
 
@@ -370,11 +384,6 @@ func _on_wrapping_started(step_index: int) -> void:
 		is_current_pita_wrapping = true
 		var lipie_container = _assembly_station.find_child("LipieContainer", true, false)
 		if lipie_container:
-			var lipie = lipie_container.get_node_or_null("Lipie")
-			if lipie and lipie.has_method("calculeaza_scor_assembly"):
-				var reteta = current_pita_state.get("vegetables", [])
-				var assembly_score = lipie.calculeaza_scor_assembly(reteta)
-				update_station_score("assembly", assembly_score)
 			lipie_container.visible = false
 
 
@@ -429,3 +438,16 @@ func _gaseste_label_profit(nod: Node) -> Label:
 		if gasit:
 			return gasit
 	return null
+
+
+func actualizeaza_text_clienti(serviti: int, total: int) -> void:
+	# Știm că TopBar a fost mutat în CanvasLayer în _ready()
+	var top_bar = $CanvasLayer.get_node_or_null("TopBar")
+	if top_bar and top_bar.has_method("update_customer_counter"):
+		top_bar.update_customer_counter(serviti, total)
+		
+		
+# ok deci am descoperit inca o problema:
+#cand e evaluata o comanda si vine un client nou (in alea 10 secunde), el apare pe ecran cum se misca desi teoretic n ar trebuit sa l vedem
+#
+#cand se termina ziua, nu ar trebui sa ma duca in meniul respectiv, ci intr-un cadru care arata ca afara e noapte si imi arata statisticile de la finalul zilei (total tips, comenzi perfecte etc). nu stiu exact cum se numeste in cod dar aia ar trebui sa imi arate. apoi datele privind scorurile trebuie salvate cumva global si schimbat la day 2 pentru a avea sens meniul de incepere a unei noi zile

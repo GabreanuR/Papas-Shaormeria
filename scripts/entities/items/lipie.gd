@@ -41,6 +41,9 @@ func _drop_data(_at_position, data):
 	var mouse_pos = get_global_mouse_position()
 	
 	if data.has("este_sos") and data["este_sos"] == true:
+		if data.has("nume"):
+			ingrediente_puse.append(data["nume"])
+			
 		var camera = get_viewport().get_camera_2d()
 		if camera:
 			var tween = create_tween()
@@ -251,12 +254,18 @@ func update_from_cutting(prepared_data: Dictionary = {}) -> void:
 
 func calculeaza_scor_assembly(reteta_ceruta: Array) -> int:
 	var scor_ingrediente := 100.0
-	
 	var puse = ingrediente_puse.duplicate()
-	var cerute = reteta_ceruta.duplicate()
+	
+	# FIX: Ignorăm lucrurile care NU țin de Assembly (carne, lipie, sucuri)
+	var de_ignorat = ["lipie", "carne_pui", "carne_vita", "chicken", "beef", "suc_cola", "suc_portocale", "suc_lamaie"]
+	var cerute = []
+	for item in reteta_ceruta:
+		if not item in de_ignorat:
+			cerute.append(item)
 	
 	var pointer_puse = 0
 	
+	# Verificăm ce a cerut clientul
 	for i in range(cerute.size()):
 		var item_cautat = cerute[i]
 		var gasit_in_ordine = false
@@ -277,18 +286,19 @@ func calculeaza_scor_assembly(reteta_ceruta: Array) -> int:
 					break
 			
 			if gasit_oriunde:
-				scor_ingrediente -= 5.0
+				scor_ingrediente -= 5.0 # L-ai pus, dar în ordinea greșită
 			else:
-				scor_ingrediente -= 15.0 
+				scor_ingrediente -= 15.0 # Ai uitat complet ingredientul!
 				
+	# Orice a rămas în lista 'puse' înseamnă că e ceva în PLUS
 	for item in puse:
 		if item != null:
-			scor_ingrediente -= 10.0
+			scor_ingrediente -= 10.0 # Depunctare pentru ingrediente extra
 			
 	scor_ingrediente = clamp(scor_ingrediente, 0, 100)
 	
+	# Media cu minigame-ul de sos
 	var scor_sos = calculeaza_scor_sos()
-
 	var scor_total = (scor_ingrediente * 0.6) + (scor_sos * 0.4)
 	
 	return int(clamp(scor_total, 0, 100))

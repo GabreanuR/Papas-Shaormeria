@@ -56,8 +56,12 @@ var paper_pile_1_base_scale := Vector2.ONE
 var paper_pile_2_base_scale := Vector2.ONE
 var paper_hint_tween: Tween = null
 
+var default_tray_x: float = 0.0
+var local_pita_state: Dictionary = {}
 
 func _ready() -> void:
+	default_tray_x = tray.position.x # Memorăm unde stătea tava la început
+	
 	wrap_area.wrap_step_changed.connect(_on_wrap_step_changed)
 	wrap_area.wrap_completed.connect(_on_wrap_done)
 
@@ -125,6 +129,8 @@ func _show_wrap_step(step_index: int) -> void:
 
 
 func _on_wrap_step_changed(step_index: int) -> void:
+	if assembled_pita == null:
+		return
 	_show_wrap_step(step_index)
 
 
@@ -299,34 +305,107 @@ func _on_send_pressed() -> void:
 	var gm = get_tree().current_scene
 	var nota_totala = 0
 
-	# --- 1. CALCULĂM SCORUL FINAL (HÂRTIE + SUC + SWIPE) ---
+	# --- 1. IDENTIFICĂM BILETUL ȘI CLIENTUL CURENT ---
+	var real_ticket = ticket_slot_area.get_meta("current_ticket")
+	if not is_instance_valid(real_ticket):
+		return
+		
+	var id_client_curent = real_ticket.id_client_proprietar
+
+	# --- 2. RESTAURĂM ȘI CALCULĂM DATELE CORECTE (Faza 4 + Faza 5 unificate) ---
 	if gm and "current_pita_state" in gm:
-		# A) Puncte pentru gestul de swipe (Maxim 50 puncte)
+		
+		# A) Restaurăm datele originale ale acestei lipii specifice (Calitate, Carne, Scor Tăiere)
+		gm.current_pita_state["lipie_quality"] = local_pita_state.get("lipie_quality", "ready")
+		gm.current_pita_state["meat_type"] = local_pita_state.get("meat_type", "")
+		gm.current_pita_state["scores"]["cutting"] = local_pita_state.get("scores", {}).get("cutting", 0)
+
+		# Preluăm rețeta reală de la OrderStation pe baza ID-ului de pe bilet
+		var order_st = gm._order_station
+		var reteta_reala = []
+		if order_st and order_st.has_method("obtine_comanda_client"):
+			reteta_reala = order_st.obtine_comanda_client(id_client_curent)
+
+		# B) CALCULĂM ACUM SCORUL DE ASSEMBLY DIN MEMORIE
+		var ingrediente_pe_masa = gm.current_pita_state.get("ingrediente_salvate", [])
+		var scor_sos_salvat = gm.current_pita_state.get("scor_sos_salvat", 100.0)
+		
+		var scor_ingrediente := 100.0
+		
+		# --- NOU: PENALIZARE PENTRU CARNE GREȘITĂ/LIPSĂ ---
+		var carne_pusa = gm.current_pita_state.get("meat_type", "")
+		var carne_ceruta = ""
+		
+		for item in reteta_reala:
+			if item == "carne_pui" or item == "chicken": carne_ceruta = "chicken"
+			elif item == "carne_vita" or item == "beef": carne_ceruta = "beef"
+			
+		var carne_pusa_tradusa = ""
+		if carne_pusa == "carne_pui" or carne_pusa == "chicken": carne_pusa_tradusa = "chicken"
+		elif carne_pusa == "carne_vita" or carne_pusa == "beef": carne_pusa_tradusa = "beef"
+
+		if carne_ceruta != carne_pusa_tradusa:
+			gm.current_pita_state["scores"]["cutting"] = 0
+			
+		# Curățăm rețeta cerută, păstrând doar legumele
+		var de_ignorat = ["lipie", "carne_pui", "carne_vita", "chicken", "beef", "suc_cola", "suc_portocale", "suc_lamaie"]
+		var cerute = []
+		for item in reteta_reala:
+			if not item in de_ignorat:
+				cerute.append(item)
+				
+		# 1. Dacă clientul n-a cerut nicio legumă/sos și tu n-ai pus nimic, e perfect.
+		if cerute.is_empty() and ingrediente_pe_masa.is_empty():
+			scor_ingrediente = 100.0
+		else:
+			# 2. Match exact - verificăm ce a pus jucătorul versus ce se cerea
+			var puse_duplicate = ingrediente_pe_masa.duplicate()
+			var cerute_duplicate = cerute.duplicate()
+			
+			for cerut in cerute_duplicate:
+				if cerut in puse_duplicate:
+					# Ingredientul a fost pus, îl ștergem din lista de 'puse'
+					puse_duplicate.erase(cerut)
+				else:
+					# Clientul a cerut ingredientul, dar lipsește de pe lipie
+					scor_ingrediente -= 20.0
+			
+			# Ce rămâne în 'puse_duplicate' sunt ingrediente puse în plus!
+			for extra in puse_duplicate:
+				scor_ingrediente -= 15.0
+				
+			# (Opțional: Poți reintroduce logica de "ordine" aici dacă dorești, 
+			# dar verificarea simplă prezență/absență este mult mai stabilă).
+				
+		scor_ingrediente = clamp(scor_ingrediente, 0, 100)
+		
+		# Media finală între ingrediente și precizia minigame-ului de sos
+		var scor_assembly_real = 0
+		if scor_ingrediente <= 0:
+			scor_assembly_real = 0
+		else:
+			scor_assembly_real = int(clamp((scor_ingrediente * 0.6) + (scor_sos_salvat * 0.4), 0, 100))
+			
+		gm.update_station_score("assembly", scor_assembly_real)
+
+		# C) CALCULĂM SCORUL DE WRAPPING (Swipe + Hârtie + Suc)
 		var scor_swipe = int(wrap_quality * 50)
 		
-		# B) Verificăm hârtia în funcție de carne (25 puncte)
 		var scor_hartie = 0
 		var carne_folosita = gm.current_pita_state.get("meat_type", "")
-		
-		if carne_folosita == "carne_pui" and carried_final_texture == wrapped_with_paper_1_texture:
+		# FIX "Mere cu Pere": Verificăm și varianta în engleză (chicken/beef) și în română!
+		if (carne_folosita == "carne_pui" or carne_folosita == "chicken") and carried_final_texture == wrapped_with_paper_1_texture:
 			scor_hartie = 25
-		elif carne_folosita == "carne_vita" and carried_final_texture == wrapped_with_paper_2_texture:
+		elif (carne_folosita == "carne_vita" or carne_folosita == "beef") and carried_final_texture == wrapped_with_paper_2_texture:
 			scor_hartie = 25
 			
-		# C) Verificăm dacă sucul pus coincide cu cel cerut de client (25 puncte)
 		var scor_suc = 0
 		var suc_cerut = ""
-		
-		# Luăm biletul direct de la clientul care așteaptă la OrderStation
-		var order_st = gm._order_station
-		if order_st and order_st.client:
-			# Căutăm în comanda lui care ingredient începe cu "suc_"
-			for ingredient in order_st.client.comanda_mea:
-				if ingredient.begins_with("suc_"):
-					suc_cerut = ingredient
-					break
-					
-		# Vedem ce suc a pus efectiv jucătorul pe tavă
+		for ingredient in reteta_reala:
+			if ingredient.begins_with("suc_"):
+				suc_cerut = ingredient
+				break
+				
 		var suc_oferit = ""
 		if selected_drink_texture == drink_1_texture:
 			suc_oferit = "suc_cola"
@@ -335,29 +414,30 @@ func _on_send_pressed() -> void:
 		elif selected_drink_texture == drink_3_texture:
 			suc_oferit = "suc_lamaie"
 			
-		# Dacă s-au potrivit (sau dacă clientul nu a vrut suc și jucătorul nu a pus nimic)
 		if suc_oferit == suc_cerut:
 			scor_suc = 25
 			
-		# Adunăm cele trei componente pentru nota finală de la Wrapping Station
 		var scor_wrapping_total = scor_swipe + scor_hartie + scor_suc
 		gm.update_station_score("wrapping", scor_wrapping_total)
 		
-		# D) Actualizăm și restul sistemului (Waiting score)
-		if order_st and order_st.client != null:
-			var c = order_st.client
-			var waiting_score = int((c.rabdare_curenta / c.rabdare_maxima) * 100)
-			gm.update_station_score("waiting", waiting_score)
+		# D) CALCULĂM REAL WAITING SCORE (Răbdarea clientului din listă!)
+		if order_st:
+			for c in order_st.zona_asteptare:
+				if c.id_unic == id_client_curent:
+					var waiting_score = int((c.rabdare_curenta / c.rabdare_maxima) * 100)
+					
+					gm.update_station_score("waiting", waiting_score)
+					break
 		
 		nota_totala = gm.current_pita_state.get("total_score", 0)
 
-	# --- 2. SALVĂM ȘAORMA ÎN ISTORIC (Acum conține și Waiting Score!) ---
+	# --- 3. SALVĂM ȘAORMA ÎN ISTORIC ---
 	if gm and gm.has_method("save_current_pita"):
 		gm.save_current_pita()
 		if "is_current_pita_wrapping" in gm:
 			gm.is_current_pita_wrapping = false
 
-	# --- 3. ANIMAȚIA TĂVII CARE PLEACĂ ---
+	# --- 4. ANIMAȚIA TĂVII CARE PLEACĂ ---
 	var tween := create_tween()
 	tween.tween_property(tray, "position:x", tray.position.x + 1800, 0.85)
 	
@@ -366,13 +446,35 @@ func _on_send_pressed() -> void:
 	var fade_tween := create_tween()
 	fade_tween.tween_property(fade, "modulate:a", 1.0, 0.85)
 	
-	# Așteptăm să se termine animația de negru complet
 	await fade_tween.finished
 
-	# Așteptăm o secundă să plece tava, apoi mutăm camera!
-	if gm and gm.has_method("arata_evaluarea_la_client"):
-		gm.arata_evaluarea_la_client(nota_totala)
+	# --- 5. CAMERĂ ȘI RESETARE ACUM ---
+	if gm:
+		var order_st = gm._order_station
+		if order_st and order_st.has_method("aduce_client_pentru_evaluare"):
+			order_st.aduce_client_pentru_evaluare(id_client_curent)
+		
+		if gm.has_method("arata_evaluarea_la_client"):
+			gm.arata_evaluarea_la_client(nota_totala)
 
+	# Resetarea stației pe ascuns
+	fade.hide()
+	fade.modulate.a = 0.0
+	tray.position.x = default_tray_x
+
+	if is_instance_valid(real_ticket):
+		real_ticket.queue_free()
+
+	if assembled_pita and is_instance_valid(assembled_pita):
+		assembled_pita.queue_free()
+		assembled_pita = null
+
+	ticket_placed = false
+	ticket_slot_area.remove_meta("current_ticket")
+	_reset_wrap_visual_state()
+	_reset_drinks()
+	if wrap_area and wrap_area.has_method("reset_wrap"):
+		wrap_area.reset_wrap()
 
 
 func _keep_paper_piles_on_counter() -> void:
@@ -409,6 +511,11 @@ func _reset_wrap_visual_state() -> void:
 	paper_applied = false
 	carrying_paper = false
 	carried_final_texture = null
+	
+	# FIX DEFINITIV: Resetăm starea biletului pentru noua șaormă!
+	ticket_placed = false
+	if ticket_slot_area.has_meta("current_ticket"):
+		ticket_slot_area.remove_meta("current_ticket")
 
 	_stop_paper_hint()
 	_set_paper_piles_enabled(false)
@@ -417,13 +524,19 @@ func _reset_wrap_visual_state() -> void:
 	wrapped_visual.hide()
 	swipe_arrow_visual.hide()
 
-	fade.show()
+	# Resetăm fizic ecranul negru să fie invizibil și să NU blocheze click-urile
+	fade.hide()
 	fade.modulate.a = 0.0
 	fade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
 func receive_pita_from_assembly(source_lipie_container: Node, _pita_state: Dictionary) -> void:
 	if source_lipie_container == null:
+		_reset_wrap_visual_state()
+		pita_preview.hide()
+		swipe_arrow_visual.hide()
+		instruction_label.hide()
+		assembled_pita = null
 		return
 
 	if not source_lipie_container is Node2D:
@@ -493,6 +606,8 @@ func receive_pita_from_assembly(source_lipie_container: Node, _pita_state: Dicti
 
 	instruction_label.text = "Swipe the shaorma!"
 	instruction_label.show()
+	
+	local_pita_state = _pita_state.duplicate(true) # Salvează copia unică a acestei lipii!
 		
 func get_lipie_quality_color(lipie_quality: String) -> Color:
 	if lipie_quality == "burned":
@@ -664,6 +779,9 @@ func try_accept_ticket_from_drop(ticket: Control) -> bool:
 
 	darken.visible = false
 	darken.modulate.a = 0.0
+
+	# --- LINIA LIPSĂ ADĂUGATĂ AICI ---
+	ticket_slot_area.set_meta("current_ticket", ticket)
 
 	return true
 

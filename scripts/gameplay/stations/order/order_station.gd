@@ -1,88 +1,179 @@
 extends Node2D
 
-# Facem legăturile cu nodurile noastre
 @onready var fundal_lobby = $LobbyFrame
 @onready var fundal_comanda = $OrderFrame
-@onready var buton_comanda = $Customer/TextureButton # Asigură-te că TextureButton e scris exact așa!
-@onready var client = $Customer
-@onready var poza_client = $Customer/Sprite2D
-const OrderTicketScene = preload("res://scenes/entities/items/order_ticket.tscn")
 @onready var sfoara = $"../TopBar/HBoxContainer/TicketBackground/TicketZone"
-var contor_clienti: int = 1
 @onready var label_scor = $LabelScor
-var container_tava_evaluare: Node2D = null
 
-# 2. ADAUGĂ în locul lor această listă de "Profiluri" (Dicționare):
+const CustomerScene = preload("res://scenes/entities/characters/customer.tscn")
+const OrderTicketScene = preload("res://scenes/entities/items/order_ticket.tscn")
+
+var container_tava_evaluare: Node2D = null
+var client_in_evaluare: Node = null # Ține minte exact cine e la tejghea acum
+var semn_closed_afisat: bool = false
+var clienti_serviti: int = 0
+var total_clienti_zi: int = 0
+
 var lista_clienti = [
-	{
-		"lobby": preload("res://assets/graphics/characters/papalouie.png"),
-		"zoom": preload("res://assets/graphics/characters/papalouie_zoomed.png")
-	}
-	 ,{
-	 	"lobby": preload("res://assets/graphics/characters/wally.png"),
-	 	"zoom": preload("res://assets/graphics/characters/wally_zoomed.png")
-	 }
-	,{
-	 	"lobby": preload("res://assets/graphics/characters/akari.png"),
-	 	"zoom": preload("res://assets/graphics/characters/akari_zoomed.png")
-	 }
-	,{
-	 	"lobby": preload("res://assets/graphics/characters/chuck.png"),
-	 	"zoom": preload("res://assets/graphics/characters/chuck_zoomed.png")
-	 }
-	,{
-	 	"lobby": preload("res://assets/graphics/characters/elle.png"),
-	 	"zoom": preload("res://assets/graphics/characters/elle_zoomed.png")
-	 }
-	,{
-	 	"lobby": preload("res://assets/graphics/characters/kahuna.png"),
-	 	"zoom": preload("res://assets/graphics/characters/kahuna_zoomed.png")
-	 }
-	,{
-	 	"lobby": preload("res://assets/graphics/characters/prudence.png"),
-	 	"zoom": preload("res://assets/graphics/characters/prudence_zoomed.png")
-	 }
+	{ "lobby": preload("res://assets/graphics/characters/papalouie.png"), "zoom": preload("res://assets/graphics/characters/papalouie_zoomed.png") },
+	{ "lobby": preload("res://assets/graphics/characters/wally.png"), "zoom": preload("res://assets/graphics/characters/wally_zoomed.png") },
+	{ "lobby": preload("res://assets/graphics/characters/akari.png"), "zoom": preload("res://assets/graphics/characters/akari_zoomed.png") },
+	{ "lobby": preload("res://assets/graphics/characters/chuck.png"), "zoom": preload("res://assets/graphics/characters/chuck_zoomed.png") },
+	{ "lobby": preload("res://assets/graphics/characters/elle.png"), "zoom": preload("res://assets/graphics/characters/elle_zoomed.png") },
+	{ "lobby": preload("res://assets/graphics/characters/kahuna.png"), "zoom": preload("res://assets/graphics/characters/kahuna_zoomed.png") },
+	{ "lobby": preload("res://assets/graphics/characters/prudence.png"), "zoom": preload("res://assets/graphics/characters/prudence_zoomed.png") }
 ]
 
-# 3. Adaugă două variabile noi care vor ține minte clientul ales la momentul respectiv:
-var client_curent_lobby: Texture2D
-var client_curent_zoom: Texture2D
+var profiluri_disponibile: Array = []
+var coada_comenzi: Array = [] 
+var zona_asteptare: Array = [] 
 
-# Funcția _ready se rulează automat o singură dată, fix când pornește scena
+var timpi_spawn: Array[float] = [0.5, 30.0, 90.0, 150.0, 180.0]
+var index_spawn: int = 0
+var timp_scurs: float = 0.0
+var contor_clienti_total: int = 1 
+var offset_sfoara_urmator: float = 10.0 # Ajută la așezarea biletelor noi
+
 func _ready():
-	var profil_random = lista_clienti.pick_random()
-	client_curent_lobby = profil_random["lobby"]
-	client_curent_zoom = profil_random["zoom"]
+	profiluri_disponibile = lista_clienti.duplicate()
+	profiluri_disponibile.shuffle()
 	
-	# La început, vrem să vedem DOAR Lobby-ul
+	# SETĂM CONTORUL INIȚIAL
+	total_clienti_zi = timpi_spawn.size()
+	var gm = get_tree().current_scene
+	if gm and gm.has_method("actualizeaza_text_clienti"):
+		gm.actualizeaza_text_clienti(clienti_serviti, total_clienti_zi)
+	
 	fundal_lobby.show()
 	fundal_comanda.hide()
-	
-	# Îi punem poza mică și îl așezăm în stânga, la coadă 
-	poza_client.texture = client_curent_lobby
-	client.scale = Vector2(1, 1)
-	adu_client_la_tejghea()
+	set_process(true)
 
-# Funcția legată de click-ul pe balonaș
-func _on_customer_a_fost_apasat(comanda):
-	# BLOCĂM BUTOANELE DE JOS!
+func _process(delta: float):
+	if index_spawn < timpi_spawn.size():
+		timp_scurs += delta
+		if timp_scurs >= timpi_spawn[index_spawn]:
+			spawneaza_client_nou()
+			index_spawn += 1
+	else:
+		# Dacă am terminat de spawnat toți clienții din array, punem semnul de închis!
+		if not semn_closed_afisat:
+			_afiseaza_semn_closed()
+			semn_closed_afisat = true
+
+func _afiseaza_semn_closed() -> void:
+	var label_closed = Label.new()
+	label_closed.text = "CLOSED"
+	label_closed.add_theme_font_size_override("font_size", 48)
+	label_closed.add_theme_color_override("font_color", Color(0.8, 0.1, 0.1)) # Roșu
+	label_closed.add_theme_color_override("font_outline_color", Color(1, 1, 1))
+	label_closed.add_theme_constant_override("outline_size", 8)
+	
+	fundal_lobby.add_child(label_closed)
+	# Ajustează poziția în funcție de unde este ușa ta în imaginea Lobby-ului
+	label_closed.position = Vector2(1600, 300) 
+	label_closed.rotation_degrees = -15.0
+
+func spawneaza_client_nou():
+	if profiluri_disponibile.size() == 0:
+		return
+		
+	var profil = profiluri_disponibile.pop_back()
+	var client_nou = CustomerScene.instantiate()
+	
+	client_nou.textura_lobby = profil["lobby"]
+	client_nou.textura_zoom = profil["zoom"]
+	client_nou.id_unic = contor_clienti_total
+	contor_clienti_total += 1
+	
+	client_nou.position = Vector2(2000, 313)
+	client_nou.scale = Vector2(1, 1)
+	add_child(client_nou)
+	
+	client_nou.a_fost_apasat.connect(_on_customer_a_fost_apasat.bind(client_nou))
+	
+	coada_comenzi.append(client_nou)
+	actualizeaza_pozitii_coada()
+	
+	if fundal_comanda.visible:
+		client_nou.hide()
+
+# --- LOGICA DE COADĂ ---
+func actualizeaza_pozitii_coada():
+	for i in range(coada_comenzi.size()):
+		var c = coada_comenzi[i]
+		var target_x = 200 + (i * 300)
+		c.z_index = 50 - i
+		
+		var tween_mers = create_tween()
+		tween_mers.tween_property(c, "position:x", target_x, 1.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		
+		var tween_leganat = create_tween().set_loops()
+		tween_leganat.tween_property(c, "rotation_degrees", 3.0, 0.25).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		tween_leganat.tween_property(c, "rotation_degrees", -3.0, 0.25).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		
+		get_tree().create_timer(1.5).timeout.connect(func():
+			if is_instance_valid(c):
+				tween_leganat.kill()
+				create_tween().tween_property(c, "rotation_degrees", 0.0, 0.1)
+		)
+		
+		var buton = c.get_node("TextureButton")
+		if i == 0:
+			buton.show() 
+		else:
+			buton.hide()
+			
+			
+# --- NOU: LOGICA REPARATĂ PENTRU ZONA DE AȘTEPTARE ---
+func actualizeaza_pozitii_asteptare():
+	for i in range(zona_asteptare.size()):
+		var c = zona_asteptare[i]
+		if not is_instance_valid(c): continue
+		
+		# Folosim indexul 'i' (0, 1, 2...) în loc de .size()!
+		# Primul client din zona de așteptare va sta la X=200, următorul la X=450, etc.
+		var target_x = 200 + (i * 250)
+		
+		# Z-index-ul scade spre spate ca să se randeze corect în spațiu 3D virtual
+		c.z_index = 20 - i
+		
+		var tween = create_tween()
+		tween.tween_property(c, "position", Vector2(target_x, 250), 1.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		
+
+# --- CÂND APĂSĂM PE BALONAȘUL UNUI CLIENT NOU ---
+func _on_customer_a_fost_apasat(comanda, clientul_apasat):
+	# Curățenie bilet anterior (dacă e cazul)
+	for copil in fundal_comanda.get_children():
+		if copil.has_method("set_locked_large"):
+			_pune_bilet_pe_sfoara(copil)
+
 	var gm = get_tree().current_scene
 	if gm and gm.has_method("seteaza_stare_butoane_statii"):
 		gm.seteaza_stare_butoane_statii(false)
 
-	# 1. Ascundem balonașul de comandă (și-a făcut treaba)
-	buton_comanda.hide()
+	clientul_apasat.get_node("TextureButton").hide()
+	coada_comenzi.erase(clientul_apasat)
+	zona_asteptare.append(clientul_apasat)
 	
-	# 2. SCHIMBĂM CADRUL (Tăietură de montaj directă)
+	# --- FIX WAITING SCORE: TRECEM CLIENTUL PE RĂBDARE LENTĂ! ---
+	if "rata_curenta" in clientul_apasat and "rata_scadere_gatit" in clientul_apasat:
+		clientul_apasat.rata_curenta = clientul_apasat.rata_scadere_gatit
+	
+	actualizeaza_pozitii_coada()
+	
+	for c in coada_comenzi: c.hide()
+	for c in zona_asteptare:
+		if c != clientul_apasat: c.hide()
+	
 	fundal_lobby.hide()
 	fundal_comanda.show()
 	
-	# Starea 2: CLOSE-UP (Magia!)
-	poza_client.texture = client_curent_zoom
-	client.position = Vector2(800, 55) 
-	client.scale = Vector2(1.3, 1.3)
+	clientul_apasat.get_node("Sprite2D").texture = clientul_apasat.textura_zoom
+	clientul_apasat.position = Vector2(800, 55) 
+	clientul_apasat.scale = Vector2(1.3, 1.3)
+	clientul_apasat.z_index = 100 
 	
-	# Creăm biletul vizual și îl punem pe tejghea
 	var tichet_nou = OrderTicketScene.instantiate()
 	fundal_comanda.add_child(tichet_nou)
 	tichet_nou.position = Vector2(1300, 200) 
@@ -90,109 +181,142 @@ func _on_customer_a_fost_apasat(comanda):
 	
 	await get_tree().create_timer(0.5).timeout
 	
-	# Trimitem atât comanda, cât și numărul curent!
-	tichet_nou.primeste_comanda(comanda, contor_clienti)
+	# FIX IMPORTANT: ÎNTÂI conectăm semnalul, APOI îi dăm comanda!
+	tichet_nou.comanda_gata.connect(_on_order_ticket_comanda_gata.bind(tichet_nou, clientul_apasat))
+	tichet_nou.primeste_comanda(comanda, clientul_apasat.id_unic)
 	
-	# Ne legăm de semnal și transmitem și referința biletului
-	tichet_nou.comanda_gata.connect(_on_order_ticket_comanda_gata.bind(tichet_nou))
-	
-	# După ce am dat comanda biletului, creștem contorul pentru următorul client
-	contor_clienti += 1
-
-# Această funcție se apelează automat când biletul strigă "comanda_gata"
-func _on_order_ticket_comanda_gata(tichet_rezolvat):
-	# DEBLOCĂM BUTOANELE!
+func _on_order_ticket_comanda_gata(tichet_rezolvat, clientul_apasat):
 	var gm = get_tree().current_scene
 	if gm and gm.has_method("seteaza_stare_butoane_statii"):
 		gm.seteaza_stare_butoane_statii(true)
 	
-	# 1. Deblocăm biletul ca să devină mic (scale = 0.4)
-	tichet_rezolvat.set_locked_large(false)
-	tichet_rezolvat.get_parent().remove_child(tichet_rezolvat)
+	_pune_bilet_pe_sfoara(tichet_rezolvat)
 	
-	# 2. Creăm un "cârlig" invizibil care va sta pe șina HBoxContainer
-	var carlig = Control.new()
-	carlig.mouse_filter = Control.MOUSE_FILTER_IGNORE # CRITIC: Ca să nu blocheze click-urile (Drag & Drop)
-	
-	# Cârligul dictează spațiul ocupat pe șină! (Ajustat pentru scale = 0.25)
-	carlig.custom_minimum_size = Vector2(45, 65) 
-	
-	# 3. Leagă viața cârligului de viața biletului: când biletul e preluat, ștergem și cârligul.
-	tichet_rezolvat.tree_exited.connect(carlig.queue_free)
-	
-	# 4. Punem biletul în cârlig, și cârligul pe șină
-	carlig.add_child(tichet_rezolvat)
-	sfoara.add_child(carlig)
-	
-	# Ca să arate centrat în cârlig
-	tichet_rezolvat.position = carlig.custom_minimum_size / 2.0
-	
-	# 5. SCHIMBĂM CADRUL ÎNAPOI
 	fundal_comanda.hide()
 	fundal_lobby.show()
 	
-	# 4. READUCEM CLIENTUL LA NORMAL
-	poza_client.texture = client_curent_lobby # Îi dăm înapoi poza întreagă
-	client.scale = Vector2(1, 1)     # Îl facem la loc mic
-	client.position = Vector2(200, 313)
+	for c in coada_comenzi: c.show()
+	for c in zona_asteptare: c.show()
 	
-	# BUTONUL NU ÎL MAI APRINDEM! (Nu scriem buton_comanda.show())
-	# Astfel, clientul va sta la coadă, dar fără buton, exact cum ai cerut.
+	clientul_apasat.get_node("Sprite2D").texture = clientul_apasat.textura_lobby
+	clientul_apasat.scale = Vector2(0.85, 0.85) 
+	
+	# REPARAT: Nu mai calculăm o poziție fixă aici, ci chemăm funcția dinamică!
+	actualizeaza_pozitii_asteptare()
+	
+	
+# --- FORȚĂM MICȘORAREA BILETULUI ---
+func _pune_bilet_pe_sfoara(tichet_rezolvat):
+	# Dacă e deja pe sfoară, îl lăsăm în pace
+	if tichet_rezolvat.get_parent() != fundal_comanda:
+		return
+		
+	# Aici lăsăm codul tău original să facă magia de micșorare!
+	tichet_rezolvat.set_locked_large(false)
+	tichet_rezolvat.get_parent().remove_child(tichet_rezolvat)
+	
+	var carlig = Control.new()
+	carlig.custom_minimum_size = Vector2(55, 65) 
+	
+	# Permitem mouse-ului să tragă de el
+	carlig.mouse_filter = Control.MOUSE_FILTER_PASS 
+	carlig.gui_input.connect(_on_carlig_drag.bind(carlig))
+	carlig.set_meta("is_dragging", false)
+	
+	tichet_rezolvat.tree_exited.connect(carlig.queue_free)
+	
+	carlig.add_child(tichet_rezolvat)
+	
+	# FOLOSIM VARIABILA TA ORIGINALĂ
+	sfoara.add_child(carlig)
+	
+	# Poziția în cârlig și pe sfoară
+	tichet_rezolvat.position = Vector2(25, 30)
+	carlig.position = Vector2(offset_sfoara_urmator, 0)
+	offset_sfoara_urmator += 80.0 # Îi dăm mai mult spațiu între ele (80px)
 
-func adu_client_la_tejghea():
-	# REFRESH LA CLIENT (Răbdare 100%, comandă nouă, viteză de coadă!)
-	if client != null and client.has_method("pregateste_client_nou"):
-		client.pregateste_client_nou()
+# --- DRAG & DROP ADAPTAT LA NOUA LĂȚIME ---
+func _on_carlig_drag(event: InputEvent, carlig: Control):
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		if event.pressed:
+			carlig.set_meta("is_dragging", true)
+			carlig.z_index = 100 # Îl aducem în față
+			# Îl punem ultimul în listă ca să se randeze peste celelalte bilete
+			carlig.get_parent().move_child(carlig, -1)
+		else:
+			carlig.set_meta("is_dragging", false)
+			carlig.z_index = 0
+			
+	elif event is InputEventMouseMotion and carlig.get_meta("is_dragging"):
+		# Mișcăm biletul la stânga și la dreapta o dată cu mouse-ul
+		carlig.position.x += event.relative.x
+		
+		# IGNORĂM lățimea containerului și îi dăm voie fixă să fie tras pe ecran (0 - 1500 pixeli)
+		carlig.position.x = clamp(carlig.position.x, 0, 1500)
+# -------------------------------------------------------------
 
-	# 1. Îl ascundem în afara ecranului, în DREAPTA (ex: X = 1200)
-	client.position = Vector2(2000, 313)
-	client.rotation_degrees = 0.0 # Îl resetăm să stea drept la început
-	buton_comanda.hide()
+	# --- SISTEMUL DE LIVRARE ȘI EVALUARE ---
+# Această funcție va fi apelată de GameplayMaster când apeși "Send" la Wrapping Station
+func aduce_client_pentru_evaluare(id_cautat: int) -> void:
+	var client_gasit = null
 	
-	# 2. TWEEN-UL PENTRU DEPLASARE (Glisarea principală)
-	var tween_mers = create_tween()
-	# Merge de la 1200 înapoi la 300 (la stânga), cu încetinire la final
-	tween_mers.tween_property(client, "position:x", 200, 3.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	for c in zona_asteptare:
+		if c.id_unic == id_cautat:
+			client_gasit = c
+			break
+			
+	if client_gasit == null:
+		print("Eroare: Nu am găsit clientul cu ID ", id_cautat, " în sala de așteptare!")
+		return
+		
+	# LOGICĂ NOUĂ: Îl salvăm aici ca să îl putem șterge din joc după cele 10 secunde de note!
+	client_in_evaluare = client_gasit
+	zona_asteptare.erase(client_gasit)
 	
-	# 3. TWEEN-UL PENTRU LEGĂNAT (Mult mai fin)
-	var tween_leganat = create_tween().set_loops()
+	for c in coada_comenzi: c.hide()
+	for c in zona_asteptare: c.hide()
 	
-	# Pășește finuț stânga-dreapta
-	tween_leganat.tween_property(client, "rotation_degrees", 3.0, 0.25).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	tween_leganat.tween_property(client, "rotation_degrees", -3.0, 0.25).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	
-	# 4. Așteptăm ca deplasarea pe X să se termine
-	await tween_mers.finished
-	
-	# 5. Oprim legănatul
-	tween_leganat.kill()
-	
-	# 6. Îl îndreptăm finuț înapoi la 0 grade
-	var tween_stop = create_tween()
-	tween_stop.tween_property(client, "rotation_degrees", 0.0, 0.1).set_trans(Tween.TRANS_SINE)
-	
-	# 7. Afișăm balonașul
-	buton_comanda.show()
-
-func pregateste_tejgheaua_pentru_evaluare() -> void:
-	# 1. Schimbăm cadrul pe tejghea (de aproape)
 	fundal_lobby.hide()
 	fundal_comanda.show()
 	
-	# 2. Ne asigurăm că clientul este în starea de zoom, la locul lui
-	if poza_client != null and client_curent_zoom != null:
-		poza_client.texture = client_curent_zoom
-		client.position = Vector2(800, 55)
-		client.scale = Vector2(1.3, 1.3)
+	client_gasit.get_node("Sprite2D").texture = client_gasit.textura_zoom
+	client_gasit.position = Vector2(800, 55) 
+	client_gasit.scale = Vector2(1.3, 1.3)
+	client_gasit.z_index = 100
+	
+
+func obtine_comanda_client(id_cautat: int) -> Array:
+	# Căutăm în sala de așteptare
+	for c in zona_asteptare:
+		if c.id_unic == id_cautat:
+			return c.comanda_mea
+			
+	# Căutăm și în coadă (just in case)
+	for c in coada_comenzi:
+		if c.id_unic == id_cautat:
+			return c.comanda_mea
+			
+	return []
+
+# --- SISTEMUL DE LIVRARE ȘI EVALUARE (REPARAT COMPLET) ---
+
+func pregateste_tejgheaua_pentru_evaluare() -> void:
+	# Ne asigurăm că suntem pe cadrul de close-up
+	fundal_lobby.hide()
+	fundal_comanda.show()
 
 func arata_evaluare_finala(nota: int, textura_lipie: Texture2D, textura_suc: Texture2D) -> void:
+	var gm = get_tree().current_scene
+	if gm and gm.has_method("seteaza_stare_butoane_statii"):
+		gm.seteaza_stare_butoane_statii(false)
+	
 	if container_tava_evaluare != null and is_instance_valid(container_tava_evaluare):
 		container_tava_evaluare.queue_free()
 		
 	container_tava_evaluare = Node2D.new()
 	fundal_comanda.add_child(container_tava_evaluare)
 	
-	container_tava_evaluare.z_index = 100
+	container_tava_evaluare.z_index = 101 # Un pic peste client
 	container_tava_evaluare.position = Vector2(960, 800)
 	
 	# --- 1. POZA TAVA ---
@@ -217,14 +341,13 @@ func arata_evaluare_finala(nota: int, textura_lipie: Texture2D, textura_suc: Tex
 		sprite_lipie.scale = Vector2(0.3, 0.3)
 		container_tava_evaluare.add_child(sprite_lipie)
 
-	# --- 4. EXTRACTIE SCORURI IN PROCENTE ȘI MEDIE ---
-	var gm = get_tree().current_scene
+	# --- 4. EXTRACȚIE SCORURI ȘI CALCUL BACȘIȘ ---
 	var s_waiting := 0
 	var s_cutting := 0
 	var s_assembly := 0
 	var s_wrapping := 0
 	var medie_generala := 0
-	var bacsis_primit := 0.0 # <--- NOU
+	var bacsis_primit := 0.0 
 	
 	if gm and "completed_pitas" in gm and gm.completed_pitas.size() > 0:
 		var ultima_shaorma = gm.completed_pitas.back()
@@ -237,16 +360,13 @@ func arata_evaluare_finala(nota: int, textura_lipie: Texture2D, textura_suc: Tex
 		
 		medie_generala = floor((s_waiting + s_cutting + s_assembly + s_wrapping) / 4.0)
 		
-		# --- CALCUL BACȘIȘ ---
-		# Bacșiș maxim: 5.00$. Dacă media e < 50%, primești 0$.
 		if medie_generala >= 50:
 			bacsis_primit = (medie_generala / 100.0) * 5.00
 			
-		# Trimitem banii la master să-i pună în seif și să schimbe textul din TopBar!
 		if gm.has_method("adauga_bacsis"):
 			gm.adauga_bacsis(bacsis_primit)
 
-	# --- 5. AFIȘARE TEXT MULTILINE (Acum include și bacșișul) ---
+	# --- 5. AFIȘARE PANOU SCORURI ---
 	if label_scor != null:
 		label_scor.text = (
 			"Waiting Score: " + str(s_waiting) + "%\n" +
@@ -255,14 +375,15 @@ func arata_evaluare_finala(nota: int, textura_lipie: Texture2D, textura_suc: Tex
 			"Wrapping Score: " + str(s_wrapping) + "%\n" +
 			"---------------------\n" +
 			"TOTAL: " + str(medie_generala) + "%\n" +
-			"Tip: +$ %.2f" % bacsis_primit # <--- Arată bacșișul cu 2 zecimale!
+			"Tip: +$ %.2f" % bacsis_primit
 		)
 		
 		label_scor.reset_size()
 		label_scor.show()
+		label_scor.z_index = 200 # Să fie clar deasupra
 		label_scor.global_position = Vector2(300 - (label_scor.size.x / 2.0), 200)
 		
-	# --- 6. FADE IN DIN NEGRU ---
+	# --- 6. FADE IN REFRESHING ---
 	var ecran_negru = ColorRect.new()
 	ecran_negru.color = Color(0, 0, 0, 1) 
 	ecran_negru.set_anchors_preset(Control.PRESET_FULL_RECT) 
@@ -274,9 +395,43 @@ func arata_evaluare_finala(nota: int, textura_lipie: Texture2D, textura_suc: Tex
 	fade_in_tween.tween_property(ecran_negru, "color:a", 0.0, 0.5) 
 	fade_in_tween.finished.connect(ecran_negru.queue_free) 
 	
-	# --- 7. AȘTEPTĂM 3 SECUNDE ȘI CURĂȚĂM TAVA ---
-	await get_tree().create_timer(10.0).timeout
+	# --- 7. MAGIA CELOR 7 SECUNDE ---
+	await get_tree().create_timer(7.0).timeout
 	
+	# --- 8. CURĂȚENIA ȘI REVENIREA REUȘITĂ LA LOBBY ---
 	if label_scor != null:
 		label_scor.hide()
-	container_tava_evaluare.queue_free()
+	if container_tava_evaluare != null and is_instance_valid(container_tava_evaluare):
+		container_tava_evaluare.queue_free()
+		
+	# Clientul servit își ia mâncarea și este șters definitiv
+	if client_in_evaluare != null and is_instance_valid(client_in_evaluare):
+		client_in_evaluare.queue_free()
+		client_in_evaluare = null
+		
+	# Închidem close-up-ul și aprindem Lobby-ul normal
+	fundal_comanda.hide()
+	fundal_lobby.show()
+	
+	# REPARAT COMPLET: Recalculăm pozițiile pentru clienții rămași în așteptare!
+	# Clientul 2, care era pe poziția a doua, va trece automat pe poziția 1 (X=200)!
+	actualizeaza_pozitii_asteptare()
+	
+	# Afișăm din nou toți ceilalți clienți rămași în restaurant
+	for c in coada_comenzi: c.show()
+	for c in zona_asteptare: c.show()
+	
+	# --- NOU: DEBLOCĂM BUTOANELE PENTRU URMĂTOAREA COMANDĂ ---
+	if gm and gm.has_method("seteaza_stare_butoane_statii"):
+		gm.seteaza_stare_butoane_statii(true)
+	
+	# --- NOU: LOGICA DE END OF DAY ---
+	clienti_serviti += 1
+	
+	if gm and gm.has_method("actualizeaza_text_clienti"):
+		gm.actualizeaza_text_clienti(clienti_serviti, total_clienti_zi)
+		
+	# Dacă am servit toți clienții planificați pentru azi, trecem direct la ecranul de final!
+	if clienti_serviti >= total_clienti_zi:
+		if gm and gm.has_method("_on_day_ended"):
+			gm._on_day_ended()

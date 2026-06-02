@@ -838,17 +838,19 @@ func send_tortilla_to_assembly(tortilla: Area2D) -> void:
 	if not tortilla.get_meta("has_meat", false):
 		return
 
+	# Preluăm direct scorul calculat pentru lipia + carnea asamblată pe ecran
+	var final_cut_score = calculate_tortilla_score(tortilla)
+
 	var tortilla_data := {
 		"lipie_quality": tortilla.get_meta("heat_state", "raw"),
 		"meat_type": tortilla.get_meta("meat_type", ""),
 		"meat_quality": tortilla.get_meta("meat_quality", ""),
-		"cutting_score": calculate_tortilla_score(tortilla)
+		"cutting_score": final_cut_score # FIX: Adăugăm scorul curat, calculat!
 	}
 
 	cutting_score_data["sent_shaormas"] += 1
 
-	var master := get_node_or_null("/root/GameplayMaster")
-
+	var master = get_tree().current_scene # Asigurăm accesul la nodul curent
 	if master != null:
 		if not master.has_meta("prepared_shaormas_queue"):
 			master.set_meta("prepared_shaormas_queue", [])
@@ -861,9 +863,7 @@ func send_tortilla_to_assembly(tortilla: Area2D) -> void:
 		filling_tortilla = null
 
 	heated_tortillas.erase(tortilla)
-
 	refresh_heated_tortilla_stack_interaction()
-
 	tortilla.queue_free()
 
 

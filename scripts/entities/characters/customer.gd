@@ -1,5 +1,10 @@
 extends Node2D
 
+@onready var sprite = $Sprite2D
+var textura_lobby: Texture2D
+var textura_zoom: Texture2D
+var id_unic: int = 0
+
 var comanda_mea: Array = []
 signal a_fost_apasat(ingrediente)
 signal patience_expired
@@ -58,6 +63,9 @@ func genereaza_comanda_random():
 
 # _ready se execută imediat ce apare clientul în scenă
 func _ready():
+	if textura_lobby != null:
+		sprite.texture = textura_lobby
+		
 	pregateste_client_nou()
 	pornește_animatie_buton()
 	

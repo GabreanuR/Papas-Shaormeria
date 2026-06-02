@@ -61,7 +61,7 @@ func _setup_hub_mode() -> void:
 func _setup_gameplay_mode() -> void:
 	_update_gameplay_display()
 	Global.daily_earnings_changed.connect(_on_daily_money_changed)
-	set_process(true) 
+	set_process(false) 
 	
 	# 1. Arătăm complet șina de bonuri
 	ticket_bg.modulate.a = 1.0
@@ -78,11 +78,15 @@ func _setup_gameplay_mode() -> void:
 # ---------------------------------------------------------
 # LOGICA DE TIMER (GAMEPLAY)
 # ---------------------------------------------------------
-func _process(_delta: float) -> void:
-	var time_left: float = Global.day_time_left
-	var minutes := int(time_left / 60.0)
-	var seconds := int(time_left) % 60
-	first_label.text = "%02d:%02d" % [minutes, seconds]
+#func _process(_delta: float) -> void:
+	#var time_left: float = Global.day_time_left
+	#var minutes := int(time_left / 60.0)
+	#var seconds := int(time_left) % 60
+	#first_label.text = "%02d:%02d" % [minutes, seconds]
+	
+func update_customer_counter(serviti: int, total: int) -> void:
+	first_label.text = str(serviti) + " / " + str(total)
+	_animate_label(first_label) # Refolosim efectul tău fain de mărire a textului!
 
 # ---------------------------------------------------------
 # HUB FUNCTIONS 

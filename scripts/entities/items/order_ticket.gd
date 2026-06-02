@@ -11,6 +11,7 @@ const LARGE_SCALE := Vector2(1.3, 1.3)
 
 var is_locked_large := false
 var dimensiune_originala: Vector2
+var id_client_proprietar: int = 0
 
 var imagini_ingrediente := {
 	"lipie": preload("res://assets/graphics/ingredients/lipie.png"), 
@@ -49,6 +50,7 @@ func set_locked_large(locked: bool) -> void:
 		scale = SMALL_SCALE
 
 func primeste_comanda(lista_ingrediente: Array, numar_client: int) -> void:
+	id_client_proprietar = numar_client
 	label_numar.text = str(numar_client).pad_zeros(2)
 	show()
 	

@@ -53,13 +53,14 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="TicketZone" type="HBoxContainer" parent="HBoxContainer/TicketBackground" unique_id=1136075644]
+[node name="TicketZone" type="Control" parent="HBoxContainer/TicketBackground" unique_id=1316595454]
 layout_mode = 2
 size_flags_horizontal = 3
 script = ExtResource("5_kesql")
 
 [node name="OrderTicket" parent="HBoxContainer/TicketBackground/TicketZone" unique_id=1253955845 instance=ExtResource("3_kef68")]
-layout_mode = 2
+layout_mode = 0
+offset_bottom = 112.0
 
 [node name="MenuBtn" type="TextureButton" parent="HBoxContainer" unique_id=800234697]
 unique_name_in_owner = true

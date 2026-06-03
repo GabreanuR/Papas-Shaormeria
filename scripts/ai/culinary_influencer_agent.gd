@@ -44,13 +44,49 @@ Format:
 
 	http_request.request(ollama_url, headers, HTTPClient.METHOD_POST, JSON.stringify(body))
 
-func _on_request_completed(_result: int, response_code: int, _headers: PackedStringArray, body: PackedByteArray) -> void:
+#func _on_request_completed(_result: int, response_code: int, _headers: PackedStringArray, body: PackedByteArray) -> void:
+	#if response_code != 200:
+		#review_ready.emit("This shaorma is bussing! Next trend is falafel.", "falafel")
+		#return
+#
+	#var json := JSON.new()
+	#if json.parse(body.get_string_from_utf8()) != OK:
+		#review_ready.emit("Amazing taste! Next trend is falafel.", "falafel")
+		#return
+#
+	#var data = json.get_data()
+	#if typeof(data) == TYPE_DICTIONARY:
+		#var raw_response := str(data.get("response", "")).strip_edges()
+		#
+		#var response_json = JSON.parse_string(raw_response)
+		#if response_json and typeof(response_json) == TYPE_DICTIONARY:
+			#var review = response_json.get("review", "Amazing!")
+			#var trend = response_json.get("trend_ingredient", "falafel")
+			#review_ready.emit(review, trend)
+			#return
+			#
+	#review_ready.emit("Incredible taste! You must try it with extra garlic.", "maioneza_usturoi")
+
+
+func _on_request_completed(result: int, response_code: int, _headers: PackedStringArray, body: PackedByteArray) -> void:
+	
+	# === CAPCANELE NOASTRE DE DEBUG ===
+	print("\n--- 🚨 INVESTIGAȚIE OLLAMA ---")
+	print("Cod Rezultat intern Godot (0 înseamnă că s-a conectat cu succes): ", result)
+	print("Cod Răspuns Server (200 înseamnă OK): ", response_code)
+	
+	var text_primit = body.get_string_from_utf8()
+	print("Ce a zis efectiv Ollama: ", text_primit)
+	print("--------------------------------\n")
+	# ==================================
+
 	if response_code != 200:
 		review_ready.emit("This shaorma is bussing! Next trend is falafel.", "falafel")
 		return
 
 	var json := JSON.new()
-	if json.parse(body.get_string_from_utf8()) != OK:
+	if json.parse(text_primit) != OK:
+		print("❌ EROARE: Ollama nu a răspuns cu un JSON valid!")
 		review_ready.emit("Amazing taste! Next trend is falafel.", "falafel")
 		return
 
@@ -62,7 +98,11 @@ func _on_request_completed(_result: int, response_code: int, _headers: PackedStr
 		if response_json and typeof(response_json) == TYPE_DICTIONARY:
 			var review = response_json.get("review", "Amazing!")
 			var trend = response_json.get("trend_ingredient", "falafel")
+			
+			print("✅ SUCCES: Ollama a ales trendul: ", trend)
 			review_ready.emit(review, trend)
 			return
+		else:
+			print("❌ EROARE: Răspunsul brut nu a putut fi transformat în dicționar.")
 			
 	review_ready.emit("Incredible taste! You must try it with extra garlic.", "maioneza_usturoi")

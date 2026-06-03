@@ -77,7 +77,7 @@ func genereaza_comanda_random():
 	
 	if Global.trend_ingredient != "" and randf() <= 0.7:
 		if not comanda_mea.has(Global.trend_ingredient):
-			comanda_mea.append(Global.trend_ingredient)
+			comanda_mea.insert(2, Global.trend_ingredient)
 
 
 func pregateste_client_nou():

@@ -48,6 +48,8 @@ var daily_stats: Dictionary = {
 	"tips_earned": 0.0
 }
 
+var trend_ingredient: String = ""
+
 # ---------------------------------------------------------
 # 5. PRIVATE VARIABLES
 # ---------------------------------------------------------

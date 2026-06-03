@@ -42,6 +42,4 @@ theme/custom_font="uid://crfo7nlure7a2"
 
 [rendering]
 
-renderer/rendering_method="forward_plus"
-renderer/rendering_method.web="gl_compatibility"
 rendering_device/driver.windows="d3d12"

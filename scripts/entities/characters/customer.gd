@@ -74,6 +74,10 @@ func genereaza_comanda_random():
 		
 	var sucul_ales = sucuri_disponibile.pick_random()
 	comanda_mea.append(sucul_ales)
+	
+	if Global.trend_ingredient != "" and randf() <= 0.7:
+		if not comanda_mea.has(Global.trend_ingredient):
+			comanda_mea.append(Global.trend_ingredient)
 
 
 func pregateste_client_nou():

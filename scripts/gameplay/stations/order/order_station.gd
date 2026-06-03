@@ -6,6 +6,9 @@ const LoyalCustomerAgentScript = preload("res://scripts/ai/loyal_customer_agent.
 var loyal_customer_agent: Node = null
 var loyal_dialog_label: Label = null
 
+var CulinaryInfluencerAgentScript = load("res://scripts/ai/culinary_influencer_agent.gd")
+var culinary_agent: Node = null
+
 @onready var fundal_lobby = $LobbyFrame
 @onready var fundal_comanda = $OrderFrame
 @onready var sfoara = $"../TopBar/HBoxContainer/TicketBackground/TicketZone"
@@ -57,6 +60,11 @@ func _ready():
 	add_child(loyal_customer_agent)
 	loyal_customer_agent.dialogue_ready.connect(_on_loyal_dialogue_ready)
 	set_process(true)
+	
+	if CulinaryInfluencerAgentScript:
+		culinary_agent = CulinaryInfluencerAgentScript.new()
+		add_child(culinary_agent)
+		culinary_agent.review_ready.connect(_on_influencer_review_ready)
 
 func _process(delta: float):
 	if index_spawn < timpi_spawn.size():
@@ -87,7 +95,10 @@ func spawneaza_client_nou():
 	if profiluri_disponibile.size() == 0:
 		return
 	
-	var este_loyal := contor_clienti_total == 1
+	#var este_loyal := contor_clienti_total == 1
+	var este_loyal: bool = false
+	var este_influencer: bool = true
+	# (Global.current_save.get("day", 1) % 3 == 0 and contor_clienti_total == 1)
 	var profil
 	
 	if este_loyal:
@@ -101,6 +112,7 @@ func spawneaza_client_nou():
 	client_nou.textura_zoom = profil["zoom"]
 	client_nou.id_unic = contor_clienti_total
 	client_nou.is_loyal_customer = este_loyal
+	client_nou.set_meta("is_influencer", este_influencer)
 	contor_clienti_total += 1
 	
 	client_nou.position = Vector2(2000, 313)
@@ -480,6 +492,11 @@ func arata_evaluare_finala(nota: int, textura_lipie: Texture2D, textura_suc: Tex
 				"wrapping": s_wrapping,
 				"timestamp": Time.get_datetime_string_from_system()
 			})
+			
+		elif client_in_evaluare.get_meta("is_influencer", false) and culinary_agent:
+			if gm and "completed_pitas" in gm and gm.completed_pitas.size() > 0:
+				var ingrediente_folosite = gm.completed_pitas.back().get("ingrediente_salvate", [])
+				culinary_agent.generate_review(ingrediente_folosite)
 	await get_tree().create_timer(7.0).timeout
 	
 	# --- 8. CURĂȚENIA ȘI REVENIREA REUȘITĂ LA LOBBY ---
@@ -540,3 +557,10 @@ func _afiseaza_dialog_loyal_customer(text: String) -> void:
 	loyal_dialog_label.z_index = 300
 
 	fundal_comanda.add_child(loyal_dialog_label)
+
+
+
+func _on_influencer_review_ready(review_text: String, trend: String) -> void:
+	Global.trend_ingredient = trend
+	print("🚨 AGENT AI 2: Noul trend viral este: ", trend)
+	_afiseaza_dialog_loyal_customer("[INFLUENCER]: " + review_text)

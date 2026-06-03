@@ -97,8 +97,8 @@ func spawneaza_client_nou():
 	
 	#var este_loyal := contor_clienti_total == 1
 	var este_loyal: bool = false
-	var este_influencer: bool = true
-	#var este_influencer: bool = (Global.current_save.get("day", 1) % 3 == 0 and contor_clienti_total == 1)
+	var este_influencer: bool = (Global.current_save.get("day", 1) == 1 and contor_clienti_total == 1)
+	#var este_influencer: bool = (Global.current_save.get("day", 1) % 3 == 0 and contor_clienti_total == 2)
 	var profil
 	
 	if este_loyal:
@@ -113,6 +113,9 @@ func spawneaza_client_nou():
 	client_nou.id_unic = contor_clienti_total
 	client_nou.is_loyal_customer = este_loyal
 	client_nou.set_meta("is_influencer", este_influencer)
+	if este_influencer:
+		client_nou.ai_dialogue_ready_text = "Hello! I am a culinary influencer. Make me a viral shaorma and I will review it on my channel!"
+		client_nou.ai_dialogue_is_ready = true
 	contor_clienti_total += 1
 	
 	client_nou.position = Vector2(2000, 313)
@@ -236,6 +239,11 @@ func _on_customer_a_fost_apasat(comanda, clientul_apasat):
 	if clientul_apasat.is_loyal_customer:
 		timp_asteptare_dialog = 6.0
 
+		if clientul_apasat.ai_dialogue_ready_text != "":
+			_afiseaza_dialog_loyal_customer(clientul_apasat.ai_dialogue_ready_text)
+			
+	elif clientul_apasat.get_meta("is_influencer", false):
+		timp_asteptare_dialog = 6.0 # Câte secunde stă textul pe ecran
 		if clientul_apasat.ai_dialogue_ready_text != "":
 			_afiseaza_dialog_loyal_customer(clientul_apasat.ai_dialogue_ready_text)
 

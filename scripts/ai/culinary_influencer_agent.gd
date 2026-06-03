@@ -38,6 +38,10 @@ Format:
 	}
 
 	var headers := ["Content-Type: application/json"]
+	# Dacă nodul e deja ocupat cu altă cerere, o anulează pe aia veche ca să facă loc
+	if http_request.get_http_client_status() != HTTPClient.STATUS_DISCONNECTED:
+		http_request.cancel_request()
+
 	http_request.request(ollama_url, headers, HTTPClient.METHOD_POST, JSON.stringify(body))
 
 func _on_request_completed(_result: int, response_code: int, _headers: PackedStringArray, body: PackedByteArray) -> void:

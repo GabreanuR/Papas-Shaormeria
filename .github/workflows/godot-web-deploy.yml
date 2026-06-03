@@ -42,12 +42,7 @@ jobs:
       - name: Export Web
         run: godot --headless --verbose --export-release "Web" build/web/index.html
 
-      # Adăugăm un Service Worker pentru a permite rularea Godot 4 în browser 
-      # (necesită Cross-Origin Isolation pentru SharedArrayBuffer)
-      - name: Add coi-service-worker
-        run: |
-          cp export_templates/coi-serviceworker.js build/web/coi-serviceworker.js
-          sed -i 's#</head>#<script src="coi-serviceworker.js"></script></head>#g' build/web/index.html
+
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

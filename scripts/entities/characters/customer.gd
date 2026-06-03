@@ -4,6 +4,9 @@ const CustomerHistoryScript = preload("res://scripts/ai/customer_history.gd")
 
 var is_loyal_customer := false
 
+var ai_dialogue_ready_text: String = ""
+var ai_dialogue_is_ready: bool = false
+
 @onready var sprite = $Sprite2D
 @onready var buton_comanda = $TextureButton
 
@@ -12,6 +15,7 @@ var textura_zoom: Texture2D
 var id_unic: int = 0
 
 var comanda_mea: Array = []
+
 signal a_fost_apasat(ingrediente)
 signal patience_expired
 
@@ -57,12 +61,14 @@ func genereaza_comanda_random():
 	var legume_amestecate = legume_disponibile.duplicate()
 	legume_amestecate.shuffle()
 	var numar_legume = randi_range(2, 4)
+
 	for i in range(numar_legume):
 		comanda_mea.append(legume_amestecate[i])
 		
 	var sosuri_amestecate = sosuri_disponibile.duplicate()
 	sosuri_amestecate.shuffle()
 	var numar_sosuri = randi_range(1, 2)
+
 	for i in range(numar_sosuri):
 		comanda_mea.append(sosuri_amestecate[i])
 		

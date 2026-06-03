@@ -23,6 +23,7 @@ static func load_history() -> Array:
 		return []
 
 	var data = json.get_data()
+
 	if typeof(data) != TYPE_ARRAY:
 		return []
 
@@ -31,12 +32,14 @@ static func load_history() -> Array:
 
 static func save_interaction(entry: Dictionary) -> void:
 	var history := load_history()
+
 	history.append(entry)
 
 	while history.size() > MAX_HISTORY:
 		history.pop_front()
 
 	var file := FileAccess.open(HISTORY_PATH, FileAccess.WRITE)
+
 	if file == null:
 		return
 
@@ -51,4 +54,9 @@ static func last_order_was_wrong() -> bool:
 		return false
 
 	var last_entry: Dictionary = history.back()
+
 	return int(last_entry.get("score", 100)) < WRONG_ORDER_LIMIT
+
+
+static func has_any_history() -> bool:
+	return not load_history().is_empty()

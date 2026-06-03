@@ -1,6 +1,10 @@
 extends Node2D
 
 const CustomerHistoryScript = preload("res://scripts/ai/customer_history.gd")
+const LoyalCustomerAgentScript = preload("res://scripts/ai/loyal_customer_agent.gd")
+
+var loyal_customer_agent: Node = null
+var loyal_dialog_label: Label = null
 
 @onready var fundal_lobby = $LobbyFrame
 @onready var fundal_comanda = $OrderFrame
@@ -49,6 +53,9 @@ func _ready():
 	
 	fundal_lobby.show()
 	fundal_comanda.hide()
+	loyal_customer_agent = LoyalCustomerAgentScript.new()
+	add_child(loyal_customer_agent)
+	loyal_customer_agent.dialogue_ready.connect(_on_loyal_dialogue_ready)
 	set_process(true)
 
 func _process(delta: float):
@@ -99,6 +106,26 @@ func spawneaza_client_nou():
 	client_nou.position = Vector2(2000, 313)
 	client_nou.scale = Vector2(1, 1)
 	add_child(client_nou)
+
+	if client_nou.is_loyal_customer and loyal_customer_agent != null:
+		var history := CustomerHistoryScript.load_history()
+
+		if history.is_empty():
+			client_nou.ai_dialogue_ready_text = "Hi, I'm Papalouie! This is my first visit here. I have a very good memory, so I'll remember every mistake from now on."
+		else:
+			client_nou.ai_dialogue_ready_text = "I'm back again! Let's see if you still remember how I like my shaorma."
+
+		client_nou.ai_dialogue_is_ready = false
+
+		loyal_customer_agent.dialogue_ready.connect(
+			func(text):
+				if is_instance_valid(client_nou):
+					client_nou.ai_dialogue_ready_text = text
+					client_nou.ai_dialogue_is_ready = true,
+			CONNECT_ONE_SHOT
+		)
+
+		loyal_customer_agent.generate_dialogue(client_nou.comanda_mea)
 	
 	client_nou.a_fost_apasat.connect(_on_customer_a_fost_apasat.bind(client_nou))
 	
@@ -154,50 +181,71 @@ func actualizeaza_pozitii_asteptare():
 
 # --- CÂND APĂSĂM PE BALONAȘUL UNUI CLIENT NOU ---
 func _on_customer_a_fost_apasat(comanda, clientul_apasat):
-	# Curățenie bilet anterior (dacă e cazul)
 	for copil in fundal_comanda.get_children():
 		if copil.has_method("set_locked_large"):
 			_pune_bilet_pe_sfoara(copil)
 
 	var gm = get_tree().current_scene
+
 	if gm and gm.has_method("seteaza_stare_butoane_statii"):
 		gm.seteaza_stare_butoane_statii(false)
 
 	clientul_apasat.get_node("TextureButton").hide()
+
 	coada_comenzi.erase(clientul_apasat)
 	zona_asteptare.append(clientul_apasat)
-	
-	# --- FIX WAITING SCORE: TRECEM CLIENTUL PE RĂBDARE LENTĂ! ---
+
 	if "rata_curenta" in clientul_apasat and "rata_scadere_gatit" in clientul_apasat:
 		clientul_apasat.rata_curenta = clientul_apasat.rata_scadere_gatit
-	
+
 	actualizeaza_pozitii_coada()
-	
-	for c in coada_comenzi: c.hide()
+
+	for c in coada_comenzi:
+		c.hide()
+
 	for c in zona_asteptare:
-		if c != clientul_apasat: c.hide()
-	
+		if c != clientul_apasat:
+			c.hide()
+
 	fundal_lobby.hide()
 	fundal_comanda.show()
-	
+
 	if clientul_apasat.has_method("seteaza_sprite_comanda"):
 		clientul_apasat.seteaza_sprite_comanda()
 	else:
 		clientul_apasat.get_node("Sprite2D").texture = clientul_apasat.textura_zoom
-	clientul_apasat.position = Vector2(800, 55) 
+
+	clientul_apasat.position = Vector2(800, 55)
 	clientul_apasat.scale = Vector2(1.3, 1.3)
-	clientul_apasat.z_index = 100 
-	
+	clientul_apasat.z_index = 100
+
+	var timp_asteptare_dialog := 0.5
+
+	if clientul_apasat.is_loyal_customer:
+		timp_asteptare_dialog = 6.0
+
+		if clientul_apasat.ai_dialogue_ready_text != "":
+			_afiseaza_dialog_loyal_customer(clientul_apasat.ai_dialogue_ready_text)
+
+	await get_tree().create_timer(timp_asteptare_dialog).timeout
+
 	var tichet_nou = OrderTicketScene.instantiate()
 	fundal_comanda.add_child(tichet_nou)
-	tichet_nou.position = Vector2(1300, 200) 
-	tichet_nou.set_locked_large(true) 
-	
-	await get_tree().create_timer(0.5).timeout
-	
-	# FIX IMPORTANT: ÎNTÂI conectăm semnalul, APOI îi dăm comanda!
-	tichet_nou.comanda_gata.connect(_on_order_ticket_comanda_gata.bind(tichet_nou, clientul_apasat))
-	tichet_nou.primeste_comanda(comanda, clientul_apasat.id_unic)
+
+	tichet_nou.position = Vector2(1300, 200)
+	tichet_nou.set_locked_large(true)
+
+	tichet_nou.comanda_gata.connect(
+		_on_order_ticket_comanda_gata.bind(
+			tichet_nou,
+			clientul_apasat
+		)
+	)
+
+	tichet_nou.primeste_comanda(
+		comanda,
+		clientul_apasat.id_unic
+	)
 	
 func _on_order_ticket_comanda_gata(tichet_rezolvat, clientul_apasat):
 	var gm = get_tree().current_scene
@@ -205,7 +253,9 @@ func _on_order_ticket_comanda_gata(tichet_rezolvat, clientul_apasat):
 		gm.seteaza_stare_butoane_statii(true)
 	
 	_pune_bilet_pe_sfoara(tichet_rezolvat)
-	
+	if loyal_dialog_label != null and is_instance_valid(loyal_dialog_label):
+		loyal_dialog_label.queue_free()
+		loyal_dialog_label = null
 	fundal_comanda.hide()
 	fundal_lobby.show()
 	
@@ -469,3 +519,24 @@ func arata_evaluare_finala(nota: int, textura_lipie: Texture2D, textura_suc: Tex
 	if clienti_serviti >= total_clienti_zi:
 		if gm and gm.has_method("_on_day_ended"):
 			gm._on_day_ended()
+			
+func _on_loyal_dialogue_ready(text: String) -> void:
+	_afiseaza_dialog_loyal_customer(text)
+
+
+func _afiseaza_dialog_loyal_customer(text: String) -> void:
+	if loyal_dialog_label != null and is_instance_valid(loyal_dialog_label):
+		loyal_dialog_label.queue_free()
+
+	loyal_dialog_label = Label.new()
+	loyal_dialog_label.text = text
+	loyal_dialog_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	loyal_dialog_label.custom_minimum_size = Vector2(520, 130)
+	loyal_dialog_label.add_theme_font_size_override("font_size", 26)
+	loyal_dialog_label.add_theme_color_override("font_color", Color(0.12, 0.08, 0.04))
+	loyal_dialog_label.add_theme_color_override("font_outline_color", Color.WHITE)
+	loyal_dialog_label.add_theme_constant_override("outline_size", 5)
+	loyal_dialog_label.position = Vector2(430, 360)
+	loyal_dialog_label.z_index = 300
+
+	fundal_comanda.add_child(loyal_dialog_label)

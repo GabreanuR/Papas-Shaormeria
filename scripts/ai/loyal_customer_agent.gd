@@ -1,7 +1,7 @@
 extends Node
 class_name LoyalCustomerAgent
 
-const CustomerHistory = preload("res://scripts/ai/customer_history.gd")
+const CustomerHistoryScript = preload("res://scripts/ai/customer_history.gd")
 
 signal dialogue_ready(text: String)
 
@@ -18,16 +18,20 @@ func _ready() -> void:
 
 
 func generate_dialogue(order: Array) -> void:
-	var history := CustomerHistory.load_history()
+	var history := CustomerHistoryScript.load_history()
+	var has_history := CustomerHistoryScript.has_any_history()
 
 	var prompt := """
-You are a loyal recurring customer in a funny Papa's Shaormeria game.
+You are Papalouie, the loyal recurring customer in a funny Papa's Shaormeria game.
 
-You are the first customer of the day.
+You are always the first customer of the day.
+You have a very good memory.
 You remember only the last 3 visits.
 Speak naturally, shortly, and like a returning customer.
-If the player made mistakes before, mention it politely.
-If there is no history, introduce yourself as a returning customer.
+
+If this is your first saved interaction, do NOT say you are back. Say this is your first visit here, introduce yourself, and clearly say that you have a very good memory and that you will remember mistakes from now on.
+If the player made mistakes before, mention one politely.
+If the previous visit was good, mention that you remember it.
 
 Current order:
 %s
@@ -35,9 +39,12 @@ Current order:
 Hidden memory:
 %s
 
-Return only the dialogue text.
+Has previous memory:
+%s
+
+Return only the customer dialogue text.
 Maximum 2 sentences.
-""" % [str(order), JSON.stringify(history)]
+""" % [str(order), JSON.stringify(history), str(has_history)]
 
 	var body := {
 		"model": model_name,
@@ -55,7 +62,6 @@ Maximum 2 sentences.
 
 	if err != OK:
 		dialogue_ready.emit(_fallback_dialogue(history))
-
 
 func _on_request_completed(
 	_result: int,
@@ -90,12 +96,12 @@ func _on_request_completed(
 
 func _fallback_dialogue(history: Array) -> String:
 	if history.is_empty():
-		return "Hi, I'm your loyal customer! Let's see if this becomes my favorite shaormeria."
+		return "Hi, I'm Papalouie! This is my first visit here. I have a very good memory, so I'll remember every mistake from now on."
 
 	var last_entry: Dictionary = history.back()
 	var score := int(last_entry.get("score", 100))
 
 	if score < 70:
-		return "I'm back, but last time wasn't great. Please don't mess up my shaorma again."
+		return "I'm back, and I remember last time wasn't great. Please don't mess up my shaorma again."
 
-	return "I'm back again! Last time was pretty good, so I trust you with another shaorma."
+	return "I'm back again! I remember last time was pretty good, so I trust you with another shaorma."

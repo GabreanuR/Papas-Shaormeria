@@ -1,0 +1,54 @@
+name: "Deploy Godot to GitHub Pages"
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  export-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    container:
+      image: barichello/godot-ci:4.3
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Export Templates
+        run: |
+          mkdir -v -p ~/.local/share/godot/export_templates/
+          mv /root/.local/share/godot/export_templates/4.3.stable ~/.local/share/godot/export_templates/4.3.stable
+
+      - name: Create Web Build Directory
+        run: mkdir -v -p build/web
+
+      - name: Export Web
+        run: godot --headless --export-release "Web" build/web/index.html
+
+      # Adăugăm un Service Worker pentru a permite rularea Godot 4 în browser 
+      # (necesită Cross-Origin Isolation pentru SharedArrayBuffer)
+      - name: Add coi-service-worker
+        run: |
+          curl -L https://github.com/gzuidhof/coi-serviceworker/raw/master/coi-serviceworker.js > build/web/coi-serviceworker.js
+          sed -i 's#</head>#<script src="coi-serviceworker.js"></script></head>#g' build/web/index.html
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/web
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

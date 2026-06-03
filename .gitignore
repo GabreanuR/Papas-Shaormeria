@@ -3,7 +3,7 @@
 *.translation
 
 # Ignoră fișierul de configurare a exporturilor (dacă are căi absolute locale)
-export_presets.cfg
+# export_presets.cfg (COMENTAT DE AI: GitHub Actions are nevoie de el)
 
 # Ignoră folderele unde veți exporta jocul final (.exe, .html)
 /build/

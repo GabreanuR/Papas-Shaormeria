@@ -34,8 +34,11 @@ jobs:
       - name: Create Web Build Directory
         run: mkdir -v -p build/web
 
+      - name: Force Import Assets (Workaround for Godot 4 headless crash)
+        run: godot --headless --verbose --editor --quit || true
+
       - name: Export Web
-        run: godot --headless --export-release "Web" build/web/index.html
+        run: godot --headless --verbose --export-release "Web" build/web/index.html
 
       # Adăugăm un Service Worker pentru a permite rularea Godot 4 în browser 
       # (necesită Cross-Origin Isolation pentru SharedArrayBuffer)

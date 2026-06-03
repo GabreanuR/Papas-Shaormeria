@@ -43,3 +43,4 @@ theme/custom_font="uid://crfo7nlure7a2"
 [rendering]
 
 rendering_device/driver.windows="d3d12"
+textures/vram_compression/import_etc2_astc=true

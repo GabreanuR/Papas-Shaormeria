@@ -98,7 +98,7 @@ func spawneaza_client_nou():
 	#var este_loyal := contor_clienti_total == 1
 	var este_loyal: bool = false
 	var este_influencer: bool = true
-	# (Global.current_save.get("day", 1) % 3 == 0 and contor_clienti_total == 1)
+	#var este_influencer: bool = (Global.current_save.get("day", 1) % 3 == 0 and contor_clienti_total == 1)
 	var profil
 	
 	if este_loyal:

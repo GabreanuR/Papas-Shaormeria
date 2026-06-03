@@ -1,5 +1,7 @@
 extends Node2D
 
+const CustomerHistoryScript = preload("res://scripts/ai/customer_history.gd")
+
 @onready var fundal_lobby = $LobbyFrame
 @onready var fundal_comanda = $OrderFrame
 @onready var sfoara = $"../TopBar/HBoxContainer/TicketBackground/TicketZone"
@@ -36,6 +38,7 @@ var offset_sfoara_urmator: float = 10.0 # Ajută la așezarea biletelor noi
 
 func _ready():
 	profiluri_disponibile = lista_clienti.duplicate()
+	profiluri_disponibile.remove_at(0)
 	profiluri_disponibile.shuffle()
 	
 	# SETĂM CONTORUL INIȚIAL
@@ -76,13 +79,21 @@ func _afiseaza_semn_closed() -> void:
 func spawneaza_client_nou():
 	if profiluri_disponibile.size() == 0:
 		return
-		
-	var profil = profiluri_disponibile.pop_back()
+	
+	var este_loyal := contor_clienti_total == 1
+	var profil
+	
+	if este_loyal:
+		profil = lista_clienti[0]
+	else:
+		profil = profiluri_disponibile.pop_back()
+	
 	var client_nou = CustomerScene.instantiate()
 	
 	client_nou.textura_lobby = profil["lobby"]
 	client_nou.textura_zoom = profil["zoom"]
 	client_nou.id_unic = contor_clienti_total
+	client_nou.is_loyal_customer = este_loyal
 	contor_clienti_total += 1
 	
 	client_nou.position = Vector2(2000, 313)
@@ -169,7 +180,10 @@ func _on_customer_a_fost_apasat(comanda, clientul_apasat):
 	fundal_lobby.hide()
 	fundal_comanda.show()
 	
-	clientul_apasat.get_node("Sprite2D").texture = clientul_apasat.textura_zoom
+	if clientul_apasat.has_method("seteaza_sprite_comanda"):
+		clientul_apasat.seteaza_sprite_comanda()
+	else:
+		clientul_apasat.get_node("Sprite2D").texture = clientul_apasat.textura_zoom
 	clientul_apasat.position = Vector2(800, 55) 
 	clientul_apasat.scale = Vector2(1.3, 1.3)
 	clientul_apasat.z_index = 100 
@@ -198,7 +212,11 @@ func _on_order_ticket_comanda_gata(tichet_rezolvat, clientul_apasat):
 	for c in coada_comenzi: c.show()
 	for c in zona_asteptare: c.show()
 	
-	clientul_apasat.get_node("Sprite2D").texture = clientul_apasat.textura_lobby
+	if clientul_apasat.has_method("seteaza_sprite_lobby"):
+		clientul_apasat.seteaza_sprite_lobby()
+	else:
+		clientul_apasat.get_node("Sprite2D").texture = clientul_apasat.textura_lobby
+
 	clientul_apasat.scale = Vector2(0.85, 0.85) 
 	
 	# REPARAT: Nu mai calculăm o poziție fixă aici, ci chemăm funcția dinamică!
@@ -279,7 +297,10 @@ func aduce_client_pentru_evaluare(id_cautat: int) -> void:
 	fundal_lobby.hide()
 	fundal_comanda.show()
 	
-	client_gasit.get_node("Sprite2D").texture = client_gasit.textura_zoom
+	if client_gasit.has_method("seteaza_sprite_comanda"):
+		client_gasit.seteaza_sprite_comanda()
+	else:
+		client_gasit.get_node("Sprite2D").texture = client_gasit.textura_zoom
 	client_gasit.position = Vector2(800, 55) 
 	client_gasit.scale = Vector2(1.3, 1.3)
 	client_gasit.z_index = 100
@@ -396,6 +417,19 @@ func arata_evaluare_finala(nota: int, textura_lipie: Texture2D, textura_suc: Tex
 	fade_in_tween.finished.connect(ecran_negru.queue_free) 
 	
 	# --- 7. MAGIA CELOR 7 SECUNDE ---
+	if client_in_evaluare != null and is_instance_valid(client_in_evaluare):
+		if client_in_evaluare.is_loyal_customer:
+			CustomerHistoryScript.save_interaction({
+				"customer_id": client_in_evaluare.id_unic,
+				"order": client_in_evaluare.comanda_mea,
+				"score": medie_generala,
+				"was_wrong": medie_generala < 70,
+				"waiting": s_waiting,
+				"cutting": s_cutting,
+				"assembly": s_assembly,
+				"wrapping": s_wrapping,
+				"timestamp": Time.get_datetime_string_from_system()
+			})
 	await get_tree().create_timer(7.0).timeout
 	
 	# --- 8. CURĂȚENIA ȘI REVENIREA REUȘITĂ LA LOBBY ---

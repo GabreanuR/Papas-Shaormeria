@@ -27,7 +27,7 @@ func generate_fusion_recipe(available_ingredients: Array):
 	var headers = ["Content-Type: application/json"]
 	http_request.request(url, headers, HTTPClient.METHOD_POST, body)
 
-func _on_request_completed(result, response_code, headers, body):
+func _on_request_completed(_result, response_code, _headers, body):
 	if response_code == 200:
 		var response_text = body.get_string_from_utf8()
 		var json = JSON.new()

@@ -117,7 +117,7 @@ func spawneaza_client_nou():
 		return
 	
 	var este_loyal: bool = (Global.current_save.get("day", 1) == 1 and contor_clienti_total == 1)
-	var este_influencer: bool = (Global.current_save.get("day", 1) % 3 == 0 and contor_clienti_total == 1)
+	var este_influencer: bool = (int(Global.current_save.get("day", 1)) % 3 == 0 and contor_clienti_total == 1)
 	
 	var profil
 	
@@ -418,7 +418,7 @@ func pregateste_tejgheaua_pentru_evaluare() -> void:
 	fundal_lobby.hide()
 	fundal_comanda.show()
 
-func arata_evaluare_finala(nota: int, textura_lipie: Texture2D, textura_suc: Texture2D) -> void:
+func arata_evaluare_finala(_nota: int, textura_lipie: Texture2D, textura_suc: Texture2D) -> void:
 	var gm = get_tree().current_scene
 	if gm and gm.has_method("seteaza_stare_butoane_statii"):
 		gm.seteaza_stare_butoane_statii(false)

@@ -42,12 +42,14 @@ func _ready() -> void:
 
 func _setup_hub_mode() -> void:
 	_update_hub_display()
-	Global.money_changed.connect(_on_global_money_changed)
-	Global.day_changed.connect(_on_day_changed)
+	if not Global.money_changed.is_connected(_on_global_money_changed):
+		Global.money_changed.connect(_on_global_money_changed)
+	if not Global.day_changed.is_connected(_on_day_changed):
+		Global.day_changed.connect(_on_day_changed)
 	set_process(false) 
 	
 	# 1. Ascundem invizibil șina de bonuri
-	ticket_bg.modulate.a = 0.0
+	ticket_bg.self_modulate.a = 0.0
 	
 	# 2. Aplicăm grafica de fundal pentru informații
 	if hub_info_style:
@@ -60,11 +62,12 @@ func _setup_hub_mode() -> void:
 
 func _setup_gameplay_mode() -> void:
 	_update_gameplay_display()
-	Global.daily_earnings_changed.connect(_on_daily_money_changed)
+	if not Global.daily_earnings_changed.is_connected(_on_daily_money_changed):
+		Global.daily_earnings_changed.connect(_on_daily_money_changed)
 	set_process(false) 
 	
-	# 1. Arătăm complet șina de bonuri
-	ticket_bg.modulate.a = 1.0
+	# 1. Ascundem invizibil șina de bonuri (la fel ca în HUB)
+	ticket_bg.self_modulate.a = 0.0
 	
 	# 2. Aplicăm grafica de fundal pentru informații
 	if gameplay_info_style:

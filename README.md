@@ -1,6 +1,6 @@
 # Papas Shaormeria
 
-This project is a fast-food simulator developed in **Godot Engine**, created for the Software Development Methods (MDS) laboratory. The game integrates artificial intelligence both in the development process and within the core gameplay mechanics (AI Agents).
+This project is a fast-food simulator developed in **Godot Engine 4.3**, created for the Software Development Methods (MDS) laboratory. The game integrates artificial intelligence both in the development process and within the core gameplay mechanics (AI Agents powered by a local LLM via Ollama).
 
 **Authors & Contributors:**
 * Amelia - [@amelia-roibu](https://github.com/amelia-roibu)
@@ -13,61 +13,75 @@ This project is a fast-food simulator developed in **Godot Engine**, created for
 ## Component A: Implementation (Live & Demo)
 
 * **Screencast / Offline Demo:** [Link Screencast YouTube](https://youtube.com/link-ul-vostru-aici)
-* **Live Demo:** The project can be run from the source using Godot 4.x or by downloading the latest release from the [Releases](../../releases) section.
+* **Live Demo (Web):** The game is automatically deployed to **GitHub Pages** on every push to `main`. Play it directly in the browser (SharedArrayBuffer enabled via `coi-serviceworker`).
+* **Local Run:** Clone the repo and open `project.godot` with Godot 4.3+. For AI agents, install [Ollama](https://ollama.ai) and pull `llama3.2`.
 
 ### AI Agents Integration (Core Gameplay)
-The game utilizes a local LLM to power two distinct agents that directly influence the gameplay loop:
+The game utilizes a **local LLM (Llama 3.2 via Ollama)** to power three distinct agents that directly influence the gameplay loop:
 
-1. **Agent 1: The Loyal Customer with Memory**
-   * **Role:** A recurring customer who remembers the history of your interactions.
-   * **How it works:** The system saves a local history (context window) of the latest orders. The prompt sent to the LLM includes this hidden history. The agent "reasons" based on past interactions (e.g., *"I hope you don't drop the ketchup bottle today like you did yesterday..."*) and adjusts its patience level (-10% time limit if yesterday's order was wrong).
-2. **Agent 2: The Culinary Influencer**
-   * **Role:** An occasional visitor (every 3 in-game days) who dictates the game's meta.
-   * **How it works:** The agent receives the data of the served shaorma and generates a JSON-formatted response containing a text review and a `trend_ingredient`. The following day, the spawn system overrides normal customer preferences, generating a 70% probability that they will request the ingredient promoted by the influencer, forcing the player to adapt their strategy.
+1. **Agent 1: The Loyal Customer with Memory (`loyal_customer_agent.gd`)**
+   * **Role:** A recurring customer (Papalouie) who is always the first customer of the day and remembers your past interactions.
+   * **How it works:** The system saves a local JSON history (`customer_history.gd`) of the latest 3 orders, including scores. The prompt sent to the LLM includes this hidden memory. The agent generates contextual dialogue based on past experiences (e.g., complains if the last score was below 70, praises if it was good). If the LLM is unavailable, a deterministic fallback dialogue system kicks in. Additionally, a bad previous order reduces the customer's patience by 10%.
+2. **Agent 2: The Culinary Influencer (`culinary_influencer_agent.gd`)**
+   * **Role:** A TikTok food critic who reviews your shaorma and dictates the next day's ingredient trend.
+   * **How it works:** After being served, the agent sends the list of shaorma ingredients (filtered to exclude drinks) to the LLM with a strict JSON output format (`{"review": "...", "trend_ingredient": "..."}`). The returned `trend_ingredient` is stored in `Global.trend_ingredient`, and the next day's customer spawn system (`customer.gd`) applies a 70% probability override so customers request that trending ingredient, forcing the player to adapt their strategy.
+3. **Agent 3: Daily Fusion Menu (`daily_menu_agent.gd`)**
+   * **Role:** A master chef AI that generates a unique "Fusion Shaorma" recipe each day using available ingredients.
+   * **How it works:** Receives the full list of available ingredients and returns a JSON response with a creative recipe (`fusion_recipe` array). Completing the daily fusion recipe awards double tips. Falls back to a default recipe (`["carne_pui", "cartofi", "varza", "maioneza_usturoi"]`) if the LLM is unavailable.
 
 ---
 
 ## Component B: AI-Assisted Software Development Process
 
-This project follows a complete software development lifecycle, heavily assisted by AI tools (code generation, architecture planning, testing).
+This project follows a complete software development lifecycle, heavily assisted by AI tools (code generation, architecture planning, testing, CI/CD).
 
 ### 1. User Stories & Backlog
-We defined over 10 User Stories to cover all game mechanics. Full details can be found in the [Projects/Issues](#) tab of this repository.
+We defined over 13 User Stories to cover all game mechanics. Full details can be found in the [Projects/Issues](../../issues) tab of this repository.
 
 * **US1 (Order Intake):** As a player, I want to click on customers to open their order ticket.
 * **US2 (Cutting Station - Mini-game):** As a chef, I want to cut meat with an electric knife.
-  * *Acceptance Criteria:* Display a "Cooking" bar. Clicking in the "Green Zone" = perfect cut. Clicking in the "Red Zone" = lowered quality.
+  * *Acceptance Criteria:* Clicking in the "Green Zone" = perfect cut. Visual quality feedback reflected in the pita state scoring system.
 * **US3 (Assembly Station):** As a chef, I want to drag and drop ingredients onto the wrap in a specific order.
-* **US4 (Sauce Dispenser):** As a chef, I want to control the sauce flow by moving the mouse in a zig-zag pattern.
-* **US5 (Wrapping):** As a player, I want to perform a sequence of gestures (swipes) to tightly roll the wrap.
-* **US6 (AI Agent 1 - Loyal Customer):** As a player, I want to serve a recurring customer who remembers past orders. *(See Agents section for full Acceptance Criteria)*
-* **US7 (AI Agent 2 - The Influencer):** As a player, I want to be visited by a food critic who alters in-game demand based on a JSON output. *(See Agents section for full Acceptance Criteria)*
+  * *Scoring:* Correct order = full points, wrong order = −5, missing ingredient = −15, extra ingredient = −10. Weighted 60% ingredients + 40% sauce mini-game.
+* **US4 (Sauce Dispenser):** As a chef, I want to squeeze sauce onto the shaorma by holding the mouse, with a scoring system based on ideal droplet count and mess penalty.
+* **US5 (Wrapping):** As a player, I want to perform a sequence of swipe gestures to tightly roll the wrap.
+* **US6 (AI Agent 1 - Loyal Customer):** As a player, I want to serve a recurring customer who remembers past orders. *(Fully implemented — see Agents section)*
+* **US7 (AI Agent 2 - The Influencer):** As a player, I want to be visited by a food critic who alters in-game demand based on a JSON output. *(Fully implemented — see Agents section)*
 * **US8 (Upgrade System):** As a player, I want to use tips to buy shop upgrades.
-  * *Acceptance Criteria:* Separate "Shop" screen. Virtual currency. Buying an item reduces action time by 20% and visually modifies the tool.
-* **US9 (Menu of the Day):** As a player, I want a daily "Fusion Shaorma" recipe generated by AI (awards double points).
+* **US9 (Menu of the Day):** As a player, I want a daily "Fusion Shaorma" recipe generated by AI (awards double tips). *(Fully implemented)*
 * **US10 (Character Customization):** As a user, I want to be able to change my character's apron and hat.
 * **US11 (Daily Challenge):** As a player, I want a "Speedrun" trial (serve 5 customers in 2 minutes) to earn a trophy.
-* **US12 (A/V Effects):** As a player, I want specific audio (meat sizzling) and particle effects (steam) for immersion.
+* **US12 (A/V Effects):** As a player, I want specific audio effects and particle effects for immersion. *(Implemented via `AudioManager` autoload with automatic click sounds on all buttons)*
 * **US13 (Health Inspection):** As a player, I want to be forced to clean workstations via rapid clicks to avoid random health inspection penalties.
 
 ### 2. Diagrams (Architecture and Workflow)
-We used AI tools to generate the system architecture.
+We used AI tools to generate the system architecture. All four diagrams are available in `docs/diagrams/`:
 * [Godot Classes UML Diagram](./docs/diagrams/component_architecture_UML.png)
 * [Customer State Workflow](./docs/diagrams/customer_state_diagram.png)
 * [Local LLM Communication Architecture](./docs/diagrams/llm_communication_architecture.png)
 * [Gameplay Workflow (Core Loop)](./docs/diagrams/game_workflow.png)
 
 ### 3. Source Control (Git)
-The project uses Git with a branch-based workflow (e.g., `feature/cutting-station`, `bugfix/llm-timeout`).
+The project uses Git with a branch-based workflow (e.g., `feature/US1-order-intake`, `feature/US5-wrapping`, `bugfix/US7-json-parse-error`).
 * Each team member has a minimum of 5 commits.
 * All features were integrated via reviewed **Pull Requests**.
 * [Link to Pull Requests list](../../pulls)
 
 ### 4. Automated Tests & AI Evals
-We integrated the GUT (Godot Unit Test) framework for core mechanics and specific evaluation scripts for the AI agents.
-* **Unit Tests:** Validation of the score calculation logic and upgrade system math.
-* **AI Evals:** Automated tests sending mock prompts to the LLM to verify if the JSON returned by the "Influencer" matches the schema, and if the memory agent correctly detects a negative history array.
-* [Link to tests folder](./tests/)
+We integrated the **GUT (Godot Unit Test)** framework for core mechanics and AI agent logic validation. Tests are located in `test/unit/` and configured via `.gutconfig.json`.
+
+* **`test_global.gd`** (22 tests) — Save/load system, money management, day progression, signal emissions, daily stats reset.
+* **`test_gameplay_master.gd`** (14 tests) — Pita state creation, station score updates and accumulation, perfect order tracking, tip accumulation.
+* **`test_loyal_customer_agent.gd`** (6 tests) — Fallback dialogue logic, boundary score testing (69 vs 70), history ordering (last entry vs first).
+* **`test_culinary_influencer_agent.gd`** (5 tests) — Drink filtering logic (ensuring drinks are excluded from AI prompts).
+* **`test_day_transition.gd`** (3 tests) — Constants validation, enum integrity, scene path verification.
+
+**Total: ~50 automated tests.**
+
+Run them from Godot → GUT tab → Run All, or via CLI:
+```bash
+godot --headless -s addons/gut/gut_cmdln.gd
+```
 
 ### 5. Bug Reporting and Resolution
 We simulated a professional QA flow:
@@ -75,12 +89,49 @@ We simulated a professional QA flow:
 * **Resolution (PR):** [PR #2: Added fallback logic for AI output](../../pulls/2)
 
 ### 6. CI/CD Pipeline
-We configured **GitHub Actions** for process automation:
-* On every push to the `main` branch, the pipeline automatically runs the test suite (GUT).
-* If tests pass, it automatically exports the game for Windows/Web and uploads it as an artifact.
+We configured **GitHub Actions** for full process automation (`.github/workflows/godot-web-deploy.yml`):
+* On every push to the `main` branch, the pipeline:
+  1. Checks out the repository in a `barichello/godot-ci:4.3` container.
+  2. Sets up Godot export templates (4.3.stable).
+  3. Applies headless export fixes (replaces UID references with `res://` paths for `project.godot`).
+  4. Exports the game for **Web** (`godot --headless --export-release "Web"`).
+  5. Injects `coi-serviceworker.js` into the HTML for `SharedArrayBuffer` support.
+  6. Runs a debug step to log PCK size and all exported files.
+  7. Deploys to **GitHub Pages** via `actions/deploy-pages@v4`.
 * [Link to Actions tab](../../actions)
 
-### 7. AI Usage Report
+### 7. Project Structure
+```
+Papas-Shaormeria/
+├── addons/gut/            # GUT testing framework
+├── assets/                # Graphics, fonts, themes (.tres)
+├── autoloads/             # AudioManager (auto click-sounds)
+├── data/                  # Game data files
+├── docs/                  # AI report, architecture diagrams
+├── scenes/                # All .tscn files
+│   ├── components/        # Reusable UI components
+│   ├── day_management/    # Day transition, summary panel
+│   ├── entities/          # Customers, items (lipie, tickets)
+│   ├── gameplay/          # Master, stations (order/cutting/assembly/wrapping)
+│   ├── menus/             # Main menu, saves, settings, credits
+│   └── ui/                # TopBar, QuickMenu, DropLayer, TicketZone
+├── scripts/               # All .gd files (mirrors scenes/)
+│   ├── ai/                # AI agents + customer history
+│   ├── components/        # Action popup, parallax, light flicker
+│   ├── day_management/    # Day transition logic, summary
+│   ├── entities/          # Customer, lipie, order ticket
+│   ├── gameplay/          # GameplayMaster, station scripts
+│   ├── menus/             # Menu scripts (main, saves, settings, credits)
+│   ├── shop_and_upgrades/ # Upgrade and customization systems
+│   └── ui/                # TopBar, QuickMenu, DropLayer
+├── test/unit/             # GUT unit tests
+├── web/                   # coi-serviceworker.js (for web export)
+├── .github/workflows/     # CI/CD pipeline
+├── .gutconfig.json        # GUT test configuration
+└── project.godot          # Godot project file
+```
+
+### 8. AI Usage Report
 This project was developed applying an *AI-first* principle. A comprehensive report on the tools used can be read here:
 * [Read the Full AI Usage Report](./docs/AI_USAGE_REPORT.md)
-*(Briefly: We used [Local LLM Name] for the in-game agents, GitHub Copilot / Cursor for implementing GDScript files, ChatGPT for recipe brainstorming and Mermaid diagram generation, and AI image generators for 2D assets).*
+* **Tools used:** Ollama (Llama 3.2) for in-game agents, Antigravity (Google DeepMind) for GDScript implementation and code review, Gemini/ChatGPT for planning and diagrams, AI image generators for 2D assets.

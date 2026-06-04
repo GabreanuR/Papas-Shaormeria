@@ -9,6 +9,9 @@ var loyal_dialog_label: Label = null
 var CulinaryInfluencerAgentScript = load("res://scripts/ai/culinary_influencer_agent.gd")
 var culinary_agent: Node = null
 
+var DailyMenuAgentScript = load("res://scripts/ai/daily_menu_agent.gd")
+var daily_agent: Node = null
+
 @onready var fundal_lobby = $LobbyFrame
 @onready var fundal_comanda = $OrderFrame
 @onready var sfoara = $"../TopBar/HBoxContainer/TicketBackground/TicketZone"
@@ -70,6 +73,18 @@ func _ready():
 		culinary_agent = CulinaryInfluencerAgentScript.new()
 		add_child(culinary_agent)
 		culinary_agent.review_ready.connect(_on_influencer_review_ready)
+		
+	if DailyMenuAgentScript:
+		daily_agent = DailyMenuAgentScript.new()
+		add_child(daily_agent)
+		daily_agent.daily_recipe_ready.connect(_on_daily_recipe_ready)
+		
+		var toate_ingredientele = [
+			"carne_pui", "carne_vita", "falafel", "ardei", "cartofi", 
+			"castraveti_murati", "ceapa", "rosii", "varza", 
+			"maioneza_usturoi", "ketchup_picant", "maioneza"
+		]
+		daily_agent.generate_fusion_recipe(toate_ingredientele)
 
 func _process(delta: float):
 	if index_spawn < timpi_spawn.size():
@@ -680,4 +695,49 @@ func _arata_notificare_stire_tiktok(review_text: String, trend_ingredient_nou: S
 	
 	# Schimbat timpul: Acum îngheață ecranul fix 6.0 secunde în lobby
 	await get_tree().create_timer(6.0).timeout
+	canvas.queue_free()
+
+
+func _on_daily_recipe_ready(reteta: Array) -> void:
+	Global.daily_fusion_recipe = reteta
+	var text_reteta = ""
+	for ingredient in reteta:
+		var nume_curat = ingredient.replace("_", " ").capitalize()
+		text_reteta += "- " + nume_curat + "\n"
+	_arata_notificare_meniul_zilei(text_reteta)
+
+func _arata_notificare_meniul_zilei(ingrediente_text: String) -> void:
+	var canvas = CanvasLayer.new()
+	canvas.layer = 150 
+	
+	var panel_meniu = PanelContainer.new()
+	var stil_meniu = StyleBoxFlat.new()
+	
+	stil_meniu.bg_color = Color(0.1, 0.4, 0.2, 0.95) 
+	stil_meniu.set_corner_radius_all(15)
+	stil_meniu.set_content_margin_all(30)
+	
+	stil_meniu.border_width_left = 5
+	stil_meniu.border_width_top = 5
+	stil_meniu.border_width_right = 5
+	stil_meniu.border_width_bottom = 5
+	stil_meniu.border_color = Color(1.0, 0.85, 0.3) 
+	
+	panel_meniu.add_theme_stylebox_override("panel", stil_meniu)
+	
+	var text_meniu = Label.new()
+	text_meniu.text = "⭐ DAILY FUSION SPECIAL ⭐\nDouble points if you serve this exact recipe:\n\n" + ingrediente_text
+	text_meniu.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	text_meniu.add_theme_font_size_override("font_size", 24)
+	text_meniu.add_theme_color_override("font_color", Color.WHITE) 
+	text_meniu.add_theme_color_override("font_outline_color", Color.BLACK)
+	text_meniu.add_theme_constant_override("outline_size", 6)
+	
+	panel_meniu.add_child(text_meniu)
+	canvas.add_child(panel_meniu)
+	add_child(canvas)
+	
+	panel_meniu.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	
+	await get_tree().create_timer(5.0).timeout
 	canvas.queue_free()

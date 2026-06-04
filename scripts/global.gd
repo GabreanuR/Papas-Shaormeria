@@ -50,6 +50,7 @@ var daily_stats: Dictionary = {
 
 var trend_ingredient: String = ""
 var urmatorul_trend_ingredient: String = ""
+var daily_fusion_recipe: Array = []
 
 # ---------------------------------------------------------
 # 5. PRIVATE VARIABLES

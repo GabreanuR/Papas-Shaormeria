@@ -75,7 +75,7 @@ func genereaza_comanda_random():
 	var sucul_ales = sucuri_disponibile.pick_random()
 	comanda_mea.append(sucul_ales)
 	
-	if Global.trend_ingredient != "" and randf() <= 0.4: # Am scăzut șansa la 40% cum am vorbit ieri
+	if Global.trend_ingredient != "" and randf() <= 0.7: 
 		if not comanda_mea.has(Global.trend_ingredient):
 			
 			# Verificăm dacă ingredientul trendy este sos sau băutură

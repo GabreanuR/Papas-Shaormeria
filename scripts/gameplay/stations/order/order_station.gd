@@ -33,6 +33,11 @@ var lista_clienti = [
 	{ "lobby": preload("res://assets/graphics/characters/prudence.png"), "zoom": preload("res://assets/graphics/characters/prudence_zoomed.png") }
 ]
 
+var profil_influencer = {
+	"lobby": preload("res://assets/graphics/characters/didar.png"),
+	"zoom": preload("res://assets/graphics/characters/didar_zoomed.png")
+}
+
 var profiluri_disponibile: Array = []
 var coada_comenzi: Array = [] 
 var zona_asteptare: Array = [] 
@@ -95,12 +100,15 @@ func spawneaza_client_nou():
 	if profiluri_disponibile.size() == 0:
 		return
 	
-	var este_loyal := contor_clienti_total == 1
-	var este_influencer: bool = (Global.current_save.get("day", 1) % 3 == 0 and contor_clienti_total == 2)
+	var este_loyal: bool = (Global.current_save.get("day", 1) == 1 and contor_clienti_total == 1)
+	var este_influencer: bool = (Global.current_save.get("day", 1) % 3 == 0 and contor_clienti_total == 1)
+	
 	var profil
 	
 	if este_loyal:
 		profil = lista_clienti[0]
+	elif este_influencer:
+		profil = profil_influencer
 	else:
 		profil = profiluri_disponibile.pop_back()
 	
@@ -538,10 +546,6 @@ func arata_evaluare_finala(nota: int, textura_lipie: Texture2D, textura_suc: Tex
 	if gm and gm.has_method("actualizeaza_text_clienti"):
 		gm.actualizeaza_text_clienti(clienti_serviti, total_clienti_zi)
 		
-	# Dacă am servit toți clienții planificați pentru azi, trecem direct la ecranul de final!
-	#if clienti_serviti >= total_clienti_zi:
-		#if gm and gm.has_method("_on_day_ended"):
-			#gm._on_day_ended()
 			
 	# --- SISTEMUL INTELIGENT DE END OF DAY (ZILELE 3, 6, 9 etc.) ---
 	
@@ -567,11 +571,6 @@ func arata_evaluare_finala(nota: int, textura_lipie: Texture2D, textura_suc: Tex
 		if este_zi_de_influencer and Global.urmatorul_trend_ingredient != "":
 			Global.trend_ingredient = Global.urmatorul_trend_ingredient
 			Global.urmatorul_trend_ingredient = ""
-			print("🔄 SCHIMBARE DE TREND! Noul trend activ pentru următoarele 3 zile este: ", Global.trend_ingredient)
-		else:
-			# Dacă suntem în zilele intermediare (ex: ziua 4, 5), NU curățăm și NU schimbăm nimic!
-			# Global.trend_ingredient rămâne intact, deci clienții vor cere în continuare vechiul trend cu șansă mare!
-			print("📈 Trendul actual (" + Global.trend_ingredient + ") rămâne activ și pentru ziua următoare.")
 
 		# 3. Permitem colegei tale să schimbe scena și să incrementeze ziua
 		if gm and gm.has_method("_on_day_ended"):
@@ -638,9 +637,6 @@ func _on_influencer_review_ready(review_text: String, trend: String) -> void:
 	# NU mai punem în Global.trend_ingredient direct! Îl punem în buzunarul secret:
 	Global.urmatorul_trend_ingredient = trend
 	print("📱 AI-ul a stabilit trendul pentru MÂINE: ", trend)
-	#
-	## Afișăm textul în noul chenar stilizat din stânga
-	#_afiseaza_dialog_influencer_stilizat("[INFLUENCER]: " + review_text)
 	
 	# Salvăm recenzia în memorie ca să o poată citi notificarea la finalul zilei
 	Global.set_meta("text_review_influencer", review_text)

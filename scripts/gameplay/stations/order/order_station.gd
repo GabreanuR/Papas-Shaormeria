@@ -95,10 +95,8 @@ func spawneaza_client_nou():
 	if profiluri_disponibile.size() == 0:
 		return
 	
-	#var este_loyal := contor_clienti_total == 1
-	var este_loyal: bool = false
-	var este_influencer: bool = (Global.current_save.get("day", 1) == 1 and contor_clienti_total == 1)
-	#var este_influencer: bool = (Global.current_save.get("day", 1) % 3 == 0 and contor_clienti_total == 2)
+	var este_loyal := contor_clienti_total == 1
+	var este_influencer: bool = (Global.current_save.get("day", 1) % 3 == 0 and contor_clienti_total == 2)
 	var profil
 	
 	if este_loyal:
@@ -541,7 +539,41 @@ func arata_evaluare_finala(nota: int, textura_lipie: Texture2D, textura_suc: Tex
 		gm.actualizeaza_text_clienti(clienti_serviti, total_clienti_zi)
 		
 	# Dacă am servit toți clienții planificați pentru azi, trecem direct la ecranul de final!
+	#if clienti_serviti >= total_clienti_zi:
+		#if gm and gm.has_method("_on_day_ended"):
+			#gm._on_day_ended()
+			
+	# --- SISTEMUL INTELIGENT DE END OF DAY (ZILELE 3, 6, 9 etc.) ---
+	
+	if gm and gm.has_method("actualizeaza_text_clienti"):
+		gm.actualizeaza_text_clienti(clienti_serviti, total_clienti_zi)
+		
+	# Dacă am servit toți clienții planificați pentru azi, pornim logica de trecere a zilei
 	if clienti_serviti >= total_clienti_zi:
+		var ziua_curenta: int = Global.current_save.get("day", 1)
+		
+		# 1. Știrea se afișează STRICT în zilele de influencer (ziua 1 pentru teste, sau din 3 în 3: 3, 6, 9)
+		var este_zi_de_influencer: bool = (ziua_curenta == 1 or ziua_curenta % 3 == 0)
+		
+		if este_zi_de_influencer and Global.has_meta("text_review_influencer") and Global.urmatorul_trend_ingredient != "":
+			var review_salvat = Global.get_meta("text_review_influencer")
+			
+			# Afișăm panoul de 6 secunde în lobby
+			await _arata_notificare_stire_tiktok(review_salvat, Global.urmatorul_trend_ingredient)
+			Global.remove_meta("text_review_influencer")
+		
+		# 2. LOGICA SCHIMBĂRII DE TREND: 
+		# Dacă este zi de influencer, mutăm noul trend din buzunarul secret în cel activ!
+		if este_zi_de_influencer and Global.urmatorul_trend_ingredient != "":
+			Global.trend_ingredient = Global.urmatorul_trend_ingredient
+			Global.urmatorul_trend_ingredient = ""
+			print("🔄 SCHIMBARE DE TREND! Noul trend activ pentru următoarele 3 zile este: ", Global.trend_ingredient)
+		else:
+			# Dacă suntem în zilele intermediare (ex: ziua 4, 5), NU curățăm și NU schimbăm nimic!
+			# Global.trend_ingredient rămâne intact, deci clienții vor cere în continuare vechiul trend cu șansă mare!
+			print("📈 Trendul actual (" + Global.trend_ingredient + ") rămâne activ și pentru ziua următoare.")
+
+		# 3. Permitem colegei tale să schimbe scena și să incrementeze ziua
 		if gm and gm.has_method("_on_day_ended"):
 			gm._on_day_ended()
 			
@@ -568,7 +600,88 @@ func _afiseaza_dialog_loyal_customer(text: String) -> void:
 
 
 
+# 1. REPARAREA TEXTULUI DIN TIMPUL ZILEI (Căsuță frumoasă cu chenar în stânga)
+func _afiseaza_dialog_influencer_stilizat(mesaj: String) -> void:
+	var vechiul_panel = fundal_comanda.get_node_or_null("CasetaDialogInfluencer")
+	if vechiul_panel: vechiul_panel.queue_free()
+	
+	if mesaj == "": return
+		
+	var panel = PanelContainer.new()
+	panel.name = "CasetaDialogInfluencer"
+	
+	var stil_fundal = StyleBoxFlat.new()
+	stil_fundal.bg_color = Color(0, 0, 0, 0.8) # Negru elegant, semi-transparent
+	stil_fundal.set_corner_radius_all(12)
+	stil_fundal.set_content_margin_all(15)
+	panel.add_theme_stylebox_override("panel", stil_fundal)
+	
+	var label = Label.new()
+	label.text = mesaj
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	label.add_theme_font_size_override("font_size", 20)
+	label.add_theme_color_override("font_color", Color.WHITE)
+	
+	panel.add_child(label)
+	fundal_comanda.add_child(panel)
+	
+	# REPARARE DIMENSIUNI ȘI ANCORE:
+	panel.set_anchors_preset(Control.PRESET_TOP_LEFT) # Îi tăiem pornirile de expansiune automată
+	panel.position = Vector2(80, 220) 
+	
+	# În loc de custom_minimum_size care îl poate bugui, îi setăm mărimea fixă de pornire
+	panel.size = Vector2(320, 100) 
+	panel.z_index = 350
+
+# 2. SALVAREA INGREDIENTULUI PENTRU ZIUA URRMĂTOARE
 func _on_influencer_review_ready(review_text: String, trend: String) -> void:
-	Global.trend_ingredient = trend
-	print("🚨 AGENT AI 2: Noul trend viral este: ", trend)
-	_afiseaza_dialog_loyal_customer("[INFLUENCER]: " + review_text)
+	# NU mai punem în Global.trend_ingredient direct! Îl punem în buzunarul secret:
+	Global.urmatorul_trend_ingredient = trend
+	print("📱 AI-ul a stabilit trendul pentru MÂINE: ", trend)
+	#
+	## Afișăm textul în noul chenar stilizat din stânga
+	#_afiseaza_dialog_influencer_stilizat("[INFLUENCER]: " + review_text)
+	
+	# Salvăm recenzia în memorie ca să o poată citi notificarea la finalul zilei
+	Global.set_meta("text_review_influencer", review_text)
+
+# 3. FUNCȚIA PENTRU NOTIFICAREA POP-OUT DE SÂRȘIT DE ZI
+func _arata_notificare_stire_tiktok(review_text: String, trend_ingredient_nou: String) -> void:
+	var canvas = CanvasLayer.new()
+	canvas.layer = 150 # Cel mai mare strat din joc
+	
+	var panel_stire = PanelContainer.new()
+	var stil_stire = StyleBoxFlat.new()
+	
+	# Schimbat în maro închis elegant (stilul jocurilor lui Papa) cu opacitate 95%
+	stil_stire.bg_color = Color(0.22, 0.14, 0.08, 0.95) 
+	stil_stire.set_corner_radius_all(15)
+	stil_stire.set_content_margin_all(30)
+	
+	# Adăugăm o bordură/chenar auriu/galben frumos în jurul casetei
+	stil_stire.border_width_left = 5
+	stil_stire.border_width_top = 5
+	stil_stire.border_width_right = 5
+	stil_stire.border_width_bottom = 5
+	stil_stire.border_color = Color(0.95, 0.75, 0.2) # Auriu/Galben cald
+	
+	panel_stire.add_theme_stylebox_override("panel", stil_stire)
+	
+	var text_stire = Label.new()
+	text_stire.text = "📱 TIKTOK VIRAL REVIEW:\n\n" + review_text + "\n\n🔥 TOMORROW'S TRENDY INGREDIENT: " + trend_ingredient_nou.to_upper()
+	text_stire.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	text_stire.add_theme_font_size_override("font_size", 24)
+	text_stire.add_theme_color_override("font_color", Color.WHITE) # Textul principal devine alb curat
+	text_stire.add_theme_color_override("font_outline_color", Color.BLACK)
+	text_stire.add_theme_constant_override("outline_size", 6)
+	
+	panel_stire.add_child(text_stire)
+	canvas.add_child(panel_stire)
+	add_child(canvas)
+	
+	# Centrăm pop-up-ul perfect pe mijlocul ecranului
+	panel_stire.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	
+	# Schimbat timpul: Acum îngheață ecranul fix 6.0 secunde în lobby
+	await get_tree().create_timer(6.0).timeout
+	canvas.queue_free()

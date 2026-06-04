@@ -75,9 +75,25 @@ func genereaza_comanda_random():
 	var sucul_ales = sucuri_disponibile.pick_random()
 	comanda_mea.append(sucul_ales)
 	
-	if Global.trend_ingredient != "" and randf() <= 0.7:
+	if Global.trend_ingredient != "" and randf() <= 0.4: # Am scăzut șansa la 40% cum am vorbit ieri
 		if not comanda_mea.has(Global.trend_ingredient):
-			comanda_mea.insert(2, Global.trend_ingredient)
+			
+			# Verificăm dacă ingredientul trendy este sos sau băutură
+			var este_sos_sau_bautura: bool = false
+			
+			var lista_lichide = ["ketchup_dulce", "ketchup_picant", "maioneza", "maioneza_picanta", "maioneza_usturoi"]
+			
+			if Global.trend_ingredient in lista_lichide:
+				este_sos_sau_bautura = true
+			
+			# Aplicăm poziționarea pe bilet în funcție de tip
+			if este_sos_sau_bautura:
+				# Dacă e sos/băutură, îl punem la final, dar chiar ÎNAINTE de ultima băutură (poziția penultimă)
+				var pozitie_inserare = max(0, comanda_mea.size() - 1)
+				comanda_mea.insert(pozitie_inserare, Global.trend_ingredient)
+			else:
+				# Dacă e ingredient solid (carne, cartofi, ceapă), îl punem la început, după carne (poziția 2)
+				comanda_mea.insert(2, Global.trend_ingredient)
 
 
 func pregateste_client_nou():

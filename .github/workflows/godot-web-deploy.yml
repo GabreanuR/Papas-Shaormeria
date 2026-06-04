@@ -45,13 +45,10 @@ jobs:
 
       - name: Add SharedArrayBuffer fix (coi-serviceworker)
         run: |
-          cd build/web
-          # Descarcă coi-serviceworker
-          curl -sL https://raw.githubusercontent.com/gzuidhof/coi-serviceworker/master/coi-serviceworker.min.js \
-            -o coi-serviceworker.min.js
-          # Injectează script tag în index.html
-          sed -i 's|<head>|<head><script src="coi-serviceworker.min.js"></script>|' index.html
-
+          wget -q https://raw.githubusercontent.com/gzuidhof/coi-serviceworker/master/coi-serviceworker.min.js \
+            -O build/web/coi-serviceworker.min.js
+          sed -i 's|<head>|<head><script src="coi-serviceworker.min.js"></script>|' build/web/index.html
+          
       - name: Add COOP/COEP headers for SharedArrayBuffer   # <-- fix ecran gri
         run: |
           cat > build/web/_headers << 'EOF'

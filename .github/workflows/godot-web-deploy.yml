@@ -46,8 +46,8 @@ jobs:
 
       - name: Add SharedArrayBuffer fix
         run: |
-          cp web/coi-serviceworker.min.js build/web/coi-serviceworker.min.js
-          sed -i 's|<head>|<head><script src="coi-serviceworker.min.js"></script>|' build/web/index.html
+          cp web/coi-serviceworker.js build/web/coi-serviceworker.js
+          sed -i 's|<head>|<head><script src="coi-serviceworker.js"></script>|' build/web/index.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

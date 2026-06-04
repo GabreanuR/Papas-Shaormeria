@@ -1,10 +1,7 @@
-res://test/unit/test_global.gd
-res://scenes/ui/top_bar.tscn
+res://scenes/menus/main_menu.tscn
 res://assets/theme/global_ui_theme.tres
 res://assets/theme/light_texture.tres
 res://addons/gut/gui/editor_globals.gd
 res://addons/gut/gui/EditorRadioButton.tres
-res://test/unit/test_gameplay_master.gd
-res://scripts/ui/top_bar.gd
-res://scripts/gameplay/stations/order/order_station.gd
-res://scripts/ai/daily_menu_agent.gd
+res://assets/graphics/shaders/assembly_clipping.gdshader
+res://test/unit/test_culinary_influencer_agent.gd

@@ -584,7 +584,7 @@ func arata_evaluare_finala(_nota: int, textura_lipie: Texture2D, textura_suc: Te
 		var ziua_curenta: int = Global.current_save.get("day", 1)
 		
 		# 1. Știrea se afișează STRICT în zilele de influencer (ziua 1 pentru teste, sau din 3 în 3: 3, 6, 9)
-		var este_zi_de_influencer: bool = (ziua_curenta == 1 or ziua_curenta % 3 == 0)
+		var este_zi_de_influencer: bool = (ziua_curenta % 3 == 0)
 		
 		if este_zi_de_influencer and Global.has_meta("text_review_influencer") and Global.urmatorul_trend_ingredient != "":
 			var review_salvat = Global.get_meta("text_review_influencer")
@@ -594,12 +594,16 @@ func arata_evaluare_finala(_nota: int, textura_lipie: Texture2D, textura_suc: Te
 			Global.remove_meta("text_review_influencer")
 		
 		# 2. LOGICA SCHIMBĂRII DE TREND: 
-		# Dacă este zi de influencer, mutăm noul trend din buzunarul secret în cel activ!
+		# Dacă tocmai s-a terminat ziua de influencer (ex: 3), mutăm trendul pentru ziua de joc + 1 (ex: 4)
 		if este_zi_de_influencer and Global.urmatorul_trend_ingredient != "":
 			Global.trend_ingredient = Global.urmatorul_trend_ingredient
 			Global.urmatorul_trend_ingredient = ""
+		else:
+			# Dacă NU este zi de influencer, înseamnă că tocmai s-a terminat ziua cu trend activ (ex: 4).
+			# Îl ștergem acum ca să nu se mai aplice și în zilele următoare (ex: 5, 6)!
+			if Global.trend_ingredient != "":
+				Global.trend_ingredient = ""
 
-		# 3. Permitem colegei tale să schimbe scena și să incrementeze ziua
 		if gm and gm.has_method("_on_day_ended"):
 			gm._on_day_ended()
 			

@@ -21,7 +21,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     container:
-      image: barichello/godot-ci:4.3
+      image: barichello/godot-ci:4.6   # <-- fix versiune
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -29,12 +29,13 @@ jobs:
       - name: Setup Export Templates
         run: |
           mkdir -v -p ~/.local/share/godot/export_templates/
-          mv /root/.local/share/godot/export_templates/4.3.stable ~/.local/share/godot/export_templates/4.3.stable
+          mv /root/.local/share/godot/export_templates/4.6.stable \
+             ~/.local/share/godot/export_templates/4.6.stable
 
       - name: Create Web Build Directory
         run: mkdir -v -p build/web
 
-      - name: Force Import Assets (Workaround for Godot 4 headless crash)
+      - name: Import Assets
         run: |
           godot --headless --verbose --editor --quit || true
           godot --headless --verbose --editor --quit || true
@@ -42,7 +43,22 @@ jobs:
       - name: Export Web
         run: godot --headless --verbose --export-release "Web" build/web/index.html
 
+      - name: Add SharedArrayBuffer fix (coi-serviceworker)
+        run: |
+          cd build/web
+          # Descarcă coi-serviceworker
+          curl -sL https://raw.githubusercontent.com/gzuidhof/coi-serviceworker/master/coi-serviceworker.min.js \
+            -o coi-serviceworker.min.js
+          # Injectează script tag în index.html
+          sed -i 's|<head>|<head><script src="coi-serviceworker.min.js"></script>|' index.html
 
+      - name: Add COOP/COEP headers for SharedArrayBuffer   # <-- fix ecran gri
+        run: |
+          cat > build/web/_headers << 'EOF'
+          /*
+            Cross-Origin-Opener-Policy: same-origin
+            Cross-Origin-Embedder-Policy: require-corp
+          EOF
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

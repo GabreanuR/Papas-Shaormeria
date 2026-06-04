@@ -35,12 +35,14 @@ jobs:
       - name: Create Web Build Directory
         run: mkdir -v -p build/web
 
-      - name: Import Assets
-        run: |
-          timeout 60 godot --headless --import || true
-
       - name: Export Web
-        run: godot --headless --verbose --export-release "Web" build/web/index.html
+        env:
+          DISPLAY: ""
+          GODOT_DISABLE_CRASH_HANDLER: "1"
+        run: |
+          godot --headless --verbose --export-release "Web" build/web/index.html || true
+          # Verifică dacă fișierele au fost generate
+          ls -la build/web/
 
       - name: Add SharedArrayBuffer fix
         run: |

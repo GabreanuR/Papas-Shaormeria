@@ -23,7 +23,7 @@ func _filter_ingredients(all_ingredients: Array) -> Array:
 			result.append(ing)
 	return result
 
-# --- TESTELE COLEGILOR (Data Preparation) ---
+# --- PEER TESTS (Data Preparation) ---
 func test_filter_removes_all_drinks() -> void:
 	var input := ["carne_pui", "suc_cola", "varza", "suc_lamaie"]
 	var filtered := _filter_ingredients(input)
@@ -40,31 +40,31 @@ func test_filter_empty_list() -> void:
 	var filtered := _filter_ingredients([])
 	assert_eq(filtered.size(), 0)
 
-# --- TESTELE NOASTRE (AI Evals & Mechanics) ---
+# --- OUR TESTS (AI Evals & Mechanics) ---
 func test_influencer_json_payload_parsing():
-	# AI EVAL: Simulăm un răspuns valid primit de la LLM
+	# AI EVAL: Simulate a valid JSON response from the LLM
 	var mock_llm_response = '{"review": "This fusion wrap is a TikTok masterpiece!", "trend_ingredient": "garlic"}'
 	var parsed_json = JSON.parse_string(mock_llm_response)
 	
-	assert_not_null(parsed_json, "Răspunsul JSON de la AI nu ar trebui să fie null.")
-	assert_true(parsed_json.has("review"), "JSON-ul generat de AI trebuie să conțină cheia 'review'.")
-	assert_eq(parsed_json["trend_ingredient"], "garlic", "Ingredientul de trend extras ar trebui să fie 'garlic'.")
+	assert_not_null(parsed_json, "AI JSON response should not be null.")
+	assert_true(parsed_json.has("review"), "AI generated JSON must contain the 'review' key.")
+	assert_eq(parsed_json["trend_ingredient"], "garlic", "Extracted trend ingredient should be 'garlic'.")
 
 func test_influencer_corrupt_json_fallback():
-	# AI EVAL: Testăm rezistența la crash dacă LLM-ul halucinează
+	# AI EVAL: Test crash resilience if the LLM hallucinates
 	var corrupt_llm_response = "Uh, I really liked the garlic wrap! It was nice! (No JSON here)"
 	
-	# Folosim clasa JSON pentru a intercepta eroarea silențios, fără panica motorului Godot
+	# Use JSON class to intercept the error silently without Godot engine panic
 	var json = JSON.new()
 	var err = json.parse(corrupt_llm_response)
 	
-	# Dacă err nu este OK, înseamnă că AI-ul a trimis un text corupt și activăm fallback-ul
+	# If err is not OK, it means the AI sent a corrupted string, triggering the safety fallback
 	if err != OK:
 		var fallback_json = {"review": "Generic good review!", "trend_ingredient": "varza"}
-		assert_eq(fallback_json["trend_ingredient"], "varza", "Fallback-ul ar trebui să activeze un ingredient sigur dacă AI-ul dă eroare.")
+		assert_eq(fallback_json["trend_ingredient"], "varza", "Fallback should activate a safe ingredient if AI payload is malformed.")
 
 func test_trend_probability_injection():
-	# Verificăm mecanica de 70% șanse
+	# Verify the 70% probability mechanic
 	Global.trend_ingredient = "garlic"
 	var matching_orders_count = 0
 	
@@ -72,5 +72,5 @@ func test_trend_probability_injection():
 		if randf() < 0.70:
 			matching_orders_count += 1
 			
-	assert_gt(matching_orders_count, 650, "Trendul ar trebui să apară în cel puțin ~65% din cazuri.")
-	assert_lt(matching_orders_count, 750, "Trendul nu ar trebui să depășească bariera statistică.")
+	assert_gt(matching_orders_count, 650, "Trend should appear in at least ~65% of the statistical cases.")
+	assert_lt(matching_orders_count, 750, "Trend appearance rate should not exceed the expected statistical threshold.")

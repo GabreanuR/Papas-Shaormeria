@@ -163,18 +163,18 @@ MetalShutter.wav::AudioStreamWAV::6656498864865754810::1777461649::1778013532::1
 Oswald-Bold.ttf::FontFile::3482137087522965244::1757609064::1778013531::1::::<><><>0<>0<>391d1670e055aebe2f6a51ae641022c7<>res://.godot/imported/Oswald-Bold.ttf-6b16fa994d928ebdfcbc8ed28fa49fe1.fontdata::
 Oswald-Regular.ttf::FontFile::5977281482034759563::1757609064::1778013531::1::::<><><>0<>0<>db97688e8ce7f2898ef6aba73ad992a7<>res://.godot/imported/Oswald-Regular.ttf-de0e5cb018404389c95b495273928547.fontdata::
 ::res://assets/graphics/::1778065225
-::res://assets/graphics/backgrounds/::1780602934
+::res://assets/graphics/backgrounds/::1780604210
 CreditsReceipt.png::CompressedTexture2D::7516267744051532353::1777464890::1778013532::1::::<><><>0<>0<>4d1b9a5ed172b84adeda215e1514c1a2<>res://.godot/imported/CreditsReceipt.png-552188738cc4902599c319ee43304e43.ctex::
 dayScene.png::CompressedTexture2D::8580560219401501508::1779024158::1779024193::1::::<><><>0<>0<>f2bdf80292fd4838836317909c031a89<>res://.godot/imported/dayScene.png-5edc01dccaf6f76b9ceeac39d43b0e85.ctex::
 Layer1_Sky.png::CompressedTexture2D::5827978602686962433::1776361377::1778013532::1::::<><><>0<>0<>442c305ec1386fa0680fbe793822c14a<>res://.godot/imported/Layer1_Sky.png-34cbe8149fa1b5d0c16a082ddf097799.ctex::
 Layer2_City.png::CompressedTexture2D::2712500422588146055::1776368014::1778013532::1::::<><><>0<>0<>b8dfb33a14fd795ae8d4738601b88bd4<>res://.godot/imported/Layer2_City.png-2bd114ab6421977edb9639559fe5e575.ctex::
 Layer3_Shop.png::CompressedTexture2D::8114702701554276266::1776371577::1778013532::1::::<><><>0<>0<>ee7b4ba9789b02689ea7787a660d96cc<>res://.godot/imported/Layer3_Shop.png-6ba0e55b92df297c7df4597c2c27a84a.ctex::
 Layer4_Name.png::CompressedTexture2D::103133198949280398::1776416038::1778013532::1::::<><><>0<>0<>26ce97761a564fa5ed542e2fde69cbd4<>res://.godot/imported/Layer4_Name.png-ece7265d662aa7dd2575282287bd4a8f.ctex::
-main_frame.png::CompressedTexture2D::2036465459889369163::1780602934::1780602948::1::::<><><>0<>0<>8e901f175bb13c6a7de3abfba2238e81<>res://.godot/imported/main_frame.png-7161dedcecc716e36543b30fa15cb931.ctex::
+main_frame.png::CompressedTexture2D::2036465459889369163::1780604084::1780604210::1::::<><><>0<>0<>8e901f175bb13c6a7de3abfba2238e81<>res://.godot/imported/main_frame.png-7161dedcecc716e36543b30fa15cb931.ctex::
 metal_shutter.png::CompressedTexture2D::9101214329316191437::1777459390::1778013532::1::::<><><>0<>0<>a0c57aa7a10d9c140c040b4f2f89e14b<>res://.godot/imported/metal_shutter.png-185dde98064366f0445c3a0f08bd7fc1.ctex::
 nightScene.png::CompressedTexture2D::8186722280051354550::1778062175::1778063861::1::::<><><>0<>0<>3edd25ef8538cea3d65ac0cde800bbbf<>res://.godot/imported/nightScene.png-e274ab2f2afa579843144c35dbe5e054.ctex::
 ShaormaBase.png::CompressedTexture2D::7943651684607409812::1776421524::1778013532::1::::<><><>0<>0<>eea981d74bc8bf71a673e8c32d3861f4<>res://.godot/imported/ShaormaBase.png-5fbb72ff89f388744079d0a85dfd61e1.ctex::
-tejghea.png::CompressedTexture2D::2243003347258079535::1777910227::1778013532::1::::<><><>0<>0<>efd3f64ea197aa081d994d8013c263b4<>res://.godot/imported/tejghea.png-c24619ae5c81d42b435253d14e4d5d66.ctex::
+tejghea.png::CompressedTexture2D::2243003347258079535::1780604135::1780604210::1::::<><><>0<>0<>efd3f64ea197aa081d994d8013c263b4<>res://.godot/imported/tejghea.png-c24619ae5c81d42b435253d14e4d5d66.ctex::
 ::res://assets/graphics/characters/::1780597131
 akari.png::CompressedTexture2D::2092732971030168893::1777910227::1778013532::1::::<><><>0<>0<>64f9cb85560be873af7f52209ea55170<>res://.godot/imported/akari.png-26e0d328c755ab24703ae937ad2e8c9b.ctex::
 akari_zoomed.png::CompressedTexture2D::3169882558525156903::1777910227::1778013532::1::::<><><>0<>0<>15415a25b15ca34b1ad8274f2e601c21<>res://.godot/imported/akari_zoomed.png-7c582b2528288f91a92d23016bdcf69a.ctex::
@@ -195,7 +195,7 @@ prudence_zoomed.png::CompressedTexture2D::3157848087418572003::1777910227::17780
 right_zoom_more_more.png::CompressedTexture2D::3632890304076758070::1778065032::1778065241::1::::<><><>0<>0<>e87c422c6494f6f1563fb9718acfa0a3<>res://.godot/imported/right_zoom_more_more.png-6d96adec665c6105cafd99057846c8ed.ctex::
 wally.png::CompressedTexture2D::6798165182896349048::1777910227::1778013532::1::::<><><>0<>0<>1fd75c6de2e3012bb8e41a9d89d1407d<>res://.godot/imported/wally.png-cc344ce34e45f0eb2614f5f72dfbcc58.ctex::
 wally_zoomed.png::CompressedTexture2D::2577401688264124427::1777910227::1778013532::1::::<><><>0<>0<>1e65278ac27273ab262e83773c309fe2<>res://.godot/imported/wally_zoomed.png-884251a37964ee99dd3efaa8fa089c56.ctex::
-::res://assets/graphics/cutting_station/::1780484245
+::res://assets/graphics/cutting_station/::1780604452
 beef.png::CompressedTexture2D::1950009775356954824::1778065032::1778065240::1::::<><><>0<>0<>d11aca5ade3a0bc31e2af6d1d18d3ea7<>res://.godot/imported/beef.png-8a47eee56b21b368de59c7f6ab7fce65.ctex::
 beef_on_metal.png::CompressedTexture2D::152678907455891987::1780484229::1780484245::1::::<><><>0<>0<>d916ccf894ea3af5388c315e07a59dc0<>res://.godot/imported/beef_on_metal.png-dfcfb2163ec468c685464de1ff729f41.ctex::
 bg_beef.png::CompressedTexture2D::8670291168969088753::1778065032::1778065241::1::::<><><>0<>0<>47e22f2b6484c28b91b864cc2f47a4bb<>res://.godot/imported/bg_beef.png-e75ec33cb8869eb8ec7fca4fde6471aa.ctex::
@@ -218,13 +218,13 @@ heated_shaormas_panel.png::CompressedTexture2D::2113969309684572501::1780484229:
 meat_choices.png::CompressedTexture2D::2278808252592151113::1780484229::1780484245::1::::<><><>0<>0<>d88af2435b8929880b4b11527e915670<>res://.godot/imported/meat_choices.png-d62820aba85a1a3075e5d68e6881185f.ctex::
 meat_on_sharoma_panel.png::CompressedTexture2D::3882225930652581889::1780484229::1780484245::1::::<><><>0<>0<>61b7a86d5bb02ede98d89205d0b14378<>res://.godot/imported/meat_on_sharoma_panel.png-46ab7d9135afa29adae3d1b25c33fcb0.ctex::
 new_bg.png::CompressedTexture2D::1899675651693525385::1778065032::1778065241::1::::<><><>0<>0<>bb234153f8ba0da37f1485465933cf6d<>res://.godot/imported/new_bg.png-3f10427288e41d3d595c275ee34c34f5.ctex::
-new_nackground.png::CompressedTexture2D::7020497993984654086::1780484229::1780484245::1::::<><><>0<>0<>22ce45b63f6b10aa8f1659aa5ab34396<>res://.godot/imported/new_nackground.png-c30312dd183a91608e1a6618fa7b3d7b.ctex::
+new_nackground.png::CompressedTexture2D::7020497993984654086::1780604435::1780604452::1::::<><><>0<>0<>22ce45b63f6b10aa8f1659aa5ab34396<>res://.godot/imported/new_nackground.png-c30312dd183a91608e1a6618fa7b3d7b.ctex::
 no_plate_chick.png::CompressedTexture2D::6850222252307367946::1778065032::1778065240::1::::<><><>0<>0<>fef9397815be2cafe98e1b4a3b2f1e13<>res://.godot/imported/no_plate_chick.png-42e6dce9544924f8f2b792438d601547.ctex::
 red_circle.png::CompressedTexture2D::164936694309722064::1780484229::1780484245::1::::<><><>0<>0<>9949ae5ba69e97cc2f64770b49757e35<>res://.godot/imported/red_circle.png-b9dd39ce42c761a0366f43af865da04d.ctex::
 send_to_assembly_panel.png::CompressedTexture2D::3228533721093504917::1780484229::1780484245::1::::<><><>0<>0<>178319f283e752caf279c0022fa583ea<>res://.godot/imported/send_to_assembly_panel.png-b92cf99b9ee334c4c80363eed453a766.ctex::
 tortilla_stack.png::CompressedTexture2D::5914866024790072214::1780484229::1780484245::1::::<><><>0<>0<>676962aace58e3acf7dae94e74c97c95<>res://.godot/imported/tortilla_stack.png-cd1ffa0309cecaa24b654f1b6e216806.ctex::
 trash_panel.png::CompressedTexture2D::9057844952558274512::1780484229::1780484245::1::::<><><>0<>0<>1c49b4541c188ac977f3ef091c94c8c0<>res://.godot/imported/trash_panel.png-0fed73d0d0c3d2c226368a4fd12e27e0.ctex::
-::res://assets/graphics/ingredients/::1780484245
+::res://assets/graphics/ingredients/::1780604805
 ardei.png::CompressedTexture2D::1333478894362764881::1777458440::1778013532::1::::<><><>0<>0<>0cb71eb54091c5235e9adc5746e9c0d3<>res://.godot/imported/ardei.png-e5640189464dcebf89180adbfae1ed18.ctex::
 carne_pui.png::CompressedTexture2D::5973253663537697039::1777458440::1778013532::1::::<><><>0<>0<>de901793130a267f722c4577cbe8ccce<>res://.godot/imported/carne_pui.png-d47f074d346b8ecd79a6bd4fb3be4c35.ctex::
 carne_vita.png::CompressedTexture2D::324784908937083970::1777458440::1778013532::1::::<><><>0<>0<>26aed1b408acbcd5c727d703c82f9d8a<>res://.godot/imported/carne_vita.png-ee65ba6604e91699d14fdb4d296ec83c.ctex::
@@ -238,8 +238,8 @@ drink_3.png::CompressedTexture2D::2630788794656261354::1780484229::1780484245::1
 falafel.png::CompressedTexture2D::659395344285247402::1777458440::1778013531::1::::<><><>0<>0<>5da56b67678bfe7f185accac68ded7ca<>res://.godot/imported/falafel.png-94ded240c94bf98881152c4954eab2d0.ctex::
 falafel_tava.png::CompressedTexture2D::8619801967416150220::1777458440::1778013532::1::::<><><>0<>0<>1d812fb7a7848373561e9cd6fb2ae509<>res://.godot/imported/falafel_tava.png-dacfe732c7f6ffc55026707757a0c2d6.ctex::
 fulgi_chilli.png::CompressedTexture2D::4552351145975134858::1777458440::1778013532::1::::<><><>0<>0<>590f7b6c142dab8f8d92df5fd96da8ef<>res://.godot/imported/fulgi_chilli.png-27cb1982834dd73a6d86798a3c6afbfe.ctex::
-fundal_corect.png::CompressedTexture2D::7684853824604055008::1777458440::1778013532::1::::<><><>0<>0<>759ff8485bca028ecca7ef91b2cc1152<>res://.godot/imported/fundal_corect.png-670e68ae9e8efb0930c30e91b4128088.ctex::
-fundal_sosuri.png::CompressedTexture2D::8584581001497637086::1778015710::1778015731::1::::<><><>0<>0<>a77ccadff1d2454f8b398e4ba8dc789b<>res://.godot/imported/fundal_sosuri.png-869d7462db18601d91de06dfa5f04b46.ctex::
+fundal_corect.png::CompressedTexture2D::7684853824604055008::1780604744::1780604816::1::::<><><>0<>0<>759ff8485bca028ecca7ef91b2cc1152<>res://.godot/imported/fundal_corect.png-670e68ae9e8efb0930c30e91b4128088.ctex::
+fundal_sosuri.png::CompressedTexture2D::8584581001497637086::1780604790::1780604816::1::::<><><>0<>0<>a77ccadff1d2454f8b398e4ba8dc789b<>res://.godot/imported/fundal_sosuri.png-869d7462db18601d91de06dfa5f04b46.ctex::
 garlic.png::CompressedTexture2D::8331507050533368238::1780484229::1780484245::1::::<><><>0<>0<>440e950faa8ff595e13b8ba9ceedf73f<>res://.godot/imported/garlic.png-f2af651a29fe1b01efd20d5272611996.ctex::
 jalapenos.png::CompressedTexture2D::3505659918374033026::1777458440::1778013531::1::::<><><>0<>0<>8daa182fc703c636c2d75a31034190f4<>res://.godot/imported/jalapenos.png-79a7a54a50435009b6099482f682c1a2.ctex::
 jalapenos_tava.png::CompressedTexture2D::2644968151330356972::1777458440::1778013532::1::::<><><>0<>0<>296ce0926880780e8db0fd0182979556<>res://.godot/imported/jalapenos_tava.png-eb4332c1e7f3e352743c82bba774c4ac.ctex::
@@ -296,11 +296,11 @@ filled_slot_normal.png::CompressedTexture2D::5095578597360595417::1778843155::17
 ChatGPT Image May 5, 2026 at 08_58_26 PM.png::CompressedTexture2D::8582937343373996533::1778065225::1778065241::1::::<><><>0<>0<>0c423de55fde2d4cd7ed988087f0e00a<>res://.godot/imported/ChatGPT Image May 5, 2026 at 08_58_26 PM.png-8a84fbe4e2597567c9cc16344896e930.ctex::
 ChatGPT Image May 5, 2026 at 09_07_52 PM.png::CompressedTexture2D::5466484115328786661::1778065225::1778065241::1::::<><><>0<>0<>7bcb175246972a44363f83dcb0170105<>res://.godot/imported/ChatGPT Image May 5, 2026 at 09_07_52 PM.png-3863b82dc8a12a4b682d3d8dfec98363.ctex::
 SteamParticle.png::CompressedTexture2D::693895441509973729::1776419562::1778013531::1::::<><><>0<>0<>c4f4917ab403198c6b7ab9d37d100510<>res://.godot/imported/SteamParticle.png-6736715b2868f918fd1a9f16183ed979.ctex::
-::res://assets/graphics/wrapping_station/::1780484245
+::res://assets/graphics/wrapping_station/::1780604558
 arrow_1.png::CompressedTexture2D::8761191062196162271::1780484229::1780484245::1::::<><><>0<>0<>beb255d32a2535219c6da062674d92dd<>res://.godot/imported/arrow_1.png-31097a6fa82ca180eda25c2d00caf9d5.ctex::
 arrow_2.png::CompressedTexture2D::2199202276302987662::1780484229::1780484245::1::::<><><>0<>0<>4cd4d74a2fbee1c75df2998d8c1fc6c1<>res://.godot/imported/arrow_2.png-f30ecef06120d9334d728382a894eecf.ctex::
 arrow_3.png::CompressedTexture2D::6846078422995779130::1780484229::1780484245::1::::<><><>0<>0<>c2652b61c8b286ac978b5fd52bf82b85<>res://.godot/imported/arrow_3.png-4ea20d9a7542c3140e4da5730e2238d4.ctex::
-background.png::CompressedTexture2D::1174951362875226357::1778065225::1778065241::1::::<><><>0<>0<>0c6459314b0ec12537196da25de93a82<>res://.godot/imported/background.png-ec73d19427b74d8df03b1df43d69e520.ctex::
+background.png::CompressedTexture2D::1174951362875226357::1780604546::1780604816::1::::<><><>0<>0<>0c6459314b0ec12537196da25de93a82<>res://.godot/imported/background.png-ec73d19427b74d8df03b1df43d69e520.ctex::
 beef_paper_piece.png::CompressedTexture2D::4442495936072821593::1780484229::1780484245::1::::<><><>0<>0<>29f2da98e6d65f2fe2603da20a078bc2<>res://.godot/imported/beef_paper_piece.png-53dc58ec53f37158dd44faadd376f8d2.ctex::
 beef_paper_pile.png::CompressedTexture2D::8075585440626575729::1780484229::1780484245::1::::<><><>0<>0<>66301c77c920e40286aeef8ccdc6f8d3<>res://.godot/imported/beef_paper_pile.png-dd12670816f4a7351663245958540ce1.ctex::
 chicken_paper_piece.png::CompressedTexture2D::6631210987828254323::1780484229::1780484245::1::::<><><>0<>0<>5256d1988ea17b64530a0c5e14416de4<>res://.godot/imported/chicken_paper_piece.png-7b0d366d220ed124ccae0318a025ea2e.ctex::
@@ -394,7 +394,7 @@ global.gd::GDScript::5279077662907438292::1780599549::0::1::::<>Node<><>0<>0<><>
 ::res://scripts/ai/::1780595408
 culinary_influencer_agent.gd::GDScript::8639479915525532309::1780595408::0::1::::CulinaryInfluencerAgent<>Node<><>0<>0<><>::
 customer_history.gd::GDScript::6636105832012862512::1780484229::0::1::::<>Node<><>0<>0<><>::
-daily_menu_agent.gd::GDScript::432189319764957983::1780595408::0::1::::<>Node<><>0<>0<><>::
+daily_menu_agent.gd::GDScript::432189319764957983::1780603160::0::1::::<>Node<><>0<>0<><>::
 loyal_customer_agent.gd::GDScript::9060016576468742912::1780484229::0::1::::LoyalCustomerAgent<>Node<><>0<>0<><>::
 ::res://scripts/components/::1778833944
 action_popup.gd::GDScript::650930262921744907::1778833944::0::1::::<>Control<><>0<>0<><>::
@@ -429,7 +429,7 @@ meat_piece.gd::GDScript::5794350589180722635::1779387260::0::1::::<>Node2D<><>0<
 meat_select.gd::GDScript::6103982545579466050::1780484229::0::1::::<>Node2D<><>0<>0<><>::
 tortilla.gd::GDScript::5991694116468461838::1780484229::0::1::::<>Area2D<><>0<>0<><>::
 ::res://scripts/gameplay/stations/order/::1780595408
-order_station.gd::GDScript::4291001315074253972::1780595408::0::1::::<>Node2D<><>0<>0<><>::
+order_station.gd::GDScript::4291001315074253972::1780603149::0::1::::<>Node2D<><>0<>0<><>::
 ::res://scripts/gameplay/stations/wrapping/::1780484245
 ChatGPT_Image_May_21__2026_at_07_01_30_PM-removebg-preview.png::CompressedTexture2D::6585669759526637678::1780484229::1780484245::1::::<><><>0<>0<>e6b1ba8e6fd1acad594800c753a82bdf<>res://.godot/imported/ChatGPT_Image_May_21__2026_at_07_01_30_PM-removebg-preview.png-6a1ff0f8db5cb0793a7d15683b9f982f.ctex::
 wrap_gesture.gd::GDScript::2686977465089578688::1780484229::0::1::::<>ColorRect<><>0<>0<><>::
@@ -450,7 +450,7 @@ drop_layer.gd::GDScript::8825285137184341500::1780484229::0::1::::<>Control<><>0
 quick_menu.gd::GDScript::5813829811042134804::1779439949::0::1::::<>CanvasLayer<><>0<>0<><>::
 taskbar.gd::GDScript::410332872660372381::1778093552::0::1::::<>Node<><>0<>0<><>::
 ticket_zone.gd::GDScript::5936457359155877354::1780484229::0::1::::<>Control<><>0<>0<><>::
-top_bar.gd::GDScript::1781403581921901188::1780602641::0::1::::<>MarginContainer<><>0<>0<><>::
+top_bar.gd::GDScript::1781403581921901188::1780603273::0::1::::<>MarginContainer<><>0<>0<><>::
 ::res://test/::1780601201
 ::res://test/unit/::1780601457
 test_culinary_influencer_agent.gd::GDScript::2321158716093216512::1780601230::0::1::::<>GutTest<><>0<>0<><>::

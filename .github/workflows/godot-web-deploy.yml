@@ -21,7 +21,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     container:
-      image: barichello/godot-ci:4.3
+      image: barichello/godot-ci:4.3   # <- pune exact versiunea din project.godot
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -29,20 +29,32 @@ jobs:
       - name: Setup Export Templates
         run: |
           mkdir -v -p ~/.local/share/godot/export_templates/
-          mv /root/.local/share/godot/export_templates/4.3.stable ~/.local/share/godot/export_templates/4.3.stable
+          mv /root/.local/share/godot/export_templates/4.3.stable \
+             ~/.local/share/godot/export_templates/4.3.stable
 
       - name: Create Web Build Directory
         run: mkdir -v -p build/web
 
-      - name: Force Import Assets (Workaround for Godot 4 headless crash)
+      - name: Fix for headless export
         run: |
-          godot --headless --verbose --editor --quit || true
-          godot --headless --verbose --editor --quit || true
+          sed -i 's|theme/custom_font="uid://crfo7nlure7a2"||g' project.godot
+          sed -i 's|theme/custom="uid://icmwfh7h1jg8"|theme/custom="res://assets/theme/global_ui_theme.tres"|g' project.godot
+          sed -i 's|run/main_scene="uid://o6og3fkmw0hs"|run/main_scene="res://scenes/menus/main_menu.tscn"|g' project.godot
 
       - name: Export Web
         run: godot --headless --verbose --export-release "Web" build/web/index.html
 
+      - name: Add SharedArrayBuffer fix
+        run: |
+          cp web/coi-serviceworker.js build/web/coi-serviceworker.js
+          sed -i 's|<head>|<head><script src="coi-serviceworker.js"></script>|' build/web/index.html
 
+      - name: Debug exported files
+        run: |
+          echo "=== Marime PCK ==="
+          du -sh build/web/*.pck || true
+          echo "=== Fisiere in build ==="
+          find build/web/ -type f -ls
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

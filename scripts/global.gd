@@ -1,5 +1,23 @@
 extends Node
 
+# La începutul global.gd, forțează includerea în export
+const _PRELOAD_TRES_1 = preload("res://assets/theme/booklet.tres")
+const _PRELOAD_TRES_2 = preload("res://assets/theme/global_ui_theme.tres")
+const _PRELOAD_TRES_3 = preload("res://assets/theme/light_texture.tres")
+const _PRELOAD_TRES_4 = preload("res://assets/theme/panel_style.tres")
+const _PRELOAD_TRES_5 = preload("res://assets/theme/buttons/button_hover.tres")
+const _PRELOAD_TRES_6 = preload("res://assets/theme/buttons/button_normal.tres")
+const _PRELOAD_TRES_7 = preload("res://assets/theme/buttons/button_pressed.tres")
+const _PRELOAD_TRES_8 = preload("res://assets/theme/settings_ui/grabber_hover.tres")
+const _PRELOAD_TRES_9 = preload("res://assets/theme/settings_ui/grabber_normal.tres")
+const _PRELOAD_TRES_10 = preload("res://assets/theme/settings_ui/toggle_off.tres")
+const _PRELOAD_TRES_11 = preload("res://assets/theme/settings_ui/toggle_on.tres")
+const _PRELOAD_TRES_12 = preload("res://assets/theme/slot_buttons/empty_slot.tres")
+const _PRELOAD_TRES_13 = preload("res://assets/theme/slot_buttons/empty_slot_hover.tres")
+const _PRELOAD_TRES_14 = preload("res://assets/theme/slot_buttons/fiiled_slot_hover.tres")
+const _PRELOAD_TRES_15 = preload("res://assets/theme/slot_buttons/fiiled_slot_normal.tres")
+const _PRELOAD_TRES_16 = preload("res://assets/theme/slot_buttons/filled_slot_pressed.tres")
+
 # ---------------------------------------------------------
 # 1. SIGNALS
 # ---------------------------------------------------------

@@ -52,10 +52,10 @@ We defined over 10 User Stories to cover all game mechanics. Full details can be
 
 ### 2. Diagrams (Architecture and Workflow)
 We used AI tools to generate the system architecture.
-* [Godot Classes UML Diagram](./docs/diagrams/component_architecture_UML.jpg)
-* [Customer State Workflow](./docs/diagrams/customer_state_diagram.jpg)
-* [Local LLM Communication Architecture](./docs/diagrams/llm_communication_architecture.jpg)
-* [Gameplay Workflow (Core Loop)](./docs/diagrams/game_workflow.jpg)
+* [Godot Classes UML Diagram](./docs/diagrams/component_architecture_UML.png)
+* [Customer State Workflow](./docs/diagrams/customer_state_diagram.png)
+* [Local LLM Communication Architecture](./docs/diagrams/llm_communication_architecture.png)
+* [Gameplay Workflow (Core Loop)](./docs/diagrams/game_workflow.png)
 
 ### 3. Source Control (Git)
 The project uses Git with a branch-based workflow (e.g., `feature/cutting-station`, `bugfix/llm-timeout`).

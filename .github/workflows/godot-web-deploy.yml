@@ -35,14 +35,13 @@ jobs:
       - name: Create Web Build Directory
         run: mkdir -v -p build/web
 
-      - name: Export Web
-        env:
-          DISPLAY: ""
-          GODOT_DISABLE_CRASH_HANDLER: "1"
+      - name: Fix font imports for headless
         run: |
-          godot --headless --verbose --export-release "Web" build/web/index.html || true
-          # Verifică dacă fișierele au fost generate
-          ls -la build/web/
+          sed -i 's|theme/custom_font="uid://crfo7nlure7a2"||g' project.godot
+          sed -i 's|theme/custom="uid://icmwfh7h1jg8"||g' project.godot
+
+      - name: Export Web
+        run: godot --headless --verbose --export-release "Web" build/web/index.html
 
       - name: Add SharedArrayBuffer fix
         run: |

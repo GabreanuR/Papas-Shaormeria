@@ -43,10 +43,8 @@ func _on_request_completed(result, response_code, headers, body):
 				var recipe_data = inner_json.get_data()
 				if recipe_data is Dictionary and recipe_data.has("fusion_recipe"):
 					var final_recipe = recipe_data["fusion_recipe"]
-					print("🌮 Rețeta Fusion generată cu succes: ", final_recipe)
 					daily_recipe_ready.emit(final_recipe)
 					return
 					
 	# Fallback de siguranță în caz că AI-ul dă rateu (pentru a nu bloca jocul)
-	print("⚠️ Eroare la generarea rețetei AI. Folosim rețeta de fallback.")
 	daily_recipe_ready.emit(["carne_pui", "cartofi", "varza", "maioneza_usturoi"])

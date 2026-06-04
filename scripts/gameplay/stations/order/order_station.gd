@@ -25,6 +25,7 @@ var client_in_evaluare: Node = null # Ține minte exact cine e la tejghea acum
 var semn_closed_afisat: bool = false
 var clienti_serviti: int = 0
 var total_clienti_zi: int = 0
+var label_meniu_zilei: Label = null
 
 var lista_clienti = [
 	{ "lobby": preload("res://assets/graphics/characters/papalouie.png"), "zoom": preload("res://assets/graphics/characters/papalouie_zoomed.png") },
@@ -460,6 +461,7 @@ func arata_evaluare_finala(nota: int, textura_lipie: Texture2D, textura_suc: Tex
 	var s_wrapping := 0
 	var medie_generala := 0
 	var bacsis_primit := 0.0 
+	var are_bonus_fusion: bool = false
 	
 	if gm and "completed_pitas" in gm and gm.completed_pitas.size() > 0:
 		var ultima_shaorma = gm.completed_pitas.back()
@@ -475,18 +477,28 @@ func arata_evaluare_finala(nota: int, textura_lipie: Texture2D, textura_suc: Tex
 		if medie_generala >= 50:
 			bacsis_primit = (medie_generala / 100.0) * 5.00
 			
+			# VERIFICARE US9: Dacă a comandat Meniul Zilei, dublăm bacșișul!
+			if client_in_evaluare != null and _este_reteta_fusion(client_in_evaluare.comanda_mea, Global.daily_fusion_recipe):
+				bacsis_primit *= 2.0
+				are_bonus_fusion = true
+			
 		if gm.has_method("adauga_bacsis"):
 			gm.adauga_bacsis(bacsis_primit)
 
 	# --- 5. AFIȘARE PANOU SCORURI ---
 	if label_scor != null:
+		var text_bonus = ""
+		if are_bonus_fusion:
+			text_bonus = "\n⭐ FUSION MENU BONUS (x2) ⭐"
+			
 		label_scor.text = (
 			"Waiting Score: " + str(s_waiting) + "%\n" +
 			"Cutting Score: " + str(s_cutting) + "%\n" +
 			"Assembly Score: " + str(s_assembly) + "%\n" +
 			"Wrapping Score: " + str(s_wrapping) + "%\n" +
 			"---------------------\n" +
-			"TOTAL: " + str(medie_generala) + "%\n" +
+			"TOTAL: " + str(medie_generala) + "%" +
+			text_bonus + "\n" +
 			"Tip: +$ %.2f" % bacsis_primit
 		)
 		
@@ -700,44 +712,71 @@ func _arata_notificare_stire_tiktok(review_text: String, trend_ingredient_nou: S
 
 func _on_daily_recipe_ready(reteta: Array) -> void:
 	Global.daily_fusion_recipe = reteta
-	var text_reteta = ""
+	
+	if label_meniu_zilei == null:
+		var panel = PanelContainer.new()
+		panel.name = "PanouMeniuZilei"
+		
+		var stil_fundal = StyleBoxFlat.new()
+		stil_fundal.bg_color = Color(0.96, 0.93, 0.88, 0.95) # Crem cald opac
+		stil_fundal.set_corner_radius_all(12) # Margini rotunjite mai finuț
+		stil_fundal.set_content_margin_all(16)
+		
+		# --- BORDURĂ ÎN STILUL JOCULUI ---
+		stil_fundal.border_width_left = 4
+		stil_fundal.border_width_top = 4
+		stil_fundal.border_width_right = 4
+		stil_fundal.border_width_bottom = 4
+		stil_fundal.border_color = Color(0.25, 0.15, 0.1) # Maro închis, ca marginile posterelor
+		
+		# --- EFFECT DE UMBRĂ (3D Virtual) ---
+		stil_fundal.shadow_color = Color(0, 0, 0, 0.3)
+		stil_fundal.shadow_size = 6
+		stil_fundal.shadow_offset = Vector2(4, 4)
+		
+		panel.add_theme_stylebox_override("panel", stil_fundal)
+		
+		label_meniu_zilei = Label.new()
+		label_meniu_zilei.add_theme_font_size_override("font_size", 20)
+		label_meniu_zilei.add_theme_color_override("font_color", Color(0.25, 0.15, 0.1))
+		
+		# Folosim autowrap și aliniere stânga în interior, dar centrată pe foaie pentru buline
+		label_meniu_zilei.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		
+		panel.add_child(label_meniu_zilei)
+		$LobbyFrame.add_child(panel)
+		
+		# Poziționare finisată pe perete
+		panel.position = Vector2(860, 205)
+		panel.custom_minimum_size = Vector2(250, 180)
+		panel.z_index = 10
+
+	# --- FORMATARE CORECTĂ TEXT (Titlu centrat artificial, ingrediente aliniate la stânga) ---
+	var text_bbcode = "   ⭐ FUSION SPECIAL ⭐\n\n"
 	for ingredient in reteta:
 		var nume_curat = ingredient.replace("_", " ").capitalize()
-		text_reteta += "- " + nume_curat + "\n"
-	_arata_notificare_meniul_zilei(text_reteta)
+		text_bbcode += "  •  " + nume_curat + "\n"
+	
+	label_meniu_zilei.text = text_bbcode
 
-func _arata_notificare_meniul_zilei(ingrediente_text: String) -> void:
-	var canvas = CanvasLayer.new()
-	canvas.layer = 150 
-	
-	var panel_meniu = PanelContainer.new()
-	var stil_meniu = StyleBoxFlat.new()
-	
-	stil_meniu.bg_color = Color(0.1, 0.4, 0.2, 0.95) 
-	stil_meniu.set_corner_radius_all(15)
-	stil_meniu.set_content_margin_all(30)
-	
-	stil_meniu.border_width_left = 5
-	stil_meniu.border_width_top = 5
-	stil_meniu.border_width_right = 5
-	stil_meniu.border_width_bottom = 5
-	stil_meniu.border_color = Color(1.0, 0.85, 0.3) 
-	
-	panel_meniu.add_theme_stylebox_override("panel", stil_meniu)
-	
-	var text_meniu = Label.new()
-	text_meniu.text = "⭐ DAILY FUSION SPECIAL ⭐\nDouble points if you serve this exact recipe:\n\n" + ingrediente_text
-	text_meniu.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	text_meniu.add_theme_font_size_override("font_size", 24)
-	text_meniu.add_theme_color_override("font_color", Color.WHITE) 
-	text_meniu.add_theme_color_override("font_outline_color", Color.BLACK)
-	text_meniu.add_theme_constant_override("outline_size", 6)
-	
-	panel_meniu.add_child(text_meniu)
-	canvas.add_child(panel_meniu)
-	add_child(canvas)
-	
-	panel_meniu.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
-	
-	await get_tree().create_timer(5.0).timeout
-	canvas.queue_free()
+
+func _este_reteta_fusion(comanda_client: Array, reteta_zilei: Array) -> bool:
+	if reteta_zilei.is_empty(): 
+		return false
+		
+	var umplutura_client = []
+	for item in comanda_client:
+		# Ignorăm lipia și sucurile din comanda clientului
+		if item != "lipie" and not item.begins_with("suc_"):
+			umplutura_client.append(item)
+			
+	# Dacă numărul de ingrediente nu bate, clar nu e aceeași rețetă
+	if umplutura_client.size() != reteta_zilei.size():
+		return false
+		
+	# Verificăm dacă absolut toate ingredientele din meniul zilei se regăsesc în shaorma clientului
+	for ing in reteta_zilei:
+		if not umplutura_client.has(ing):
+			return false
+			
+	return true

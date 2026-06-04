@@ -49,6 +49,13 @@ jobs:
           cp web/coi-serviceworker.js build/web/coi-serviceworker.js
           sed -i 's|<head>|<head><script src="coi-serviceworker.js"></script>|' build/web/index.html
 
+      - name: Debug exported files
+        run: |
+          echo "=== Marime PCK ==="
+          du -sh build/web/*.pck || true
+          echo "=== Fisiere in build ==="
+          find build/web/ -type f -ls
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

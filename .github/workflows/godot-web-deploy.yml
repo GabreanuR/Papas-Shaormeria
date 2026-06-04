@@ -35,11 +35,11 @@ jobs:
       - name: Create Web Build Directory
         run: mkdir -v -p build/web
 
-      - name: Import Assets (3 passes pentru UID cache)
-        run: |
-          godot --headless --verbose --editor --quit || true
-          godot --headless --verbose --editor --quit || true
-          godot --headless --verbose --editor --quit || true
+      # - name: Import Assets (3 passes pentru UID cache)
+      #   run: |
+      #     godot --headless --verbose --editor --quit || true
+      #     godot --headless --verbose --editor --quit || true
+      #     godot --headless --verbose --editor --quit || true
 
       - name: Export Web
         run: godot --headless --verbose --export-release "Web" build/web/index.html

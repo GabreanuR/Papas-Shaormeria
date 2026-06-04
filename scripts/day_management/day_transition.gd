@@ -63,6 +63,35 @@ func _ready() -> void:
 		_set_state(DayState.NIGHT)
 	else:
 		_set_state(DayState.MORNING)
+		
+	if has_node("%BtnAchievements") and has_node("%AchievementsMenu"):
+			# Ascundem instanța statică din scenă ca să nu ne încurce
+			%AchievementsMenu.visible = false
+			
+			%BtnAchievements.pressed.connect(func():
+				# Creăm un strat nou (CanvasLayer) special pentru a aduce meniul în prim-plan complet
+				var canvas_layer = CanvasLayer.new()
+				canvas_layer.layer = 100 # Îl punem pe un strat foarte înalt ca să fie deasupra clădirii
+				add_child(canvas_layer)
+				
+				# Re-instanțiem meniul curat în acest strat
+				var achievements_scene = load("res://scenes/day_management/achievements_menu.tscn")
+				var menu_instance = achievements_scene.instantiate()
+				
+				# Ne asigurăm că se întinde pe tot ecranul jocului
+				menu_instance.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+				menu_instance.visible = true
+				
+				canvas_layer.add_child(menu_instance)
+				
+				# Când se apasă butonul Close din interior, ștergem întregul strat din memorie
+				var close_btn = menu_instance.get_node("%BtnClose")
+				if close_btn:
+					close_btn.pressed.disconnect(close_btn.pressed.get_connections()[0].callable) # deconectăm logica veche simplă
+					close_btn.pressed.connect(func():
+						canvas_layer.queue_free()
+					)
+			)
 
 func _set_state(new_state: DayState) -> void:
 	_current_state = new_state

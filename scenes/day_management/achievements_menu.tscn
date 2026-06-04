@@ -1,5 +1,64 @@
 [gd_scene format=3 uid="uid://bxrqpa5qi6v0c"]
 
-[node name="AchievementsMenu" type="Control" unique_id=1413360184]
+[ext_resource type="Theme" uid="uid://icmwfh7h1jg8" path="res://assets/theme/global_ui_theme.tres" id="2_theme"]
+
+[node name="AchievementsMenu" type="Control" unique_id=1666124012]
+visible = false
 layout_mode = 3
-anchors_preset = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=555117497]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.686275)
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=1827570253]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -250.0
+offset_right = 400.0
+offset_bottom = 250.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer" unique_id=1065501105]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="LblTitle" type="Label" parent="PanelContainer/VBoxContainer" unique_id=1719300743]
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
+text = "🏆 SHAORMA ACHIEVEMENTS 🏆"
+horizontal_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/VBoxContainer" unique_id=1662804657]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="GridContainer" type="GridContainer" parent="PanelContainer/VBoxContainer/ScrollContainer" unique_id=1964105043]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+columns = 2
+
+[node name="BtnClose" type="Button" parent="PanelContainer/VBoxContainer" unique_id=1139953676]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Close"

@@ -27,6 +27,7 @@ signal money_changed(new_amount: float)
 signal daily_earnings_changed(amount: float)
 ## Emitted when the day counter advances so UI components can update reactively.
 signal day_changed(new_day: int)
+signal achievement_unlocked(id: String)
 
 # ---------------------------------------------------------
 # 2. ENUMS
@@ -216,6 +217,32 @@ func save_game_to_disk() -> void:
 	if file:
 		file.store_string(JSON.stringify(current_save))
 		file.close()
+		
+## Unlocks an achievement by ID, saves progress to disk, and emits a signal.
+func unlock_achievement(achievement_id: String) -> void:
+	# Ne asigurăm că dicționarul de achievements există în salvarea curentă
+	if not current_save.has("achievements"):
+		current_save["achievements"] = {}
+		
+	# Dacă realizarea a fost deja deblocată, nu facem nimic (prevenim bug-uri de spam)
+	if current_save["achievements"].has(achievement_id) and current_save["achievements"][achievement_id] == true:
+		return
+		
+	# Marcăm realizarea ca deblocată în salvarea curentă (va fi reținută permanent)
+	current_save["achievements"][achievement_id] = true
+	
+	# Salvăm fizic pe disk starea actualizată ca să nu se piardă dacă playerul închide jocul
+	save_game_to_disk()
+	
+	# Trimitem semnalul în joc (util pentru notificări UI animate)
+	achievement_unlocked.emit(achievement_id)
+	print("🏆 ACHIEVEMENT UNLOCKED: ", achievement_id)
+
+## Helper function to check if a specific achievement is unlocked.
+func is_achievement_unlocked(achievement_id: String) -> bool:
+	if current_save.has("achievements") and current_save["achievements"].has(achievement_id):
+		return current_save["achievements"][achievement_id]
+	return false
 
 # ---------------------------------------------------------
 # 9. PRIVATE FUNCTIONS

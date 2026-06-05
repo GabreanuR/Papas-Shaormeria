@@ -751,7 +751,7 @@ func _on_daily_recipe_ready(reteta: Array) -> void:
 		$LobbyFrame.add_child(panel)
 		
 		# Poziționare finisată pe perete
-		panel.position = Vector2(860, 205)
+		panel.position = Vector2(860, 105)
 		panel.custom_minimum_size = Vector2(250, 180)
 		panel.z_index = 10
 

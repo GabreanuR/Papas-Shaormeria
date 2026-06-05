@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://bxrqpa5qi6v0c"]
 
+[ext_resource type="Script" uid="uid://b5q127vbypmla" path="res://scripts/day_management/achievements_menu.gd" id="2_cgy6m"]
 [ext_resource type="Theme" uid="uid://icmwfh7h1jg8" path="res://assets/theme/global_ui_theme.tres" id="2_theme"]
 
 [node name="AchievementsMenu" type="Control" unique_id=1666124012]
@@ -11,6 +12,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("2_theme")
+script = ExtResource("2_cgy6m")
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=555117497]
 layout_mode = 1
@@ -48,6 +50,7 @@ horizontal_alignment = 1
 [node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/VBoxContainer" unique_id=1662804657]
 layout_mode = 2
 size_flags_vertical = 3
+horizontal_scroll_mode = 0
 
 [node name="GridContainer" type="GridContainer" parent="PanelContainer/VBoxContainer/ScrollContainer" unique_id=1964105043]
 unique_name_in_owner = true

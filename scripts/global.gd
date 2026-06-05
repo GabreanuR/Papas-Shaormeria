@@ -40,7 +40,18 @@ const SAVE_DIR := "user://saves/"
 const SAVE_FILE_TEMPLATE := "user://saves/save_slot_%d.json"
 const MAX_SAVE_SLOTS := 3
 const DEFAULT_STARTING_MONEY := 150.0
-
+const ACHIEVEMENTS_DATA = {
+	"first_bite": {"title": "First Bite", "desc": "Serve your very first customer."},
+	"perfectionist": {"title": "Perfectionist", "desc": "Achieve 5 perfect orders (100 score)."},
+	"rolling_in_dough": {"title": "Rolling in Dough", "desc": "Accumulate $500.00 in your wallet."},
+	"night_owl": {"title": "Night Owl", "desc": "Survive and complete the first 3 days."},
+	"influencers_choice": {"title": "Influencer's Choice", "desc": "Successfully serve a Culinary Influencer."},
+	"familiar_faces": {"title": "Familiar Faces", "desc": "Successfully serve a Loyal Customer."},
+	"fusion_master": {"title": "Fusion Master", "desc": "Serve an order matching the Daily Fusion Recipe."},
+	"oops": {"title": "Oops...", "desc": "Serve a bad order with a score below 50."},
+	"crowd_pleaser": {"title": "Crowd Pleaser", "desc": "Serve a total milestone of 20 customers."},
+	"kitchen_disaster": {"title": "Kitchen Disaster", "desc": "Get an absolute score of 0 on an order."}
+}
 
 # ---------------------------------------------------------
 # 4. PUBLIC VARIABLES
@@ -219,24 +230,71 @@ func save_game_to_disk() -> void:
 		file.close()
 		
 ## Unlocks an achievement by ID, saves progress to disk, and emits a signal.
-func unlock_achievement(achievement_id: String) -> void:
-	# Ne asigurăm că dicționarul de achievements există în salvarea curentă
-	if not current_save.has("achievements"):
-		current_save["achievements"] = {}
+func unlock_achievement(id: String) -> void:
+	# Verificăm dacă NU este deja deblocat
+	if not current_save["achievements"].has(id) or current_save["achievements"][id] == false:
+		current_save["achievements"][id] = true
 		
-	# Dacă realizarea a fost deja deblocată, nu facem nimic (prevenim bug-uri de spam)
-	if current_save["achievements"].has(achievement_id) and current_save["achievements"][achievement_id] == true:
-		return
-		
-	# Marcăm realizarea ca deblocată în salvarea curentă (va fi reținută permanent)
-	current_save["achievements"][achievement_id] = true
+		# Declanșăm animația de notificare!
+		if ACHIEVEMENTS_DATA.has(id):
+			_arata_notificare_trofeu(ACHIEVEMENTS_DATA[id]["title"])
+			
+func _arata_notificare_trofeu(titlu_trofeu: String) -> void:
+	var canvas = CanvasLayer.new()
+	canvas.layer = 200 # Strat foarte înalt ca să apară peste orice
+	add_child(canvas) # Îl legăm direct de Global
 	
-	# Salvăm fizic pe disk starea actualizată ca să nu se piardă dacă playerul închide jocul
-	save_game_to_disk()
+	var panel = PanelContainer.new()
+	var stil = StyleBoxFlat.new()
+	stil.bg_color = Color(0.12, 0.12, 0.12, 0.95) # Gri închis elegant
+	stil.border_color = Color(0.95, 0.75, 0.2, 1.0) # Margine aurie
+	stil.border_width_left = 3; stil.border_width_top = 3; stil.border_width_right = 3; stil.border_width_bottom = 3
+	stil.set_corner_radius_all(10)
+	stil.set_content_margin_all(15)
+	panel.add_theme_stylebox_override("panel", stil)
 	
-	# Trimitem semnalul în joc (util pentru notificări UI animate)
-	achievement_unlocked.emit(achievement_id)
-	print("🏆 ACHIEVEMENT UNLOCKED: ", achievement_id)
+	var hbox = HBoxContainer.new()
+	hbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	
+	var icon_lbl = Label.new()
+	icon_lbl.text = "🏆"
+	icon_lbl.add_theme_font_size_override("font_size", 36)
+	
+	var vbox = VBoxContainer.new()
+	var subtitlu = Label.new()
+	subtitlu.text = "ACHIEVEMENT UNLOCKED"
+	subtitlu.add_theme_font_size_override("font_size", 12)
+	subtitlu.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6))
+	
+	var titlu = Label.new()
+	titlu.text = titlu_trofeu
+	titlu.add_theme_font_size_override("font_size", 18)
+	titlu.add_theme_color_override("font_color", Color(0.95, 0.75, 0.2)) # Auriu
+	
+	vbox.add_child(subtitlu)
+	vbox.add_child(titlu)
+	
+	hbox.add_child(icon_lbl)
+	hbox.add_child(vbox)
+	panel.add_child(hbox)
+	canvas.add_child(panel)
+	
+	# O punem în afara ecranului în dreapta sus
+	panel.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+	panel.position = Vector2(1920, 60) # Ascunsă inițial după marginea din dreapta
+	panel.size = Vector2(320, 80)
+	
+	# Magia mișcării (Tween)
+	var tween = create_tween()
+	# Intră pe ecran cu un mic efect de "bounce" (recul)
+	tween.tween_property(panel, "position:x", 1920 - 350, 0.6).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	# Stă pe ecran 4 secunde ca să poată fi citită
+	tween.tween_interval(4.0)
+	# Iese de pe ecran glisând înapoi
+	tween.tween_property(panel, "position:x", 1920, 0.5).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+	
+	# Când termină, curăță tot din memorie
+	tween.finished.connect(canvas.queue_free)
 
 ## Helper function to check if a specific achievement is unlocked.
 func is_achievement_unlocked(achievement_id: String) -> bool:

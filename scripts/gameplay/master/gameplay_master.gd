@@ -55,7 +55,8 @@ func save_current_pita() -> void:
 	if current_pita_state["total_score"] == 100:
 		Global.daily_stats["perfect_orders"] += 1
 		
-		Global.unlock_achievement("perfectionist")
+		if Global.daily_stats["perfect_orders"] >= 5:
+			Global.unlock_achievement("perfectionist")
 	
 	# 2. Numărăm clientul (fiecare salvare e un client servit)
 	Global.daily_stats["customers_served"] += 1

@@ -2,3 +2,10 @@ res://scripts/day_management/day_transition.gd
 res://scripts/gameplay/master/gameplay_master.gd
 res://scripts/global.gd
 res://scripts/day_management/achievements_menu.gd
+res://scenes/day_management/achievements_menu.tscn
+res://assets/theme/global_ui_theme.tres
+res://assets/theme/light_texture.tres
+res://addons/gut/gui/editor_globals.gd
+res://addons/gut/gui/EditorRadioButton.tres
+res://assets/graphics/shaders/assembly_clipping.gdshader
+res://scripts/gameplay/stations/order/order_station.gd

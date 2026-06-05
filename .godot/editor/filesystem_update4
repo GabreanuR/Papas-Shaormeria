@@ -1,2 +1,4 @@
 res://scripts/day_management/day_transition.gd
 res://scripts/gameplay/master/gameplay_master.gd
+res://scripts/global.gd
+res://scripts/day_management/achievements_menu.gd

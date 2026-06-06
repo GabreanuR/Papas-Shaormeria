@@ -19,3 +19,6 @@ res://autoloads/audio_manager.gd
 res://autoloads/audio_manager.tscn
 res://scenes/day_management/day_transition.tscn
 res://scripts/entities/characters/customer.gd
+res://scenes/day_management/customization_menu.tscn
+res://scripts/day_management/customization_menu.gd
+res://scenes/entities/characters/customer.tscn

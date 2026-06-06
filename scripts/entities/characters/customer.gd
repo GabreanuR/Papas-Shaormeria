@@ -9,9 +9,9 @@ var ai_dialogue_is_ready: bool = false
 
 @onready var sprite = $Sprite2D
 @onready var buton_comanda = $TextureButton
-@onready var _laser_glasses: Sprite2D = $LaserGlasses
-@onready var _angel_wings: Sprite2D = $AngelWings
-@onready var _super_shoes: Sprite2D = $SuperShoes
+@onready var _laser_glasses: Sprite2D = get_node_or_null("Sprite2D/LaserGlasses")
+@onready var _angel_wings: Sprite2D = get_node_or_null("Sprite2D/AngelWings")
+@onready var _super_shoes: Sprite2D = get_node_or_null("Sprite2D/SuperShoes")
 
 var textura_lobby: Texture2D
 var textura_zoom: Texture2D
@@ -51,7 +51,12 @@ func _ready():
 	if textura_lobby != null:
 		sprite.texture = textura_lobby
 
-	_apply_equipped_accessory()
+	_apply_equipped_accessories()
+	
+	# Listen for changes so the Paper Doll updates instantly in the HUB
+	if not Global.equipped_item_changed.is_connected(_on_equipped_item_changed):
+		Global.equipped_item_changed.connect(_on_equipped_item_changed)
+
 	pregateste_client_nou()
 	pornește_animatie_buton()
 
@@ -118,11 +123,13 @@ func pregateste_client_nou():
 func seteaza_sprite_comanda():
 	if textura_zoom != null:
 		sprite.texture = textura_zoom
+		_apply_equipped_accessories()
 
 
 func seteaza_sprite_lobby():
 	if textura_lobby != null:
 		sprite.texture = textura_lobby
+		_apply_equipped_accessories()
 
 
 func pornește_animatie_buton():
@@ -166,21 +173,36 @@ func _on_texture_button_pressed():
 # ITEM CUSTOMIZATION (Paper Doll)
 # ---------------------------------------------------------
 
-## Hides all accessory sprites, then shows ONLY the one that is currently
+## Hides all accessory sprites, then shows those that are currently
 ## equipped in Global. Called once in _ready().
-func _apply_equipped_accessory() -> void:
-	_laser_glasses.hide()
-	_angel_wings.hide()
-	_super_shoes.hide()
+func _apply_equipped_accessories() -> void:
+	# Hide everything first
+	if _laser_glasses:
+		_laser_glasses.hide()
+	if _angel_wings:
+		_angel_wings.hide()
+	if _super_shoes:
+		_super_shoes.hide()
 
-	var equipped_id := Global.get_equipped_item()
-	if equipped_id == "" or not Global.ITEMS_DATA.has(equipped_id):
+	# Condiție strictă: Accesoriile sunt desenate DOAR pe Papa Louie (textura întreagă)
+	if sprite == null or sprite.texture == null:
+		return
+	var tex_name = sprite.texture.resource_path.get_file()
+	if tex_name != "papalouie.png":
 		return
 
-	var node_name: String = Global.ITEMS_DATA[equipped_id]["node_name"]
-	var accessory := get_node_or_null(node_name) as Sprite2D
-	if accessory:
-		accessory.show()
+	# Show each equipped item
+	for item_id in Global.get_equipped_items():
+		if not Global.ITEMS_DATA.has(item_id):
+			continue
+		var node_name: String = Global.ITEMS_DATA[item_id]["node_name"]
+		# Trebuie să căutăm în copilul Sprite2D
+		var accessory := get_node_or_null("Sprite2D/" + node_name) as Sprite2D
+		if accessory:
+			accessory.show()
+
+func _on_equipped_item_changed(_item_id: String) -> void:
+	_apply_equipped_accessories()
 
 ## Gameplay buff helpers — other scripts call these to apply buffs.
 func get_cooking_multiplier() -> float:

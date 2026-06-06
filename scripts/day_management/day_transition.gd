@@ -22,7 +22,8 @@ var _current_state: DayState = DayState.MORNING
 # BUTOANE DIMINEAȚA
 # ---------------------------------------------------------
 @onready var _btn_start_day: TextureButton = %BtnStartDay
-@onready var _btn_customize: TextureButton = %BtnCustomize
+@onready var _btn_customize: TextureButton = get_node_or_null("%BtnCustomize")
+@onready var _btn_character_overlay: TextureButton = %BtnCharacterOverlay
 @onready var _btn_upgrades: TextureButton = %BtnUpgrades
 @onready var _btn_achievements: TextureButton = %BtnAchievements
 
@@ -44,6 +45,15 @@ func _ready() -> void:
 	# Ne definește nevoia de rigoare, fără să depindem exclusiv de Inspector.
 	if _top_bar and _top_bar.has_method("_setup_hub_mode"):
 		_top_bar._setup_hub_mode()
+		
+	# Ascundem butonul de comandă (TextureButton) al caracterului din HUB
+	# pentru că nu dă comenzi aici, și îi oprim și logica de pierdere a răbdării.
+	var hub_customer = _morning_container.get_node_or_null("Customer")
+	if hub_customer:
+		if hub_customer.buton_comanda:
+			hub_customer.buton_comanda.hide()
+		hub_customer.set_process(false)
+		hub_customer.scade_rabdare = false
 
 	if day_music:
 		AudioManager.play_music(day_music, 1.5)
@@ -52,17 +62,35 @@ func _ready() -> void:
 	_btn_start_day.pressed.connect(_on_start_day_pressed)
 	_btn_next_day.pressed.connect(_on_next_day_pressed)
 	
-	# Conectăm butoanele pentru a deschide scenele instanțiate
-	_btn_customize.pressed.connect(func(): _customize_menu.show())
-	_btn_upgrades.pressed.connect(func(): _upgrades_menu.show())
-	#_btn_achievements.pressed.connect(func(): _achievements_menu.show())
+	# Muta meniurile în CanvasLayer ca să fure corect mouse-ul și să oprească luminile
+	call_deferred("_setup_menu_layers")
 
+	# Conectăm butoanele pentru a deschide scenele instanțiate
+	if _btn_customize:
+		_btn_customize.pressed.connect(func(): _customize_menu.show_menu())
+		
+	if _btn_character_overlay:
+		# REPARAȚIE BUG: TextureButton fără textură nu prinde click-uri în Godot!
+		if _btn_character_overlay.texture_normal == null:
+			var empty_tex = PlaceholderTexture2D.new()
+			empty_tex.size = _btn_character_overlay.size
+			_btn_character_overlay.texture_normal = empty_tex
+			_btn_character_overlay.modulate.a = 0.0 # Complet transparent
+			
+		_btn_character_overlay.pressed.connect(func(): _customize_menu.show_menu())
+		
+	_btn_upgrades.pressed.connect(func(): _upgrades_menu.show())
+	
 	# Inițializăm efectul de glow pentru toate butoanele
 	_setup_button_glow(_btn_start_day)
-	_setup_button_glow(_btn_customize)
+	if _btn_customize:
+		_setup_button_glow(_btn_customize)
 	_setup_button_glow(_btn_upgrades)
 	_setup_button_glow(_btn_achievements)
 
+	if _btn_character_overlay:
+		_setup_button_glow(_btn_character_overlay)
+		
 	# Verificăm starea din Global
 	if Global.is_night:
 		_set_state(DayState.NIGHT)
@@ -101,6 +129,23 @@ func _ready() -> void:
 					canvas_layer.queue_free()
 				)
 		)
+
+func _setup_menu_layers() -> void:
+	# Pentru a bloca automat interacțiunile cu fundalul și a declanșa mouse_exited
+	# (ca să se oprească luminile butoanelor), punem meniurile statice în CanvasLayers
+	if _customize_menu and _customize_menu.get_parent():
+		var layer = CanvasLayer.new()
+		layer.layer = 100
+		_customize_menu.get_parent().remove_child(_customize_menu)
+		add_child(layer)
+		layer.add_child(_customize_menu)
+
+	if _upgrades_menu and _upgrades_menu.get_parent():
+		var layer2 = CanvasLayer.new()
+		layer2.layer = 100
+		_upgrades_menu.get_parent().remove_child(_upgrades_menu)
+		add_child(layer2)
+		layer2.add_child(_upgrades_menu)
 
 func _set_state(new_state: DayState) -> void:
 	_current_state = new_state

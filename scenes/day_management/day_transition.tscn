@@ -8,10 +8,10 @@
 [ext_resource type="PackedScene" uid="uid://cmivhurjraqxm" path="res://scenes/day_management/customization_menu.tscn" id="4_eobbb"]
 [ext_resource type="Texture2D" uid="uid://detqtqywu6ajt" path="res://assets/graphics/ui/day_transition_buttons/start_game_button_normal.png" id="4_i85vr"]
 [ext_resource type="PackedScene" uid="uid://dkivk3gcy574l" path="res://scenes/day_management/upgrades_menu.tscn" id="5_5p5ns"]
+[ext_resource type="PackedScene" uid="uid://fd4aj0bemigw" path="res://scenes/entities/characters/customer.tscn" id="6_dlb6j"]
 [ext_resource type="PackedScene" uid="uid://bxrqpa5qi6v0c" path="res://scenes/day_management/achievements_menu.tscn" id="6_kep8y"]
 [ext_resource type="Texture2D" uid="uid://p0kkhobgin3j" path="res://assets/graphics/ui/day_transition_buttons/achievement_button_normal.png" id="7_5p5ns"]
 [ext_resource type="Texture2D" uid="uid://dp45ndy6awawo" path="res://assets/graphics/ui/day_transition_buttons/upgrades_button_normal.png" id="7_86j12"]
-[ext_resource type="Texture2D" uid="uid://ct3gbjn8h7ww6" path="res://assets/graphics/characters/papalouie.png" id="7_hs5un"]
 [ext_resource type="Texture2D" uid="uid://dk35cuhxletfk" path="res://assets/graphics/ui/day_transition_buttons/upgrades_button_hover.png" id="8_i85vr"]
 [ext_resource type="PackedScene" uid="uid://dx8edl0k8nior" path="res://scenes/components/flickering_light.tscn" id="8_kep8y"]
 [ext_resource type="PackedScene" uid="uid://cdoeho2o7r6yi" path="res://scenes/day_management/summary_panel.tscn" id="8_pauun"]
@@ -67,11 +67,34 @@ texture_normal = ExtResource("4_i85vr")
 position = Vector2(85, 202)
 scale = Vector2(2.42598, 5.3365235)
 
-[node name="CustomizationMenu" parent="MorningMenusContainer" unique_id=1457390704 instance=ExtResource("4_eobbb")]
-unique_name_in_owner = true
-layout_mode = 0
+[node name="Customer" parent="MorningMenusContainer" unique_id=1721532171 instance=ExtResource("6_dlb6j")]
+z_index = 300
+position = Vector2(188, 733)
+scale = Vector2(0.5, 0.5)
 
-[node name="BtnCustomize" type="TextureButton" parent="MorningMenusContainer" unique_id=1881062554]
+[node name="CustomizationMenu" parent="MorningMenusContainer" unique_id=323954389 instance=ExtResource("4_eobbb")]
+unique_name_in_owner = true
+z_index = 200
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -174.0
+offset_top = -148.5
+offset_right = 174.0
+offset_bottom = 148.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="BtnCustomize" type="TextureButton" parent="MorningMenusContainer" unique_id=1224084869]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="BtnCharacterOverlay" type="TextureButton" parent="MorningMenusContainer" unique_id=756020090]
 unique_name_in_owner = true
 material = SubResource("CanvasItemMaterial_86j12")
 layout_mode = 0
@@ -80,9 +103,8 @@ offset_top = 670.0
 offset_right = 404.0
 offset_bottom = 1240.0
 scale = Vector2(0.73398805, 0.66738683)
-texture_normal = ExtResource("7_hs5un")
 
-[node name="FlickeringLight" parent="MorningMenusContainer/BtnCustomize" unique_id=182394497 instance=ExtResource("8_kep8y")]
+[node name="FlickeringLight" parent="MorningMenusContainer/BtnCharacterOverlay" unique_id=182394497 instance=ExtResource("8_kep8y")]
 position = Vector2(121.00001, 312)
 scale = Vector2(4.77495, 8.095323)
 

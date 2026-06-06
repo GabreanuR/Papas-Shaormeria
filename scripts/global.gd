@@ -170,7 +170,7 @@ func get_default_save_data(shop_name: String = "Papa's Shaormeria") -> Dictionar
 		"unlocked_upgrades": [],
 		"customization": {
 			"unlocked_items": [],
-			"equipped_item": ""
+			"equipped_items": []
 		},
 		"achievements": {}
 	}
@@ -346,9 +346,19 @@ func is_item_unlocked(item_id: String) -> bool:
 	var items: Array = current_save.get("customization", {}).get("unlocked_items", [])
 	return item_id in items
 
-## Returns the ID of the currently equipped item, or "" if none.
+## Returns the list of currently equipped item IDs.
+func get_equipped_items() -> Array:
+	return current_save.get("customization", {}).get("equipped_items", [])
+
+## Returns true if a specific item is currently equipped.
+func is_item_equipped(item_id: String) -> bool:
+	return item_id in get_equipped_items()
+
+## Legacy helper — returns the first equipped item or "" (for scripts that
+## only care about a single item).
 func get_equipped_item() -> String:
-	return current_save.get("customization", {}).get("equipped_item", "")
+	var items := get_equipped_items()
+	return items[0] if items.size() > 0 else ""
 
 ## Attempts to purchase an item. Returns true on success.
 func purchase_item(item_id: String) -> bool:
@@ -367,49 +377,58 @@ func purchase_item(item_id: String) -> bool:
 	current_save["money"] -= price
 	money_changed.emit(current_save["money"])
 
-	# Ensure the customization sub-dict exists (forward-compatible saves)
-	if not current_save.has("customization"):
-		current_save["customization"] = {"unlocked_items": [], "equipped_item": ""}
-	if not current_save["customization"].has("unlocked_items"):
-		current_save["customization"]["unlocked_items"] = []
-
+	_ensure_customization_dict()
 	current_save["customization"]["unlocked_items"].append(item_id)
 	save_game_to_disk()
 	return true
 
-## Equips an owned item (exclusive — unequips the previous one).
+## Equips an owned item (additive — multiple items can be worn).
 func equip_item(item_id: String) -> void:
 	if not is_item_unlocked(item_id):
 		push_error("Cannot equip '%s': not unlocked." % item_id)
 		return
 
-	if not current_save.has("customization"):
-		current_save["customization"] = {"unlocked_items": [], "equipped_item": ""}
+	_ensure_customization_dict()
 
-	current_save["customization"]["equipped_item"] = item_id
+	var equipped: Array = current_save["customization"]["equipped_items"]
+	if item_id not in equipped:
+		equipped.append(item_id)
+
 	equipped_item_changed.emit(item_id)
 	save_game_to_disk()
 
-## Unequips whatever is currently worn.
-func unequip_item() -> void:
-	if not current_save.has("customization"):
-		return
+## Unequips a specific item.
+func unequip_item(item_id: String = "") -> void:
+	_ensure_customization_dict()
 
-	current_save["customization"]["equipped_item"] = ""
+	var equipped: Array = current_save["customization"]["equipped_items"]
+
+	if item_id == "":
+		# Legacy call — clear everything
+		equipped.clear()
+	else:
+		equipped.erase(item_id)
+
 	equipped_item_changed.emit("")
 	save_game_to_disk()
 
+## Ensures the customization sub-dictionary has the correct structure.
+func _ensure_customization_dict() -> void:
+	if not current_save.has("customization"):
+		current_save["customization"] = {"unlocked_items": [], "equipped_items": []}
+	if not current_save["customization"].has("unlocked_items"):
+		current_save["customization"]["unlocked_items"] = []
+	if not current_save["customization"].has("equipped_items"):
+		current_save["customization"]["equipped_items"] = []
+
 ## Returns the gameplay multiplier for a given buff_type.
-## If no matching item is equipped, returns 1.0 (neutral).
+## Checks ALL equipped items — returns the buff if any match.
 func get_buff_multiplier(buff_type: String) -> float:
-	var equipped := get_equipped_item()
-	if equipped == "" or not ITEMS_DATA.has(equipped):
-		return 1.0
-
-	var item_data: Dictionary = ITEMS_DATA[equipped]
-	if item_data["buff_type"] == buff_type:
-		return item_data["buff_value"]
-
+	for item_id in get_equipped_items():
+		if ITEMS_DATA.has(item_id):
+			var item_data: Dictionary = ITEMS_DATA[item_id]
+			if item_data["buff_type"] == buff_type:
+				return item_data["buff_value"]
 	return 1.0
 
 ## Convenience shortcuts used by Customer and other gameplay scripts.

@@ -50,7 +50,7 @@ func _ready() -> void:
 	# Conectăm butoanele pentru a deschide scenele instanțiate
 	_btn_customize.pressed.connect(func(): _customize_menu.show())
 	_btn_upgrades.pressed.connect(func(): _upgrades_menu.show())
-	_btn_achievements.pressed.connect(func(): _achievements_menu.show())
+	#_btn_achievements.pressed.connect(func(): _achievements_menu.show())
 
 	# Inițializăm efectul de glow pentru toate butoanele
 	_setup_button_glow(_btn_start_day)
@@ -63,6 +63,39 @@ func _ready() -> void:
 		_set_state(DayState.NIGHT)
 	else:
 		_set_state(DayState.MORNING)
+		
+	if has_node("%BtnAchievements") and has_node("%AchievementsMenu"):
+		#%AchievementsMenu.visible = false
+		%AchievementsMenu.queue_free()
+		
+		# Ștergem conectarea veche simplă a colegului ca să nu se bată cap în cap cu CanvasLayer-ul nostru
+		if _btn_achievements.pressed.is_connected(func(): _achievements_menu.show()):
+			_btn_achievements.pressed.disconnect(func(): _achievements_menu.show())
+			
+		%BtnAchievements.pressed.connect(func():
+			# REPARAȚIE BUG #2: Dacă există deja un popup activ pe ecran, nu mai creăm altul!
+			if get_tree().get_nodes_in_group("active_achievements_popup").size() > 0:
+				return
+				
+			var canvas_layer = CanvasLayer.new()
+			canvas_layer.layer = 100
+			# Adăugăm stratul într-un grup ca să îl putem detecta la următorul click
+			canvas_layer.add_to_group("active_achievements_popup") 
+			add_child(canvas_layer)
+			
+			var achievements_scene = load("res://scenes/day_management/achievements_menu.tscn")
+			var menu_instance = achievements_scene.instantiate()
+			
+			menu_instance.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+			menu_instance.visible = true
+			canvas_layer.add_child(menu_instance)
+			
+			var close_btn = menu_instance.get_node("%BtnClose")
+			if close_btn:
+				close_btn.pressed.connect(func():
+					canvas_layer.queue_free()
+				)
+		)
 
 func _set_state(new_state: DayState) -> void:
 	_current_state = new_state
@@ -74,7 +107,6 @@ func _set_state(new_state: DayState) -> void:
 			_summary_menu.hide()     # Close summary panel from previous night
 			_upgrades_menu.hide()    # Ensure modals are closed on re-entry
 			_customize_menu.hide()
-			_achievements_menu.hide()
 			_morning_container.show()
 			_top_bar.show()
 

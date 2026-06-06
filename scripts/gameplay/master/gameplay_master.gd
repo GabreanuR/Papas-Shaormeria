@@ -54,9 +54,27 @@ func save_current_pita() -> void:
 	# 1. Numărăm dacă șaorma e "Perfectă" 
 	if current_pita_state["total_score"] == 100:
 		Global.daily_stats["perfect_orders"] += 1
+		
+		if Global.daily_stats["perfect_orders"] >= 5:
+			Global.unlock_achievement("perfectionist")
 	
 	# 2. Numărăm clientul (fiecare salvare e un client servit)
 	Global.daily_stats["customers_served"] += 1
+	
+	# 🏆 DECLANȘATOARE REALIZĂRI (Achievements Core Triggers)
+	Global.unlock_achievement("first_bite")
+	
+	var score = current_pita_state["total_score"]
+	if score == 0:
+		Global.unlock_achievement("kitchen_disaster")
+	elif score < 50:
+		Global.unlock_achievement("oops")
+		
+	if Global.daily_stats["customers_served"] >= 20:
+		Global.unlock_achievement("crowd_pleaser")
+		
+	if Global.current_save["money"] >= 500.0:
+		Global.unlock_achievement("rolling_in_dough")
 	
 	# 3. Adăugăm la istoric
 	completed_pitas.append(current_pita_state.duplicate(true))

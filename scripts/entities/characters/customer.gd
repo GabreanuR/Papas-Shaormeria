@@ -9,6 +9,9 @@ var ai_dialogue_is_ready: bool = false
 
 @onready var sprite = $Sprite2D
 @onready var buton_comanda = $TextureButton
+@onready var _laser_glasses: Sprite2D = $LaserGlasses
+@onready var _angel_wings: Sprite2D = $AngelWings
+@onready var _super_shoes: Sprite2D = $SuperShoes
 
 var textura_lobby: Texture2D
 var textura_zoom: Texture2D
@@ -47,7 +50,8 @@ var sucuri_disponibile: Array = [
 func _ready():
 	if textura_lobby != null:
 		sprite.texture = textura_lobby
-		
+
+	_apply_equipped_accessory()
 	pregateste_client_nou()
 	pornește_animatie_buton()
 
@@ -100,8 +104,8 @@ func pregateste_client_nou():
 	genereaza_comanda_random()
 	a_dat_comanda = false
 	
-	var rabdare_initiala := rabdare_maxima
-	
+	var rabdare_initiala := rabdare_maxima * Global.get_patience_multiplier()
+
 	if is_loyal_customer and CustomerHistoryScript.last_order_was_wrong():
 		rabdare_initiala *= 0.9
 	
@@ -157,3 +161,33 @@ func _on_texture_button_pressed():
 		seteaza_sprite_comanda()
 		a_fost_apasat.emit(comanda_mea)
 		a_dat_comanda = true
+
+# ---------------------------------------------------------
+# ITEM CUSTOMIZATION (Paper Doll)
+# ---------------------------------------------------------
+
+## Hides all accessory sprites, then shows ONLY the one that is currently
+## equipped in Global. Called once in _ready().
+func _apply_equipped_accessory() -> void:
+	_laser_glasses.hide()
+	_angel_wings.hide()
+	_super_shoes.hide()
+
+	var equipped_id := Global.get_equipped_item()
+	if equipped_id == "" or not Global.ITEMS_DATA.has(equipped_id):
+		return
+
+	var node_name: String = Global.ITEMS_DATA[equipped_id]["node_name"]
+	var accessory := get_node_or_null(node_name) as Sprite2D
+	if accessory:
+		accessory.show()
+
+## Gameplay buff helpers — other scripts call these to apply buffs.
+func get_cooking_multiplier() -> float:
+	return Global.get_cooking_multiplier()
+
+func get_tips_multiplier() -> float:
+	return Global.get_tips_multiplier()
+
+func get_patience_multiplier() -> float:
+	return Global.get_patience_multiplier()

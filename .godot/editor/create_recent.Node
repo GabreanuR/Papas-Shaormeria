@@ -1,3 +1,4 @@
+Sprite2D
 AudioStreamPlayer
 Control
 PanelContainer
@@ -11,4 +12,3 @@ CanvasLayer
 Panel
 TextureButton
 CenterContainer
-ColorRect

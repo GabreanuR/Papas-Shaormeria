@@ -28,6 +28,7 @@ signal daily_earnings_changed(amount: float)
 ## Emitted when the day counter advances so UI components can update reactively.
 signal day_changed(new_day: int)
 signal achievement_unlocked(id: String)
+signal equipped_item_changed(item_id: String)
 
 # ---------------------------------------------------------
 # 2. ENUMS
@@ -51,6 +52,35 @@ const ACHIEVEMENTS_DATA = {
 	"oops": {"title": "Oops...", "desc": "Serve a bad order with a score below 50."},
 	"crowd_pleaser": {"title": "Crowd Pleaser", "desc": "Serve a total milestone of 20 customers."},
 	"kitchen_disaster": {"title": "Kitchen Disaster", "desc": "Get an absolute score of 0 on an order."}
+}
+
+## Item shop database — prices and gameplay buff identifiers.
+## Each buff_type maps to a specific multiplier in the Customer script.
+const ITEMS_DATA := {
+	"laser_glasses": {
+		"title": "Laser Glasses",
+		"desc": "Decreases cooking time by 50%.",
+		"price": 200.0,
+		"buff_type": "cooking_speed",
+		"buff_value": 0.5,
+		"node_name": "LaserGlasses"
+	},
+	"angel_wings": {
+		"title": "Angel Wings",
+		"desc": "Increases tips by 50%.",
+		"price": 300.0,
+		"buff_type": "tips_boost",
+		"buff_value": 1.5,
+		"node_name": "AngelWings"
+	},
+	"super_shoes": {
+		"title": "Super Shoes",
+		"desc": "Increases customer patience by 100%.",
+		"price": 250.0,
+		"buff_type": "patience_boost",
+		"buff_value": 2.0,
+		"node_name": "SuperShoes"
+	}
 }
 
 # ---------------------------------------------------------
@@ -138,7 +168,10 @@ func get_default_save_data(shop_name: String = "Papa's Shaormeria") -> Dictionar
 		"reputation": 0,
 		"inventory": { "meat_kg": 10.0, "pita_bread": 20, "garlic_sauce": 15, "spicy_sauce": 15 },
 		"unlocked_upgrades": [],
-		"customization": {},
+		"customization": {
+			"unlocked_items": [],
+			"equipped_item": ""
+		},
 		"achievements": {}
 	}
 
@@ -305,8 +338,89 @@ func is_achievement_unlocked(achievement_id: String) -> bool:
 	return false
 
 # ---------------------------------------------------------
-# 9. PRIVATE FUNCTIONS
+# 9. ITEM SHOP & CUSTOMIZATION
 # ---------------------------------------------------------
+
+## Returns true if the player owns the given item.
+func is_item_unlocked(item_id: String) -> bool:
+	var items: Array = current_save.get("customization", {}).get("unlocked_items", [])
+	return item_id in items
+
+## Returns the ID of the currently equipped item, or "" if none.
+func get_equipped_item() -> String:
+	return current_save.get("customization", {}).get("equipped_item", "")
+
+## Attempts to purchase an item. Returns true on success.
+func purchase_item(item_id: String) -> bool:
+	if not ITEMS_DATA.has(item_id):
+		push_error("Item '%s' does not exist in ITEMS_DATA." % item_id)
+		return false
+
+	if is_item_unlocked(item_id):
+		push_warning("Item '%s' is already unlocked." % item_id)
+		return false
+
+	var price: float = ITEMS_DATA[item_id]["price"]
+	if current_save["money"] < price:
+		return false
+
+	current_save["money"] -= price
+	money_changed.emit(current_save["money"])
+
+	# Ensure the customization sub-dict exists (forward-compatible saves)
+	if not current_save.has("customization"):
+		current_save["customization"] = {"unlocked_items": [], "equipped_item": ""}
+	if not current_save["customization"].has("unlocked_items"):
+		current_save["customization"]["unlocked_items"] = []
+
+	current_save["customization"]["unlocked_items"].append(item_id)
+	save_game_to_disk()
+	return true
+
+## Equips an owned item (exclusive — unequips the previous one).
+func equip_item(item_id: String) -> void:
+	if not is_item_unlocked(item_id):
+		push_error("Cannot equip '%s': not unlocked." % item_id)
+		return
+
+	if not current_save.has("customization"):
+		current_save["customization"] = {"unlocked_items": [], "equipped_item": ""}
+
+	current_save["customization"]["equipped_item"] = item_id
+	equipped_item_changed.emit(item_id)
+	save_game_to_disk()
+
+## Unequips whatever is currently worn.
+func unequip_item() -> void:
+	if not current_save.has("customization"):
+		return
+
+	current_save["customization"]["equipped_item"] = ""
+	equipped_item_changed.emit("")
+	save_game_to_disk()
+
+## Returns the gameplay multiplier for a given buff_type.
+## If no matching item is equipped, returns 1.0 (neutral).
+func get_buff_multiplier(buff_type: String) -> float:
+	var equipped := get_equipped_item()
+	if equipped == "" or not ITEMS_DATA.has(equipped):
+		return 1.0
+
+	var item_data: Dictionary = ITEMS_DATA[equipped]
+	if item_data["buff_type"] == buff_type:
+		return item_data["buff_value"]
+
+	return 1.0
+
+## Convenience shortcuts used by Customer and other gameplay scripts.
+func get_cooking_multiplier() -> float:
+	return get_buff_multiplier("cooking_speed")
+
+func get_tips_multiplier() -> float:
+	return get_buff_multiplier("tips_boost")
+
+func get_patience_multiplier() -> float:
+	return get_buff_multiplier("patience_boost")
 
 # ---------------------------------------------------------
 # 10. SIGNAL CALLBACKS

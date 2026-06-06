@@ -10,8 +10,8 @@ extends Node
 
 # ---------------------------------------------------------
 # 3. EXPORTED VARIABLES (Those that appear in the right-side Editor Inspector)
-# ---------------------------------------------------------
 @export var default_click_sound: AudioStream
+@export var achievement_sfx: AudioStream
 
 # ---------------------------------------------------------
 # 4. PUBLIC VARIABLES (Can be read/modified by other scripts)
@@ -20,6 +20,7 @@ extends Node
 # ---------------------------------------------------------
 # 5. PRIVATE VARIABLES (Prefixed with "_"; used only inside this script)
 # ---------------------------------------------------------
+var _music_tween: Tween = null
 
 # ---------------------------------------------------------
 # 6. ONREADY VARIABLES (Links to the UI / Node Tree)
@@ -35,6 +36,7 @@ func _ready() -> void:
 	get_tree().node_added.connect(_on_node_added)
 	
 	_connect_existing_buttons(get_tree().root)
+	music_player.finished.connect(_on_music_finished)
 
 # ---------------------------------------------------------
 # 8. PUBLIC FUNCTIONS (Called by you from other scripts)
@@ -43,12 +45,15 @@ func play_music(stream: AudioStream, fade_duration: float = 1.0) -> void:
 	if music_player.stream == stream and music_player.playing:
 		return
 		
+	if _music_tween:
+		_music_tween.kill()
+		
 	music_player.stream = stream
 	music_player.volume_db = -40.0
 	music_player.play()
 	
-	var tween: Tween = create_tween()
-	tween.tween_property(music_player, "volume_db", 0.0, fade_duration)\
+	_music_tween = create_tween()
+	_music_tween.tween_property(music_player, "volume_db", 0.0, fade_duration)\
 		.set_trans(Tween.TRANS_SINE)\
 		.set_ease(Tween.EASE_OUT)
 
@@ -56,12 +61,15 @@ func stop_music(fade_duration: float = 1.0) -> void:
 	if not music_player.playing:
 		return
 		
-	var tween: Tween = create_tween()
-	tween.tween_property(music_player, "volume_db", -40.0, fade_duration)\
+	if _music_tween:
+		_music_tween.kill()
+		
+	_music_tween = create_tween()
+	_music_tween.tween_property(music_player, "volume_db", -40.0, fade_duration)\
 		.set_trans(Tween.TRANS_SINE)\
 		.set_ease(Tween.EASE_IN)
 		
-	tween.tween_callback(music_player.stop)
+	_music_tween.tween_callback(music_player.stop)
 
 func play_sfx(stream: AudioStream) -> void:
 	sfx_player.stream = stream
@@ -91,3 +99,7 @@ func _on_node_added(node: Node) -> void:
 func _play_default_click() -> void:
 	if default_click_sound:
 		play_sfx(default_click_sound)
+
+func _on_music_finished() -> void:
+	if music_player.stream:
+		music_player.play()

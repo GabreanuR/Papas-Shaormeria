@@ -24,6 +24,8 @@ const LIPIE_SAUCES_POS := Vector2(2630, 570)
 var current_pita_state: Dictionary = _new_pita_state()
 var profit_ziua_curenta: float = 0.0
 
+@export var gameplay_music: AudioStream
+
 static func _new_pita_state() -> Dictionary:
 	return {
 		"lipie_quality": "ready",
@@ -114,6 +116,9 @@ func _ready() -> void:
 	_btn_assembly.pressed.connect(_go_to_assembly)
 	_btn_wrapping.pressed.connect(_go_to_wrapping)
 	_assembly_camera = _assembly_station.find_child("Camera2D", true, false)
+
+	if gameplay_music:
+		AudioManager.play_music(gameplay_music, 1.5)
 
 	# Fix: Mutăm TopBar-ul în CanvasLayer ca să rămână mereu pe ecran, indiferent unde se duce camera!
 	var top_bar = get_node_or_null("TopBar")
@@ -260,6 +265,8 @@ func _on_day_ended() -> void:
 	# 1. Calculăm tot ce e de calculat și transferăm în Global
 	Global.daily_earnings = profit_ziua_curenta
 	Global.daily_stats["tips_earned"] = profit_ziua_curenta
+	
+	AudioManager.stop_music(1.0)
 	
 	# 2. Îi spunem lui Global să adauge banii la contul total
 	Global.end_day_and_save_earnings()

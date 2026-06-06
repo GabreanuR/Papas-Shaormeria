@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://nartdbqrxw6g" path="res://scripts/gameplay/master/gameplay_master.gd" id="1_5cir7"]
 [ext_resource type="PackedScene" uid="uid://cme5sxwqrlgnq" path="res://scenes/gameplay/stations/order/order_station.tscn" id="2_1jril"]
+[ext_resource type="AudioStream" uid="uid://dnh2hhoxtokan" path="res://assets/audio/music/restaurant_music.mp3" id="2_6bkqk"]
 [ext_resource type="PackedScene" uid="uid://dhip6nndara60" path="res://scenes/gameplay/stations/cutting/MeatSelect.tscn" id="3_6bkqk"]
 [ext_resource type="PackedScene" uid="uid://bbf2c2tprivnc" path="res://scenes/gameplay/stations/assembly/assembly_station.tscn" id="4_twj3c"]
 [ext_resource type="PackedScene" uid="uid://do4jao5ljremp" path="res://scenes/gameplay/stations/wrapping/wrapping_station.tscn" id="5_apmns"]
@@ -10,6 +11,7 @@
 
 [node name="GameplayMaster" type="Node" unique_id=1025286876]
 script = ExtResource("1_5cir7")
+gameplay_music = ExtResource("2_6bkqk")
 
 [node name="OrderStation" parent="." unique_id=805942768 instance=ExtResource("2_1jril")]
 unique_name_in_owner = true

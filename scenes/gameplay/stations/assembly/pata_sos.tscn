@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://ihbdasxpe0oe"]
 
 [ext_resource type="Script" uid="uid://d3hgxtxxgp3ns" path="res://scripts/gameplay/stations/assembly/pata_sos.gd" id="1_nwfdc"]
+[ext_resource type="AudioStream" uid="uid://du1h5jikkdcuv" path="res://assets/audio/sfx/ketchup.wav" id="2_flu4s"]
 
 [node name="PataSos" type="Line2D" unique_id=1292032136]
 top_level = true
@@ -11,3 +12,6 @@ begin_cap_mode = 2
 end_cap_mode = 2
 antialiased = true
 script = ExtResource("1_nwfdc")
+
+[node name="SosSFX" type="AudioStreamPlayer" parent="." unique_id=487228804]
+stream = ExtResource("2_flu4s")

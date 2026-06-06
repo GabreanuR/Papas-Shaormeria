@@ -5,6 +5,8 @@ var poate_pune = true
 var culoare_sos = Color(1, 1, 1)
 var textura_picatura = preload("res://assets/graphics/ingredients/sos_zig_zag_alb.png")
 
+@onready var sos_sfx: AudioStreamPlayer = get_node_or_null("SosSFX")
+
 ## Cached references (set on first use to avoid repeated find_child calls)
 var _lipie_ref: Control = null
 var _gameplay_master_ref: Node = null
@@ -24,10 +26,16 @@ func _ready():
 
 func _process(_delta):
 	if activ:
+		if sos_sfx and not sos_sfx.playing:
+			sos_sfx.play()
+
 		_frame_counter += 1
 		if _frame_counter >= SPAWN_EVERY_N_FRAMES and _drop_count < MAX_DROPS:
 			_frame_counter = 0
 			creeaza_picatura()
+	else:
+		if sos_sfx and sos_sfx.playing:
+			sos_sfx.stop()
 
 func _get_lipie() -> Control:
 	if _lipie_ref == null or not is_instance_valid(_lipie_ref):

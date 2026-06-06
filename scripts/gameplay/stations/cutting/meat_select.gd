@@ -1,6 +1,7 @@
 extends Node2D
 @onready var message_label: Label = $MessageLabel
 var message_tween: Tween = null
+@onready var cutting_sfx: AudioStreamPlayer = $CuttingSFX
 
 const MAX_HEATED_TORTILLAS := 4
 
@@ -153,6 +154,9 @@ func _process(delta: float) -> void:
 	update_grill(delta)
 	update_meat_cooking(delta)
 	check_knife_cutting()
+
+	if knife_attached and cutting_sfx and not cutting_sfx.playing:
+		cutting_sfx.play()
 
 
 func _input(event: InputEvent) -> void:
@@ -342,6 +346,9 @@ func reset_knife() -> void:
 	knife_attached = false
 	knife_is_swiping = false
 	knife_cut_area = ""
+
+	if cutting_sfx and cutting_sfx.playing:
+		cutting_sfx.stop()
 
 	if knife.get_parent() != knife_original_parent:
 		knife.reparent(knife_original_parent, true)

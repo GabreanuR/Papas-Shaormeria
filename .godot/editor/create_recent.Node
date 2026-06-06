@@ -1,3 +1,4 @@
+AudioStreamPlayer
 Control
 PanelContainer
 HBoxContainer
@@ -11,4 +12,3 @@ Panel
 TextureButton
 CenterContainer
 ColorRect
-AnimationPlayer

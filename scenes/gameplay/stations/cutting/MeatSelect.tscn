@@ -20,6 +20,7 @@
 [ext_resource type="Texture2D" uid="uid://cf7um14aecf8" path="res://assets/graphics/cutting_station/beef_on_metal.png" id="9_gjuf8"]
 [ext_resource type="Texture2D" uid="uid://bl86qjmq8yt1f" path="res://assets/graphics/cutting_station/send_to_assembly_panel.png" id="10_gjsxq"]
 [ext_resource type="Texture2D" uid="uid://galg2m0ldqgn" path="res://assets/graphics/cutting_station/dark_circle.png" id="15_n8ni4"]
+[ext_resource type="AudioStream" uid="uid://csd7ommexg2k3" path="res://assets/audio/sfx/cutting.wav" id="21_ntwqt"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kbayl"]
 size = Vector2(174, 127.5)
@@ -359,3 +360,6 @@ theme_override_colors/font_color = Color(18.061918, 18.061918, 18.061914, 1)
 theme_override_font_sizes/font_size = 45
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="CuttingSFX" type="AudioStreamPlayer" parent="." unique_id=419758696]
+stream = ExtResource("21_ntwqt")

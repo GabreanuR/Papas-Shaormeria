@@ -237,6 +237,8 @@ func unlock_achievement(id: String) -> void:
 		
 		# Declanșăm animația de notificare!
 		if ACHIEVEMENTS_DATA.has(id):
+			if AudioManager.achievement_sfx:
+				AudioManager.play_sfx(AudioManager.achievement_sfx)
 			_arata_notificare_trofeu(ACHIEVEMENTS_DATA[id]["title"])
 			
 func _arata_notificare_trofeu(titlu_trofeu: String) -> void:

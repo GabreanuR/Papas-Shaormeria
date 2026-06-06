@@ -5,6 +5,8 @@ enum DayState { MORNING, NIGHT }
 const DEFAULT_DAY_DURATION := 180.0  # 3 minutes average
 const GAMEPLAY_SCENE := "res://scenes/gameplay/master/gameplay_master.tscn"
 
+@export var day_music: AudioStream
+
 var _current_state: DayState = DayState.MORNING
 
 # ---------------------------------------------------------
@@ -42,6 +44,9 @@ func _ready() -> void:
 	# Ne definește nevoia de rigoare, fără să depindem exclusiv de Inspector.
 	if _top_bar and _top_bar.has_method("_setup_hub_mode"):
 		_top_bar._setup_hub_mode()
+
+	if day_music:
+		AudioManager.play_music(day_music, 1.5)
 
 	# Conectăm butoanele principale de flux
 	_btn_start_day.pressed.connect(_on_start_day_pressed)
@@ -121,6 +126,7 @@ func _set_state(new_state: DayState) -> void:
 # SIGNAL CALLBACKS (Fluxul zilelor)
 # ---------------------------------------------------------
 func _on_start_day_pressed() -> void:
+	AudioManager.stop_music(1.0)
 	Global.start_day(DEFAULT_DAY_DURATION)
 	get_tree().change_scene_to_file(GAMEPLAY_SCENE)
 

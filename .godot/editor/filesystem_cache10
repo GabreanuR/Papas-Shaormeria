@@ -1,5 +1,5 @@
 72322a848ab928aa5c89f0cb78209805
-::res://::1780601953
+::res://::1780756514
 .gutconfig.json::JSON::-1::1780601240::0::1::::<><><>0<>0<><>::
 CerinteProiect.txt::TextFile::-1::1774957809::0::1::::<><><>0<>0<><>::
 CONTRIBUTING.md::TextFile::-1::1780601640::0::1::::<><><>0<>0<><>::
@@ -224,7 +224,7 @@ red_circle.png::CompressedTexture2D::164936694309722064::1780484229::1780484245:
 send_to_assembly_panel.png::CompressedTexture2D::3228533721093504917::1780484229::1780484245::1::::<><><>0<>0<>178319f283e752caf279c0022fa583ea<>res://.godot/imported/send_to_assembly_panel.png-b92cf99b9ee334c4c80363eed453a766.ctex::
 tortilla_stack.png::CompressedTexture2D::5914866024790072214::1780484229::1780484245::1::::<><><>0<>0<>676962aace58e3acf7dae94e74c97c95<>res://.godot/imported/tortilla_stack.png-cd1ffa0309cecaa24b654f1b6e216806.ctex::
 trash_panel.png::CompressedTexture2D::9057844952558274512::1780484229::1780484245::1::::<><><>0<>0<>1c49b4541c188ac977f3ef091c94c8c0<>res://.godot/imported/trash_panel.png-0fed73d0d0c3d2c226368a4fd12e27e0.ctex::
-::res://assets/graphics/ingredients/::1780604805
+::res://assets/graphics/ingredients/::1780604816
 ardei.png::CompressedTexture2D::1333478894362764881::1777458440::1778013532::1::::<><><>0<>0<>0cb71eb54091c5235e9adc5746e9c0d3<>res://.godot/imported/ardei.png-e5640189464dcebf89180adbfae1ed18.ctex::
 carne_pui.png::CompressedTexture2D::5973253663537697039::1777458440::1778013532::1::::<><><>0<>0<>de901793130a267f722c4577cbe8ccce<>res://.godot/imported/carne_pui.png-d47f074d346b8ecd79a6bd4fb3be4c35.ctex::
 carne_vita.png::CompressedTexture2D::324784908937083970::1777458440::1778013532::1::::<><><>0<>0<>26aed1b408acbcd5c727d703c82f9d8a<>res://.godot/imported/carne_vita.png-ee65ba6604e91699d14fdb4d296ec83c.ctex::
@@ -296,7 +296,7 @@ filled_slot_normal.png::CompressedTexture2D::5095578597360595417::1778843155::17
 ChatGPT Image May 5, 2026 at 08_58_26 PM.png::CompressedTexture2D::8582937343373996533::1778065225::1778065241::1::::<><><>0<>0<>0c423de55fde2d4cd7ed988087f0e00a<>res://.godot/imported/ChatGPT Image May 5, 2026 at 08_58_26 PM.png-8a84fbe4e2597567c9cc16344896e930.ctex::
 ChatGPT Image May 5, 2026 at 09_07_52 PM.png::CompressedTexture2D::5466484115328786661::1778065225::1778065241::1::::<><><>0<>0<>7bcb175246972a44363f83dcb0170105<>res://.godot/imported/ChatGPT Image May 5, 2026 at 09_07_52 PM.png-3863b82dc8a12a4b682d3d8dfec98363.ctex::
 SteamParticle.png::CompressedTexture2D::693895441509973729::1776419562::1778013531::1::::<><><>0<>0<>c4f4917ab403198c6b7ab9d37d100510<>res://.godot/imported/SteamParticle.png-6736715b2868f918fd1a9f16183ed979.ctex::
-::res://assets/graphics/wrapping_station/::1780604558
+::res://assets/graphics/wrapping_station/::1780604816
 arrow_1.png::CompressedTexture2D::8761191062196162271::1780484229::1780484245::1::::<><><>0<>0<>beb255d32a2535219c6da062674d92dd<>res://.godot/imported/arrow_1.png-31097a6fa82ca180eda25c2d00caf9d5.ctex::
 arrow_2.png::CompressedTexture2D::2199202276302987662::1780484229::1780484245::1::::<><><>0<>0<>4cd4d74a2fbee1c75df2998d8c1fc6c1<>res://.godot/imported/arrow_2.png-f30ecef06120d9334d728382a894eecf.ctex::
 arrow_3.png::CompressedTexture2D::6846078422995779130::1780484229::1780484245::1::::<><><>0<>0<>c2652b61c8b286ac978b5fd52bf82b85<>res://.godot/imported/arrow_3.png-4ea20d9a7542c3140e4da5730e2238d4.ctex::
@@ -385,9 +385,9 @@ main_menu.tscn::PackedScene::1047501752819576532::1779013958::0::1::::<><><>0<>0
 metal_shutter.tscn::PackedScene::7785015698435271001::1778178579::0::1::::<><><>0<>0<><>::uid://d2wxw14py3xdl::::res://assets/graphics/backgrounds/metal_shutter.png<>uid://bnp2tgflv2uq::::res://scripts/menus/metal_shutter.gd<>uid://c13ptfyyodlxi::::res://assets/audio/sfx/MetalShutter.wav
 saves_menu.tscn::PackedScene::2361913593201278966::1778846193::0::1::::<><><>0<>0<><>::uid://c0ovgjjh2udh4::::res://scripts/menus/saves_menu.gd<>uid://cjexmeym01onb::::res://scenes/components/modal_overlay.tscn<>uid://icmwfh7h1jg8::::res://assets/theme/global_ui_theme.tres<>uid://cpa2qmtme1b4d::::res://assets/graphics/ui/cancel_buttons/button_cancel_normal.png<>uid://bw53bas6ddvuu::::res://assets/graphics/ui/cancel_buttons/button_cancel_pressed.png<>uid://b7y0d8lttef68::::res://assets/graphics/ui/cancel_buttons/button_cancel_hover.png
 settings_menu.tscn::PackedScene::6920756442800365431::1779438540::0::1::::<><><>0<>0<><>::uid://drjjo5hnb1oxp::::res://scripts/menus/settings_menu.gd<>uid://cjexmeym01onb::::res://scenes/components/modal_overlay.tscn<>uid://icmwfh7h1jg8::::res://assets/theme/global_ui_theme.tres
-::res://scenes/ui/::1780602347
+::res://scenes/ui/::1780604929
 quick_menu.tscn::PackedScene::6904139965519847652::1779438735::0::1::::<><><>0<>0<><>::uid://co3i6sjqetsbs::::res://scripts/ui/quick_menu.gd<>uid://cjexmeym01onb::::res://scenes/components/modal_overlay.tscn<>uid://c5up32xja71ff::::res://scenes/menus/settings_menu.tscn
-top_bar.tscn::PackedScene::1081780917759405312::1780602347::0::1::::<><><>0<>0<><>::uid://0m6pr8h8kb5e::::res://scripts/ui/top_bar.gd<>uid://icmwfh7h1jg8::::res://assets/theme/global_ui_theme.tres<>uid://wdtlxc2q14j6::::res://scenes/entities/items/order_ticket.tscn<>uid://jpal250o0ncj::::res://assets/graphics/ui/day_transition_buttons/menu_button_normal.png<>uid://blhuo6rt2sbvf::::res://assets/graphics/ui/day_transition_buttons/menu_button_hover.png<>uid://c5mogaceh21um::::res://scenes/ui/quick_menu.tscn<>uid://cqtwt5xxywhs1::::res://scripts/ui/ticket_zone.gd
+top_bar.tscn::PackedScene::1081780917759405312::1780604929::0::1::::<><><>0<>0<><>::uid://0m6pr8h8kb5e::::res://scripts/ui/top_bar.gd<>uid://icmwfh7h1jg8::::res://assets/theme/global_ui_theme.tres<>uid://wdtlxc2q14j6::::res://scenes/entities/items/order_ticket.tscn<>uid://jpal250o0ncj::::res://assets/graphics/ui/day_transition_buttons/menu_button_normal.png<>uid://blhuo6rt2sbvf::::res://assets/graphics/ui/day_transition_buttons/menu_button_hover.png<>uid://c5mogaceh21um::::res://scenes/ui/quick_menu.tscn<>uid://cqtwt5xxywhs1::::res://scripts/ui/ticket_zone.gd
 ::res://scripts/::1780595408
 _template.gd::GDScript::2233382357832966955::1778095763::0::1::::<>Node<><>0<>0<><>::
 global.gd::GDScript::5279077662907438292::1780599549::0::1::::<>Node<><>0<>0<><>::

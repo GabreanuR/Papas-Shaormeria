@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://do4jao5ljremp" path="res://scenes/gameplay/stations/wrapping/wrapping_station.tscn" id="5_apmns"]
 [ext_resource type="Script" uid="uid://dx0bfljvbx3gy" path="res://scripts/ui/drop_layer.gd" id="6_1jril"]
 [ext_resource type="PackedScene" uid="uid://poa1kme3gfho" path="res://scenes/ui/top_bar.tscn" id="7_1jril"]
+[ext_resource type="PackedScene" uid="uid://dn5cpomhnot1v" path="res://scenes/gameplay/health_inspection_ui.tscn" id="9_twj3c"]
 
 [node name="GameplayMaster" type="Node" unique_id=1025286876]
 script = ExtResource("1_5cir7")
@@ -64,3 +65,5 @@ script = ExtResource("6_1jril")
 
 [node name="TopBar" parent="." unique_id=1361950912 instance=ExtResource("7_1jril")]
 mode = 1
+
+[node name="HealthInspectionUi" parent="." unique_id=463165713 instance=ExtResource("9_twj3c")]

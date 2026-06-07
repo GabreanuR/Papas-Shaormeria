@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 Global="*res://scripts/global.gd"
 AudioManager="*res://autoloads/audio_manager.tscn"
+HealthInspection="*uid://b654g73gipf42"
 
 [display]
 

@@ -1,0 +1,56 @@
+[gd_scene format=3 uid="uid://dn5cpomhnot1v"]
+
+[ext_resource type="Script" uid="uid://bjqs5476pkyq" path="res://scenes/gameplay/health_inspection_ui.gd" id="1_e8xgw"]
+[ext_resource type="Texture2D" uid="uid://c8nlh0i5hsvve" path="res://assets/graphics/cleaning_inspection/cloth.png" id="2_e44hg"]
+[ext_resource type="FontFile" uid="uid://bpu1j3ggtme57" path="res://assets/fonts/Oswald-Bold.ttf" id="2_td1cn"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_e8xgw"]
+
+[node name="HealthInspectionUi" type="CanvasLayer" unique_id=741731730]
+script = ExtResource("1_e8xgw")
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=1655311898]
+offset_left = -17.0
+offset_top = 222.0
+offset_right = 507.0
+offset_bottom = 537.0
+theme_override_styles/panel = SubResource("StyleBoxEmpty_e8xgw")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer" unique_id=1075804831]
+layout_mode = 2
+
+[node name="InfoLabel" type="Label" parent="PanelContainer/VBoxContainer" unique_id=2146266668]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(1, 1, 1, 0.6745098)
+theme_override_fonts/font = ExtResource("2_td1cn")
+theme_override_font_sizes/font_size = 35
+text = "Time left for cleaning the mess  before penalties are applied:"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="TimerLabel" type="Label" parent="PanelContainer/VBoxContainer" unique_id=114108984]
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0.92156863, 0.92156863, 0.92156863, 0.4392157)
+theme_override_font_sizes/font_size = 40
+text = "01:00"
+horizontal_alignment = 1
+
+[node name="PenaltyLabel" type="Label" parent="PanelContainer/VBoxContainer" unique_id=307414578]
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(1, 1, 1, 0.627451)
+theme_override_font_sizes/font_size = 40
+horizontal_alignment = 1
+
+[node name="StatusLabel" type="Label" parent="PanelContainer/VBoxContainer" unique_id=576854118]
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 40
+horizontal_alignment = 1
+
+[node name="MouseCloth" type="TextureRect" parent="." unique_id=7933357]
+visible = false
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2
+texture = ExtResource("2_e44hg")

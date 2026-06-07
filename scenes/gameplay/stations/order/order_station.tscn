@@ -3,6 +3,9 @@
 [ext_resource type="Script" uid="uid://b2eufuo13ev6c" path="res://scripts/gameplay/stations/order/order_station.gd" id="1_2hbr3"]
 [ext_resource type="Texture2D" uid="uid://67r64wpmq4a2" path="res://assets/graphics/backgrounds/tejghea.png" id="1_uca3d"]
 [ext_resource type="Texture2D" uid="uid://4aqj2u4jvasp" path="res://assets/graphics/backgrounds/main_frame.png" id="2_8kqrv"]
+[ext_resource type="Texture2D" uid="uid://c3vd0v8soaeoe" path="res://assets/graphics/cleaning_inspection/cloth_holder.png" id="3_4vf71"]
+[ext_resource type="Texture2D" uid="uid://c8nlh0i5hsvve" path="res://assets/graphics/cleaning_inspection/cloth.png" id="4_y3rv7"]
+[ext_resource type="Script" uid="uid://wm8jr5jeg06i" path="res://scenes/gameplay/health_cloth_button.gd" id="5_4b6o3"]
 [ext_resource type="FontFile" uid="uid://bpu1j3ggtme57" path="res://assets/fonts/Oswald-Bold.ttf" id="5_xyxur"]
 [ext_resource type="StyleBox" uid="uid://bkx4p8p7xgvoq" path="res://assets/theme/panel_style.tres" id="6_fva0d"]
 
@@ -16,7 +19,24 @@ mouse_filter = 2
 texture = ExtResource("2_8kqrv")
 expand_mode = 1
 
+[node name="ClothHolder" type="Node2D" parent="." unique_id=210264492]
+
+[node name="ClothHolder" type="Sprite2D" parent="ClothHolder" unique_id=1587245417]
+position = Vector2(1660.7501, 477.25)
+scale = Vector2(0.47181368, 0.44035947)
+texture = ExtResource("3_4vf71")
+
+[node name="ClothButton" type="TextureButton" parent="ClothHolder" unique_id=667956363]
+offset_left = 1538.0
+offset_top = 319.0
+offset_right = 2038.0
+offset_bottom = 819.0
+scale = Vector2(0.5, 0.5)
+texture_normal = ExtResource("4_y3rv7")
+script = ExtResource("5_4b6o3")
+
 [node name="OrderFrame" type="TextureRect" parent="." unique_id=1812318764]
+visible = false
 offset_right = 1920.0
 offset_bottom = 1080.0
 mouse_filter = 2

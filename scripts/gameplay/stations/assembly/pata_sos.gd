@@ -90,6 +90,7 @@ func creeaza_picatura():
 			pic.modulate = culoare_sos.darkened(0.2)
 			pic.z_index = 1
 			pic.add_to_group("sos_pe_masa")
+			HealthInspection.register_dirty_node(pic)
 
 	_drop_count += 1
 

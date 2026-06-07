@@ -65,7 +65,6 @@ func _drop_data(_at_position, data):
 	
 	rest_masa.texture = textura_de_aplicat
 	
-	
 	add_child(rest_masa)
 	rest_masa.global_position = mouse_pos
 	rest_masa.z_index = 1
@@ -76,4 +75,6 @@ func _drop_data(_at_position, data):
 			rest_masa.scale = Vector2(0.5, 0.5)
 		else:
 			rest_masa.scale = Vector2(0.9, 0.9)
+	
 	rest_masa.add_to_group("mizerie")
+	HealthInspection.register_dirty_node(rest_masa)

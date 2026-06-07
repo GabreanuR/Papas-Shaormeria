@@ -653,6 +653,9 @@ func create_mess_from_meat(meat: Area2D) -> void:
 	if collision != null:
 		collision.disabled = true
 
+	meat.add_to_group("mizerie")
+	HealthInspection.register_dirty_node(meat)
+
 func get_free_grill_slot_at_position(pos: Vector2) -> Area2D:
 	for slot in grill_data.keys():
 		if is_inside_area(pos, slot) and grill_data[slot]["tortilla"] == null:

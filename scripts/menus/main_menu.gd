@@ -2,6 +2,7 @@ extends Control
 
 const LOADING_SCENE: String = "res://scenes/menus/loading_screen.tscn"
 const MAX_SHOP_NAME_LENGTH: int = 20
+const CustomerHistoryScript = preload("res://scripts/ai/customer_history.gd")
 
 
 @export var menu_music: AudioStream
@@ -69,8 +70,8 @@ func _toggle_shop_lights(turning_off: bool) -> void:
 
 func _start_new_game(save_path: String, shop_name: String) -> void:
 	var data = Global.get_default_save_data(shop_name)
-	var file := FileAccess.open(save_path, FileAccess.WRITE)
 
+	var file := FileAccess.open(save_path, FileAccess.WRITE)
 	if not file:
 		push_error("Critical Error: Could not create save file at '%s'." % save_path)
 		return
@@ -78,10 +79,12 @@ func _start_new_game(save_path: String, shop_name: String) -> void:
 	file.store_string(JSON.stringify(data, "\t"))
 	file.close()
 
-	# Populate Global so the rest of the game has the correct state from the start.
-	Global.load_save_data(_current_slot_id, data)
+	CustomerHistoryScript.set_active_slot(_current_slot_id)
+	CustomerHistoryScript.reset_history_for_slot(_current_slot_id)
 
+	Global.load_save_data(_current_slot_id, data)
 	_do_transition()
+	
 
 func _load_game(save_path: String) -> void:
 	if not FileAccess.file_exists(save_path):
@@ -106,11 +109,11 @@ func _load_game(save_path: String) -> void:
 		push_error("Error: Save file at '%s' does not contain a valid Dictionary." % save_path)
 		return
 
-	# Populate Global with the loaded save data before transitioning.
+	CustomerHistoryScript.set_active_slot(_current_slot_id)
+
 	Global.load_save_data(_current_slot_id, data)
-
 	_do_transition()
-
+	
 ## Hides the menu UI, stops music, and loads the next scene.
 func _do_transition() -> void:
 	_saves_menu.hide()

@@ -1,2 +1,2 @@
-res://scripts/gameplay/stations/order/order_station.gd
 res://scripts/ai/loyal_customer_agent.gd
+res://scripts/ai/customer_history.gd

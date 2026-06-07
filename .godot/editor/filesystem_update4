@@ -1,10 +1,2 @@
-res://scenes/gameplay/health_inspection_ui.tscn
-res://assets/theme/global_ui_theme.tres
-res://assets/theme/light_texture.tres
-res://addons/gut/gui/editor_globals.gd
-res://addons/gut/gui/EditorRadioButton.tres
-res://scenes/gameplay/health_cloth_button.gd
-res://scenes/gameplay/health_inspection_ui.gd
-res://scripts/gameplay/stations/cutting/meat_select.gd
-res://scenes/gameplay/stations/order/order_station.tscn
-res://scripts/health_inspection_manager.gd
+res://scripts/gameplay/stations/order/order_station.gd
+res://scripts/ai/loyal_customer_agent.gd

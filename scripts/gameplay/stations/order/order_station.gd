@@ -4,7 +4,7 @@ const CustomerHistoryScript = preload("res://scripts/ai/customer_history.gd")
 const LoyalCustomerAgentScript = preload("res://scripts/ai/loyal_customer_agent.gd")
 
 var loyal_customer_agent: Node = null
-var loyal_dialog_label: Label = null
+var loyal_dialog_label: Control
 
 var CulinaryInfluencerAgentScript = load("res://scripts/ai/culinary_influencer_agent.gd")
 var culinary_agent: Node = null
@@ -57,7 +57,6 @@ func _ready():
 	profiluri_disponibile.remove_at(0)
 	profiluri_disponibile.shuffle()
 	
-	# SETĂM CONTORUL INIȚIAL
 	total_clienti_zi = timpi_spawn.size()
 	var gm = get_tree().current_scene
 	if gm and gm.has_method("actualizeaza_text_clienti"):
@@ -65,9 +64,14 @@ func _ready():
 	
 	fundal_lobby.show()
 	fundal_comanda.hide()
+
 	loyal_customer_agent = LoyalCustomerAgentScript.new()
 	add_child(loyal_customer_agent)
-	loyal_customer_agent.dialogue_ready.connect(_on_loyal_dialogue_ready)
+	# IMPORTANT:
+	# Nu mai conectăm aici _on_loyal_dialogue_ready,
+	# pentru că altfel textul apare imediat ce AI-ul răspunde,
+	# chiar dacă nu suntem la order cu Papalouie.
+
 	set_process(true)
 	
 	if CulinaryInfluencerAgentScript:
@@ -86,7 +90,7 @@ func _ready():
 			"maioneza_usturoi", "ketchup_picant", "maioneza"
 		]
 		daily_agent.generate_fusion_recipe(toate_ingredientele)
-
+		
 func _process(delta: float):
 	if index_spawn < timpi_spawn.size():
 		timp_scurs += delta
@@ -116,8 +120,10 @@ func spawneaza_client_nou():
 	if profiluri_disponibile.size() == 0:
 		return
 	
-	var este_loyal: bool = (Global.current_save.get("day", 1) == 1 and contor_clienti_total == 1)
-	var este_influencer: bool = (int(Global.current_save.get("day", 1)) % 3 == 0 and contor_clienti_total == 1)
+	var ziua_curenta := int(Global.current_save.get("day", 1))
+
+	var este_influencer: bool = (ziua_curenta % 3 == 0 and contor_clienti_total == 1)
+	var este_loyal: bool = (contor_clienti_total == 2)
 	
 	var profil
 	
@@ -135,9 +141,11 @@ func spawneaza_client_nou():
 	client_nou.id_unic = contor_clienti_total
 	client_nou.is_loyal_customer = este_loyal
 	client_nou.set_meta("is_influencer", este_influencer)
+
 	if este_influencer:
 		client_nou.ai_dialogue_ready_text = "Hello! I am a culinary influencer. Make me a viral shaorma and I will review it on my channel!"
 		client_nou.ai_dialogue_is_ready = true
+	
 	contor_clienti_total += 1
 	
 	client_nou.position = Vector2(2000, 313)
@@ -150,7 +158,7 @@ func spawneaza_client_nou():
 		if history.is_empty():
 			client_nou.ai_dialogue_ready_text = "Hi, I'm Papalouie! This is my first visit here. I have a very good memory, so I'll remember every mistake from now on."
 		else:
-			client_nou.ai_dialogue_ready_text = "I'm back again! Let's see if you still remember how I like my shaorma."
+			client_nou.ai_dialogue_ready_text = "I'm back again! I remember this place, so let's see today's shaorma."
 
 		client_nou.ai_dialogue_is_ready = false
 
@@ -171,7 +179,8 @@ func spawneaza_client_nou():
 	
 	if fundal_comanda.visible:
 		client_nou.hide()
-
+		
+		
 # --- LOGICA DE COADĂ ---
 func actualizeaza_pozitii_coada():
 	for i in range(coada_comenzi.size()):
@@ -259,15 +268,21 @@ func _on_customer_a_fost_apasat(comanda, clientul_apasat):
 	var timp_asteptare_dialog := 0.5
 
 	if clientul_apasat.is_loyal_customer:
-		timp_asteptare_dialog = 6.0
+		if clientul_apasat.ai_dialogue_ready_text == "":
+			clientul_apasat.ai_dialogue_ready_text = "Hi, I'm Papalouie! I remember this place, and I'm ready for another shaorma."
 
-		if clientul_apasat.ai_dialogue_ready_text != "":
-			_afiseaza_dialog_loyal_customer(clientul_apasat.ai_dialogue_ready_text)
-			
+		_afiseaza_dialog_loyal_customer(clientul_apasat.ai_dialogue_ready_text)
+
+		timp_asteptare_dialog = max(
+			9.0,
+			float(clientul_apasat.ai_dialogue_ready_text.length()) * 0.055 + 3.0
+		)
+
 	elif clientul_apasat.get_meta("is_influencer", false):
-		timp_asteptare_dialog = 6.0 # Câte secunde stă textul pe ecran
 		if clientul_apasat.ai_dialogue_ready_text != "":
 			_afiseaza_dialog_loyal_customer(clientul_apasat.ai_dialogue_ready_text)
+
+		timp_asteptare_dialog = 8.0
 
 	await get_tree().create_timer(timp_asteptare_dialog).timeout
 
@@ -608,28 +623,53 @@ func arata_evaluare_finala(_nota: int, textura_lipie: Texture2D, textura_suc: Te
 			gm._on_day_ended()
 			
 func _on_loyal_dialogue_ready(text: String) -> void:
-	_afiseaza_dialog_loyal_customer(text)
+	pass
 
 
 func _afiseaza_dialog_loyal_customer(text: String) -> void:
 	if loyal_dialog_label != null and is_instance_valid(loyal_dialog_label):
 		loyal_dialog_label.queue_free()
 
-	loyal_dialog_label = Label.new()
-	loyal_dialog_label.text = text
+	loyal_dialog_label = RichTextLabel.new()
+	loyal_dialog_label.bbcode_enabled = true
+	loyal_dialog_label.fit_content = false
+	loyal_dialog_label.scroll_active = false
 	loyal_dialog_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	loyal_dialog_label.custom_minimum_size = Vector2(520, 130)
-	loyal_dialog_label.add_theme_font_size_override("font_size", 26)
-	loyal_dialog_label.add_theme_color_override("font_color", Color(0.12, 0.08, 0.04))
+
+	loyal_dialog_label.size = Vector2(1100, 320)
+	loyal_dialog_label.custom_minimum_size = Vector2(1100, 320)
+
+	loyal_dialog_label.add_theme_font_size_override("normal_font_size", 52)
+	loyal_dialog_label.add_theme_font_size_override("bold_font_size", 52)
+
+	loyal_dialog_label.add_theme_color_override("default_color", Color(0.12, 0.08, 0.04))
 	loyal_dialog_label.add_theme_color_override("font_outline_color", Color.WHITE)
-	loyal_dialog_label.add_theme_constant_override("outline_size", 5)
-	loyal_dialog_label.position = Vector2(430, 360)
+	loyal_dialog_label.add_theme_constant_override("outline_size", 8)
+
+	# Mai jos pe ecran
+	loyal_dialog_label.position = Vector2(320, 500)
 	loyal_dialog_label.z_index = 300
 
 	fundal_comanda.add_child(loyal_dialog_label)
+	_start_loyal_typewriter(text)
 
 
+func _start_loyal_typewriter(full_text: String) -> void:
+	if loyal_dialog_label == null or not is_instance_valid(loyal_dialog_label):
+		return
 
+	loyal_dialog_label.text = "[b][/b]"
+
+	var shown := ""
+	for i in range(full_text.length()):
+		if loyal_dialog_label == null or not is_instance_valid(loyal_dialog_label):
+			return
+
+		shown += full_text[i]
+		loyal_dialog_label.text = "[b]" + shown + "[/b]"
+		await get_tree().create_timer(0.01).timeout
+		
+		
 # 1. REPARAREA TEXTULUI DIN TIMPUL ZILEI (Căsuță frumoasă cu chenar în stânga)
 func _afiseaza_dialog_influencer_stilizat(mesaj: String) -> void:
 	var vechiul_panel = fundal_comanda.get_node_or_null("CasetaDialogInfluencer")

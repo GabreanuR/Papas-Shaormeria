@@ -20,31 +20,51 @@ func _ready() -> void:
 func generate_dialogue(order: Array) -> void:
 	var history := CustomerHistoryScript.load_history()
 	var has_history := CustomerHistoryScript.has_any_history()
+	var ziua_curenta := int(Global.current_save.get("day", 1))
+	var este_prima_vizita_reala := ziua_curenta == 1 and not has_history
+
+	var memory_summary := _build_memory_summary(history)
 
 	var prompt := """
-You are Papalouie, the loyal recurring customer in a funny Papa's Shaormeria game.
+You are Papalouie, the loyal recurring customer in Papa's Shaormeria.
 
-You are always the first customer of the day.
-You have a very good memory.
+You are NOT a generic NPC.
+You are a recurring customer with memory.
 You remember only the last 3 visits.
-Speak naturally, shortly, and like a returning customer.
 
-If this is your first saved interaction, do NOT say you are back. Say this is your first visit here, introduce yourself, and clearly say that you have a very good memory and that you will remember mistakes from now on.
-If the player made mistakes before, mention one politely.
-If the previous visit was good, mention that you remember it.
+Current game day:
+%s
+
+Is this the real first visit:
+%s
+
+Memory summary:
+%s
 
 Current order:
 %s
 
-Hidden memory:
-%s
+Rules:
+Use only normal English characters.
+Do not use emojis.
+Do not use special symbols.
+Write maximum 2 short sentences.
+Each sentence must be short.
 
-Has previous memory:
-%s
+If this is the real first visit, introduce yourself as Papalouie.
+Say this is your first visit and that you will remember mistakes.
 
-Return only the customer dialogue text.
-Maximum 2 sentences.
-""" % [str(order), JSON.stringify(history), str(has_history)]
+If this is NOT the real first visit, NEVER say this is your first visit.
+Mention something from the memory summary.
+If memory is empty but day is higher than 1, say you are back and ready for another shaorma.
+
+Return only the dialogue text.
+""" % [
+		str(ziua_curenta),
+		str(este_prima_vizita_reala),
+		memory_summary,
+		str(order)
+	]
 
 	var body := {
 		"model": model_name,
@@ -63,45 +83,124 @@ Maximum 2 sentences.
 	if err != OK:
 		dialogue_ready.emit(_fallback_dialogue(history))
 
+
+func _build_memory_summary(history: Array) -> String:
+	if history.is_empty():
+		return "No saved visits."
+
+	var summaries: Array[String] = []
+
+	for entry in history:
+		var score := int(entry.get("score", 100))
+		var order := str(entry.get("order", []))
+
+		if score < 70:
+			summaries.append("Previous visit was bad, score " + str(score) + ", order " + order + ".")
+		else:
+			summaries.append("Previous visit was good, score " + str(score) + ", order " + order + ".")
+
+	return " ".join(summaries)
+
+
 func _on_request_completed(
 	_result: int,
 	response_code: int,
 	_headers: PackedStringArray,
 	body: PackedByteArray
 ) -> void:
+	var history := CustomerHistoryScript.load_history()
+
 	if response_code != 200:
-		dialogue_ready.emit("I'm back again! Please make my shaorma better than last time.")
+		dialogue_ready.emit(_fallback_dialogue(history))
 		return
 
 	var json := JSON.new()
 	var err := json.parse(body.get_string_from_utf8())
 
 	if err != OK:
-		dialogue_ready.emit("Nice to see you again! I hope you remember my order.")
+		dialogue_ready.emit(_fallback_dialogue(history))
 		return
 
 	var data = json.get_data()
 
 	if typeof(data) != TYPE_DICTIONARY:
-		dialogue_ready.emit("I'm back again! Let's see if you still know how to make my favorite shaorma.")
+		dialogue_ready.emit(_fallback_dialogue(history))
 		return
 
 	var response := str(data.get("response", "")).strip_edges()
+	dialogue_ready.emit(_sanitize_dialogue(response))
 
-	if response == "":
-		response = "I'm back again! I hope today's shaorma is perfect."
 
-	dialogue_ready.emit(response)
+func _sanitize_dialogue(text: String) -> String:
+	var history := CustomerHistoryScript.load_history()
+
+	var regex := RegEx.new()
+	regex.compile("[^a-zA-Z0-9 .,!?':\\-\\n]")
+
+	var clean := regex.sub(text, "", true)
+	clean = clean.strip_edges()
+
+	while clean.contains("  "):
+		clean = clean.replace("  ", " ")
+
+	if clean == "":
+		return _fallback_dialogue(history)
+
+	var sentence_regex := RegEx.new()
+	sentence_regex.compile("[^.!?]+[.!?]")
+
+	var matches := sentence_regex.search_all(clean)
+	var final_sentences: Array[String] = []
+
+	for match_result in matches:
+		var sentence := match_result.get_string().strip_edges()
+		sentence = _limit_sentence_words(sentence, 13)
+
+		if sentence != "":
+			final_sentences.append(sentence)
+
+		if final_sentences.size() >= 2:
+			break
+
+	if final_sentences.is_empty():
+		return _limit_sentence_words(clean, 13)
+
+	return " ".join(final_sentences)
+
+
+func _limit_sentence_words(sentence: String, max_words: int) -> String:
+	var ending := "."
+
+	if sentence.ends_with(".") or sentence.ends_with("!") or sentence.ends_with("?"):
+		ending = sentence[-1]
+		sentence = sentence.substr(0, sentence.length() - 1).strip_edges()
+
+	var words := sentence.split(" ", false)
+
+	if words.size() > max_words:
+		words = words.slice(0, max_words)
+
+	var result := " ".join(words).strip_edges()
+
+	if result == "":
+		return ""
+
+	return result + ending
 
 
 func _fallback_dialogue(history: Array) -> String:
+	var ziua_curenta := int(Global.current_save.get("day", 1))
+
 	if history.is_empty():
-		return "Hi, I'm Papalouie! This is my first visit here. I have a very good memory, so I'll remember every mistake from now on."
+		if ziua_curenta == 1:
+			return "Hi, I'm Papalouie! This is my first visit, and I'll remember mistakes."
+		else:
+			return "I'm back again! I may be fuzzy today, but I remember this place."
 
 	var last_entry: Dictionary = history.back()
 	var score := int(last_entry.get("score", 100))
 
 	if score < 70:
-		return "I'm back, and I remember last time wasn't great. Please don't mess up my shaorma again."
+		return "I'm back, and I remember last time wasn't great. Please do better today."
 
-	return "I'm back again! I remember last time was pretty good, so I trust you with another shaorma."
+	return "I'm back again! I remember last time was pretty good."

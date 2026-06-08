@@ -892,6 +892,9 @@ func calculate_tortilla_score(tortilla: Area2D) -> int:
 
 
 func update_grill(delta: float) -> void:
+	var oven_buff = Global.get_upgrade_buff("oven")
+	var accelerated_delta = delta / oven_buff
+
 	for slot in grill_data.keys():
 		var tortilla = grill_data[slot]["tortilla"]
 		var timer_circle := slot.get_node_or_null("HeatTimeCircle") as TextureProgressBar
@@ -922,7 +925,7 @@ func update_grill(delta: float) -> void:
 				timer_circle.value = 0
 			continue
 
-		grill_data[slot]["heat_time"] += delta
+		grill_data[slot]["heat_time"] += accelerated_delta
 		var heat_time: float = grill_data[slot]["heat_time"]
 
 		if timer_circle != null:
@@ -972,8 +975,12 @@ func remove_glow(tortilla: Area2D) -> void:
 
 
 func update_meat_cooking(delta: float) -> void:
-	chicken_cook_time += delta
-	beef_cook_time += delta
+	# Dacă buff-ul e 0.8, timpul trece mai repede (delta / 0.8)
+	var grill_buff = Global.get_upgrade_buff("grill")
+	var accelerated_delta = delta / grill_buff
+
+	chicken_cook_time += accelerated_delta
+	beef_cook_time += accelerated_delta
 
 	update_meat_indicator("chicken")
 	update_meat_indicator("beef")

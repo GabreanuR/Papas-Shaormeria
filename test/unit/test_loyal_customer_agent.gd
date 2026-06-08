@@ -84,7 +84,7 @@ func test_sanitize_removes_non_ascii_characters() -> void:
 	add_child_autofree(agent)
 	await get_tree().process_frame
 
-	var text := agent._sanitize_dialogue(
+	var text = agent._sanitize_dialogue(
 		"Hello nice shaorma! ★★★"
 	)
 
@@ -97,7 +97,7 @@ func test_sanitize_keeps_normal_text() -> void:
 	await get_tree().process_frame
 
 	var original := "Hello, I remember your shaorma from last time."
-	var text := agent._sanitize_dialogue(original)
+	var text = agent._sanitize_dialogue(original)
 
 	assert_eq(text, original)
 
@@ -108,7 +108,7 @@ func test_sanitize_limits_length() -> void:
 	await get_tree().process_frame
 
 	var long_text := "a".repeat(300)
-	var text := agent._sanitize_dialogue(long_text)
+	var text = agent._sanitize_dialogue(long_text)
 
 	assert_lte(text.length(), 180)
 
@@ -118,7 +118,7 @@ func test_sanitize_empty_returns_fallback() -> void:
 	add_child_autofree(agent)
 	await get_tree().process_frame
 
-	var text := agent._sanitize_dialogue("")
+	var text = agent._sanitize_dialogue("")
 
 	assert_ne(text, "")
 	assert_true(text.length() > 0)
@@ -129,7 +129,7 @@ func test_sanitize_only_symbols_returns_fallback() -> void:
 	add_child_autofree(agent)
 	await get_tree().process_frame
 
-	var text := agent._sanitize_dialogue("★★★@@@###")
+	var text = agent._sanitize_dialogue("★★★@@@###")
 
 	assert_ne(text, "")
 	assert_true(text.length() > 0)

@@ -1,5 +1,225 @@
 [gd_scene format=3 uid="uid://dkivk3gcy574l"]
 
-[node name="UpgradesMenu" type="Control" unique_id=2083543632]
+[ext_resource type="Script" uid="uid://daw0pq2f3rfdx" path="res://scripts/day_management/upgrades_menu.gd" id="1_h01cb"]
+[ext_resource type="Texture2D" uid="uid://banrjlu16viks" path="res://assets/graphics/cutting_station/final_knife.png" id="3_iqtbs"]
+[ext_resource type="Texture2D" uid="uid://c1yjgb2tkjr5m" path="res://assets/graphics/ingredients/lipie.png" id="4_0nw35"]
+[ext_resource type="Texture2D" uid="uid://bmallx4ymt5h2" path="res://assets/graphics/characters/doorbell.png" id="5_fgjv6"]
+
+[node name="UpgradesMenu" type="Control" unique_id=1241219676]
 layout_mode = 3
-anchors_preset = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_h01cb")
+
+[node name="FundalNegru" type="ColorRect" parent="." unique_id=653144196]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=824492576]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -343.0
+offset_top = -200.0
+offset_right = 343.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer" unique_id=1826702364]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer" unique_id=1456802978]
+layout_mode = 2
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=1659508]
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
+text = "Kitchen Upgrades"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=1059923487]
+layout_mode = 2
+
+[node name="ItemsContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=557966920]
+layout_mode = 2
+
+[node name="RowGrill" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/ItemsContainer" unique_id=823325160]
+layout_mode = 2
+theme_override_constants/separation = 30
+
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/ItemsContainer/RowGrill" unique_id=132082622]
+custom_minimum_size = Vector2(60, 50)
+layout_mode = 2
+size_flags_horizontal = 5
+texture = ExtResource("3_iqtbs")
+expand_mode = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/ItemsContainer/RowGrill" unique_id=311371914]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Grill Master" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/ItemsContainer/RowGrill/VBoxContainer" unique_id=32361600]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Grill Master"
+
+[node name="Label2" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/ItemsContainer/RowGrill/VBoxContainer" unique_id=1807798316]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_vertical = 5
+theme_override_font_sizes/font_size = 14
+text = "Increase Meat Cook Speed"
+
+[node name="SlotsGrill" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/ItemsContainer/RowGrill" unique_id=77537720]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+alignment = 1
+
+[node name="ColorRect" type="ColorRect" parent="PanelContainer/MarginContainer/VBoxContainer/ItemsContainer/RowGrill/SlotsGrill" unique_id=1975430157]
+custom_minimum_size = Vector2(45, 5)
+layout_mode = 2
+color = Color(0.15775332, 0.15775332, 0.15775332, 1)
+
+[node name="ColorRect2" type="ColorRect" parent="PanelContainer/MarginContainer/VBoxContainer/ItemsContainer/RowGrill/SlotsGrill" unique_id=1613717370]
+custom_minimum_size = Vector2(45, 5)
+layout_mode = 2
+color = Color(0.15775332, 0.15775332, 0.15775332, 1)
+
+[node name="ColorRect3" type="ColorRect" parent="PanelContainer/MarginContainer/VBoxContainer/ItemsContainer/RowGrill/SlotsGrill" unique_id=2119788772]
+custom_minimum_size = Vector2(45, 5)
+layout_mode = 2
+color = Color(0.15775332, 0.15775332, 0.15775332, 1)
+
+[node name="BtnBuyGrill" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/ItemsContainer/RowGrill" unique_id=1753971135]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+text = "Purchase"
+
+[node name="RowGrill2" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/ItemsContainer" unique_id=1126022949]
+layout_mode = 2
+theme_override_constants/separation = 30
+
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/ItemsContainer/RowGrill2" unique_id=520915233]
+custom_minimum_size = Vector2(55, 50)
+layout_mode = 2
+size_flags_horizontal = 5
+texture = ExtResource("4_0nw35")
+expand_mode = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/ItemsContainer/RowGrill2" unique_id=1178818769]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Turbo Oven" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/ItemsContainer/RowGrill2/VBoxContainer" unique_id=1204434410]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Turbo Oven"
+
+[node name="Label2" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/ItemsContainer/RowGrill2/VBoxContainer" unique_id=734201071]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_vertical = 5
+theme_override_font_sizes/font_size = 14
+text = "Increase Wrap Heat Speed"
+
+[node name="SlotsOven" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/ItemsContainer/RowGrill2" unique_id=617797133]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+alignment = 1
+
+[node name="ColorRect" type="ColorRect" parent="PanelContainer/MarginContainer/VBoxContainer/ItemsContainer/RowGrill2/SlotsOven" unique_id=235301260]
+custom_minimum_size = Vector2(45, 5)
+layout_mode = 2
+color = Color(0.15775332, 0.15775332, 0.15775332, 1)
+
+[node name="ColorRect2" type="ColorRect" parent="PanelContainer/MarginContainer/VBoxContainer/ItemsContainer/RowGrill2/SlotsOven" unique_id=151706495]
+custom_minimum_size = Vector2(45, 5)
+layout_mode = 2
+color = Color(0.15775332, 0.15775332, 0.15775332, 1)
+
+[node name="ColorRect3" type="ColorRect" parent="PanelContainer/MarginContainer/VBoxContainer/ItemsContainer/RowGrill2/SlotsOven" unique_id=356458420]
+custom_minimum_size = Vector2(45, 5)
+layout_mode = 2
+color = Color(0.15775332, 0.15775332, 0.15775332, 1)
+
+[node name="BtnBuyOven" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/ItemsContainer/RowGrill2" unique_id=247197449]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+text = "Purchase"
+
+[node name="RowGrill3" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/ItemsContainer" unique_id=1426265298]
+layout_mode = 2
+theme_override_constants/separation = 30
+
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/ItemsContainer/RowGrill3" unique_id=1200047367]
+custom_minimum_size = Vector2(60, 50)
+layout_mode = 2
+size_flags_horizontal = 5
+texture = ExtResource("5_fgjv6")
+expand_mode = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/ItemsContainer/RowGrill3" unique_id=1303101918]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Golden Bell" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/ItemsContainer/RowGrill3/VBoxContainer" unique_id=293688112]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Golden Bell"
+
+[node name="Label2" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/ItemsContainer/RowGrill3/VBoxContainer" unique_id=1547463242]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_vertical = 5
+theme_override_font_sizes/font_size = 14
+text = "Patience +50%"
+
+[node name="SlotsBell" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/ItemsContainer/RowGrill3" unique_id=1372258353]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+alignment = 1
+
+[node name="ColorRect" type="ColorRect" parent="PanelContainer/MarginContainer/VBoxContainer/ItemsContainer/RowGrill3/SlotsBell" unique_id=1791532221]
+custom_minimum_size = Vector2(45, 5)
+layout_mode = 2
+color = Color(0.15775332, 0.15775332, 0.15775332, 1)
+
+[node name="ColorRect2" type="ColorRect" parent="PanelContainer/MarginContainer/VBoxContainer/ItemsContainer/RowGrill3/SlotsBell" unique_id=1419779360]
+custom_minimum_size = Vector2(45, 5)
+layout_mode = 2
+color = Color(0.15775332, 0.15775332, 0.15775332, 1)
+
+[node name="ColorRect3" type="ColorRect" parent="PanelContainer/MarginContainer/VBoxContainer/ItemsContainer/RowGrill3/SlotsBell" unique_id=1875999640]
+custom_minimum_size = Vector2(45, 5)
+layout_mode = 2
+color = Color(0.15775332, 0.15775332, 0.15775332, 1)
+
+[node name="BtnBuyBell" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/ItemsContainer/RowGrill3" unique_id=827630981]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+text = "Purchase"
+
+[node name="BtnClose" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=998751309]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Close
+"

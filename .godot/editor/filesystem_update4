@@ -1,2 +1,7 @@
-res://scripts/ai/loyal_customer_agent.gd
-res://scripts/ai/customer_history.gd
+res://scenes/day_management/upgrades_menu.tscn
+res://assets/theme/global_ui_theme.tres
+res://assets/theme/light_texture.tres
+res://addons/gut/gui/editor_globals.gd
+res://addons/gut/gui/EditorRadioButton.tres
+res://scripts/day_management/upgrades_menu.gd
+res://scripts/day_management/day_transition.gd

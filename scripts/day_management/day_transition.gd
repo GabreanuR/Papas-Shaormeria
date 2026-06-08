@@ -79,7 +79,7 @@ func _ready() -> void:
 			
 		_btn_character_overlay.pressed.connect(func(): _customize_menu.show_menu())
 		
-	_btn_upgrades.pressed.connect(func(): _upgrades_menu.show())
+	_btn_upgrades.pressed.connect(func(): _upgrades_menu.show_menu())
 	
 	# Inițializăm efectul de glow pentru toate butoanele
 	_setup_button_glow(_btn_start_day)

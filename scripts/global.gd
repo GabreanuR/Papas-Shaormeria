@@ -83,6 +83,32 @@ const ITEMS_DATA := {
 	}
 }
 
+## Upgrade shop database — max level is 3. 
+## Price index 0 is empty because level 1 is free (default).
+const UPGRADES_DATA := {
+	"grill": {
+		"title": "Grill Master",
+		"desc": "Carnea se prăjește mult mai repede.",
+		"max_level": 3,
+		"prices": [0, 100, 250],   # Cât costă să treci la nivelul 2, respectiv 3
+		"buffs": [1.0, 0.8, 0.6]   # 100% (normal), 80% timp, 60% timp
+	},
+	"oven": {
+		"title": "Turbo Oven",
+		"desc": "Lipia se încălzește instantaneu.",
+		"max_level": 3,
+		"prices": [0, 200, 300],
+		"buffs": [1.0, 0.85, 0.7]  # Multiplicator pentru durata de stat pe foc
+	},
+	"bell": {
+		"title": "Golden Bell",
+		"desc": "Clienții așteaptă cu 50% mai mult.",
+		"max_level": 3,
+		"prices": [0, 120, 240],
+		"buffs": [1.0, 1.25, 1.5]  # Multiplicator pentru răbdare
+	}
+}
+
 # ---------------------------------------------------------
 # 4. PUBLIC VARIABLES
 # ---------------------------------------------------------
@@ -167,7 +193,11 @@ func get_default_save_data(shop_name: String = "Papa's Shaormeria") -> Dictionar
 		"money": DEFAULT_STARTING_MONEY,
 		"reputation": 0,
 		"inventory": { "meat_kg": 10.0, "pita_bread": 20, "garlic_sauce": 15, "spicy_sauce": 15 },
-		"unlocked_upgrades": [],
+		"equipment_levels": {
+			"grill": 1,
+			"oven": 1,
+			"bell": 1
+		},
 		"customization": {
 			"unlocked_items": [],
 			"equipped_items": []
@@ -439,7 +469,9 @@ func get_tips_multiplier() -> float:
 	return get_buff_multiplier("tips_boost")
 
 func get_patience_multiplier() -> float:
-	return get_buff_multiplier("patience_boost")
+	var haine_buff = get_buff_multiplier("patience_boost")
+	var bell_buff = get_upgrade_buff("bell") 
+	return haine_buff * bell_buff
 
 # ---------------------------------------------------------
 # 10. SIGNAL CALLBACKS
@@ -450,3 +482,49 @@ func _on_day_timer_ended() -> void:
 	# NOTE: Scene navigation is intentionally NOT done here.
 	# GameplayMaster listens to `day_ended` and handles the scene transition,
 	# keeping Global free of any scene-flow responsibilities.
+
+# ---------------------------------------------------------
+# 11. UPGRADES SYSTEM (Echipamente Bucătărie)
+# ---------------------------------------------------------
+
+## Returnează nivelul curent al unui echipament (default 1).
+func get_upgrade_level(upgrade_id: String) -> int:
+	if current_save.has("equipment_levels") and current_save["equipment_levels"].has(upgrade_id):
+		return current_save["equipment_levels"][upgrade_id]
+	return 1 # Fallback la nivel 1 dacă nu există în salvare
+
+## Cumpără următorul nivel dacă jucătorul are suficienți bani.
+func purchase_upgrade(upgrade_id: String) -> bool:
+	if not UPGRADES_DATA.has(upgrade_id):
+		return false
+		
+	var current_lvl = get_upgrade_level(upgrade_id)
+	var max_lvl = UPGRADES_DATA[upgrade_id]["max_level"]
+	
+	# Dacă e deja la maxim, nu mai poate cumpăra
+	if current_lvl >= max_lvl:
+		return false
+		
+	# array-ul "prices" are index 1 pentru Trecerea la Nivel 2. 
+	# (Index 0 este dummy pentru nivelul 1)
+	var pret = UPGRADES_DATA[upgrade_id]["prices"][current_lvl]
+	
+	if current_save["money"] >= pret:
+		current_save["money"] -= pret
+		money_changed.emit(current_save["money"])
+		
+		# Creștem nivelul și salvăm fizic
+		if not current_save.has("equipment_levels"):
+			current_save["equipment_levels"] = {}
+		current_save["equipment_levels"][upgrade_id] = current_lvl + 1
+		save_game_to_disk()
+		return true
+		
+	return false
+
+## Returnează multiplicatorul (buff-ul) specific nivelului curent.
+func get_upgrade_buff(upgrade_id: String) -> float:
+	var lvl = get_upgrade_level(upgrade_id)
+	# Scădem 1 din nivel pentru a accesa indexul corect din array-ul buffs (0, 1 sau 2)
+	var index_array = clamp(lvl - 1, 0, 2)
+	return UPGRADES_DATA[upgrade_id]["buffs"][index_array]

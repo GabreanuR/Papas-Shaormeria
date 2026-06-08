@@ -346,6 +346,8 @@ func _arata_ecran_final_arcade(titlu: String, mesaj: String, succes: bool) -> vo
 ## so that all listeners (e.g. TopBar) are notified via day_changed.
 func advance_day() -> void:
 	current_save["day"] += 1
+	if int(current_save["day"]) % 7 == 0:
+		current_save["money"] += 100
 	is_night = false
 	save_game_to_disk() # Salvăm faptul că am trecut la o zi nouă!
 	day_changed.emit(current_save["day"])

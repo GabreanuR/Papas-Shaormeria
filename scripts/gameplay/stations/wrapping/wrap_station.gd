@@ -386,7 +386,7 @@ func _on_send_pressed() -> void:
 		else:
 			scor_assembly_real = int(clamp((scor_ingrediente * 0.6) + (scor_sos_salvat * 0.4), 0, 100))
 			
-		gm.update_station_score("assembly", scor_assembly_real)
+		gm.update_station_score("assembly", min(100, scor_assembly_real))
 
 		# C) CALCULĂM SCORUL DE WRAPPING (Swipe + Hârtie + Suc)
 		var scor_swipe = int(wrap_quality * 50)
@@ -417,14 +417,14 @@ func _on_send_pressed() -> void:
 		if suc_oferit == suc_cerut:
 			scor_suc = 25
 			
-		var scor_wrapping_total = scor_swipe + scor_hartie + scor_suc
+		var scor_wrapping_total = min(100, scor_swipe + scor_hartie + scor_suc)
 		gm.update_station_score("wrapping", scor_wrapping_total)
 		
 		# D) CALCULĂM REAL WAITING SCORE (Răbdarea clientului din listă!)
 		if order_st:
 			for c in order_st.zona_asteptare:
 				if c.id_unic == id_client_curent:
-					var waiting_score = int((c.rabdare_curenta / c.rabdare_maxima) * 100)
+					var waiting_score = min(int((c.rabdare_curenta / c.rabdare_maxima) * 100), 100)
 					
 					gm.update_station_score("waiting", waiting_score)
 					break

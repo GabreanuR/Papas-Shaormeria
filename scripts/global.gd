@@ -51,7 +51,8 @@ const ACHIEVEMENTS_DATA = {
 	"fusion_master": {"title": "Fusion Master", "desc": "Serve an order matching the Daily Fusion Recipe."},
 	"oops": {"title": "Oops...", "desc": "Serve a bad order with a score below 50."},
 	"crowd_pleaser": {"title": "Crowd Pleaser", "desc": "Serve a total milestone of 20 customers."},
-	"kitchen_disaster": {"title": "Kitchen Disaster", "desc": "Get an absolute score of 0 on an order."}
+	"kitchen_disaster": {"title": "Kitchen Disaster", "desc": "Get an absolute score of 0 on an order."},
+	"speedrun_champion": {"title": "Speed Demon", "desc": "Serve 5 perfect orders in under 5 minutes in Arcade Mode."}
 }
 
 ## Item shop database — prices and gameplay buff identifiers.
@@ -137,6 +138,15 @@ var daily_stats: Dictionary = {
 var trend_ingredient: String = ""
 var urmatorul_trend_ingredient: String = ""
 var daily_fusion_recipe: Array = []
+
+# ---------------------------------------------------------
+# ARCADE MODE (SPEEDRUN)
+# ---------------------------------------------------------
+var is_arcade_mode: bool = false
+var arcade_played_today: bool = false
+var arcade_perfect_orders: int = 0
+var arcade_customers_served: int = 0
+var _arcade_finished: bool = false
 
 # ---------------------------------------------------------
 # 5. PRIVATE VARIABLES
@@ -249,9 +259,87 @@ func reset_daily_stats() -> void:
 
 ## Starts the day timer. Called by DayTransition when the player clicks "Start Day".
 func start_day(duration_seconds: float) -> void:
+	is_arcade_mode = false
 	is_night = false
 	reset_daily_stats() # Call the new reset function here!
-	_day_timer.start(duration_seconds)
+	_day_timer.stop()
+
+func start_arcade_mode() -> void:
+	is_arcade_mode = true
+	arcade_played_today = true
+	arcade_perfect_orders = 0
+	arcade_customers_served = 0
+	_arcade_finished = false
+	
+	is_night = false
+	reset_daily_stats() 
+	_day_timer.start(300.0)
+
+func register_arcade_order(score: int) -> void:
+	if not is_arcade_mode or _arcade_finished:
+		return
+		
+	arcade_customers_served += 1
+	if score >= 80:
+		arcade_perfect_orders += 1
+		
+	if arcade_customers_served >= 5:
+		_arcade_finished = true # Oprim orice altă procesare
+		_day_timer.stop()
+		
+		if arcade_perfect_orders == 5:
+			unlock_achievement("speedrun_champion")
+			current_save["money"] += 100.0
+			money_changed.emit(current_save["money"])
+			save_game_to_disk()
+			_arata_ecran_final_arcade("CHALLENGE COMPLETE!", "You earned the Speed Demon Trophy and $500!", true)
+		else:
+			_arata_ecran_final_arcade("CHALLENGE FAILED", "You served 5 customers, but only %d were perfect." % arcade_perfect_orders, false)
+
+# Funcția care desenează Pop-up-ul la final de provocare
+func _arata_ecran_final_arcade(titlu: String, mesaj: String, succes: bool) -> void:
+	var canvas = CanvasLayer.new()
+	canvas.layer = 250 # Îl punem peste absolut tot jocul
+	add_child(canvas)
+
+	var panel = PanelContainer.new()
+	var stil = StyleBoxFlat.new()
+	stil.bg_color = Color(0.12, 0.12, 0.12, 0.98) # Negru mat
+	stil.border_width_left = 6; stil.border_width_top = 6; stil.border_width_right = 6; stil.border_width_bottom = 6
+	stil.border_color = Color(0.2, 0.8, 0.2) if succes else Color(0.8, 0.2, 0.2) # Verde pt succes, Roșu pt eșec
+	stil.set_corner_radius_all(15)
+	stil.set_content_margin_all(40)
+	panel.add_theme_stylebox_override("panel", stil)
+
+	var vbox = VBoxContainer.new()
+	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	vbox.add_theme_constant_override("separation", 20)
+
+	var lbl_titlu = Label.new()
+	lbl_titlu.text = titlu
+	lbl_titlu.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	lbl_titlu.add_theme_font_size_override("font_size", 48)
+	lbl_titlu.add_theme_color_override("font_color", Color(0.95, 0.85, 0.2) if succes else Color(1.0, 1.0, 1.0))
+
+	var lbl_mesaj = Label.new()
+	lbl_mesaj.text = mesaj
+	lbl_mesaj.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	lbl_mesaj.add_theme_font_size_override("font_size", 24)
+
+	vbox.add_child(lbl_titlu)
+	vbox.add_child(lbl_mesaj)
+	panel.add_child(vbox)
+	canvas.add_child(panel)
+
+	# Îl centrăm perfect pe ecran
+	panel.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+
+	# Așteptăm 4 secunde ca jucătorul să vadă rezultatul
+	await get_tree().create_timer(10.0).timeout
+	canvas.queue_free()
+
+	# Acum trimitem semnalul care îl aruncă înapoi în Hub!
+	day_ended.emit()
 
 ## Advances the day counter by one and resets the night flag.
 ## Always use this instead of writing to current_save["day"] directly,
@@ -477,8 +565,12 @@ func get_patience_multiplier() -> float:
 # 10. SIGNAL CALLBACKS
 # ---------------------------------------------------------
 func _on_day_timer_ended() -> void:
-	is_night = true
-	day_ended.emit()
+	if is_arcade_mode:
+		if _arcade_finished: return
+		_arcade_finished = true
+		_arata_ecran_final_arcade("TIME'S UP!", "You ran out of time! You only served %d customers." % arcade_customers_served, false)
+	else:
+		pass
 	# NOTE: Scene navigation is intentionally NOT done here.
 	# GameplayMaster listens to `day_ended` and handles the scene transition,
 	# keeping Global free of any scene-flow responsibilities.

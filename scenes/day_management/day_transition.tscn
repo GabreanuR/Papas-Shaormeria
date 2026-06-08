@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://dovyecs4xt8h3" path="res://assets/graphics/backgrounds/nightScene.png" id="3_ho274"]
 [ext_resource type="PackedScene" uid="uid://poa1kme3gfho" path="res://scenes/ui/top_bar.tscn" id="4_4uypn"]
 [ext_resource type="PackedScene" uid="uid://cmivhurjraqxm" path="res://scenes/day_management/customization_menu.tscn" id="4_eobbb"]
+[ext_resource type="Texture2D" uid="uid://uapqk58ows0k" path="res://assets/graphics/characters/clock.png" id="4_gwbe1"]
 [ext_resource type="Texture2D" uid="uid://detqtqywu6ajt" path="res://assets/graphics/ui/day_transition_buttons/start_game_button_normal.png" id="4_i85vr"]
 [ext_resource type="PackedScene" uid="uid://dkivk3gcy574l" path="res://scenes/day_management/upgrades_menu.tscn" id="5_5p5ns"]
 [ext_resource type="PackedScene" uid="uid://fd4aj0bemigw" path="res://scenes/entities/characters/customer.tscn" id="6_dlb6j"]
@@ -54,6 +55,21 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_4uypn")
 
+[node name="BtnArcade" type="TextureButton" parent="MorningMenusContainer" unique_id=1393784101]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 1280.0
+offset_top = 556.0
+offset_right = 1400.0
+offset_bottom = 676.0
+texture_normal = ExtResource("4_gwbe1")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="FlickeringLight" parent="MorningMenusContainer/BtnArcade" unique_id=458594897 instance=ExtResource("8_kep8y")]
+position = Vector2(57, 57)
+scale = Vector2(2.42598, 2.4687512)
+
 [node name="BtnStartDay" type="TextureButton" parent="MorningMenusContainer" unique_id=364000258]
 unique_name_in_owner = true
 layout_mode = 0
@@ -63,7 +79,7 @@ offset_right = 1415.0
 offset_bottom = 1056.0
 texture_normal = ExtResource("4_i85vr")
 
-[node name="FlickeringLight" parent="MorningMenusContainer/BtnStartDay" unique_id=458594897 instance=ExtResource("8_kep8y")]
+[node name="FlickeringLight" parent="MorningMenusContainer/BtnStartDay" unique_id=1716588909 instance=ExtResource("8_kep8y")]
 position = Vector2(85, 202)
 scale = Vector2(2.42598, 5.3365235)
 
@@ -111,6 +127,11 @@ scale = Vector2(4.77495, 8.095323)
 [node name="UpgradesMenu" parent="MorningMenusContainer" unique_id=2083543632 instance=ExtResource("5_5p5ns")]
 unique_name_in_owner = true
 layout_mode = 0
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+grow_horizontal = 1
+grow_vertical = 1
 
 [node name="BtnUpgrades" type="TextureButton" parent="MorningMenusContainer" unique_id=1671514258]
 unique_name_in_owner = true

@@ -53,6 +53,14 @@ func update_station_score(station_name: String, score: int) -> void:
 
 
 func save_current_pita() -> void:
+	var score = current_pita_state["total_score"]
+
+	if Global.is_arcade_mode:
+		Global.register_arcade_order(score)
+		completed_pitas.append(current_pita_state.duplicate(true))
+		current_pita_state = _new_pita_state()
+		return
+
 	# 1. Numărăm dacă șaorma e "Perfectă" 
 	if current_pita_state["total_score"] == 100:
 		Global.daily_stats["perfect_orders"] += 1
@@ -66,7 +74,8 @@ func save_current_pita() -> void:
 	# 🏆 DECLANȘATOARE REALIZĂRI (Achievements Core Triggers)
 	Global.unlock_achievement("first_bite")
 	
-	var score = current_pita_state["total_score"]
+	score = current_pita_state["total_score"]
+
 	if score == 0:
 		Global.unlock_achievement("kitchen_disaster")
 	elif score < 50:
@@ -91,6 +100,7 @@ var _assembly_camera: Camera2D
 var _sauce_finish_timer: Timer
 var _go_to_sauces_button: Button
 var _go_to_wrapping_button: Button
+var _profit_label: Label
 
 # ---------------------------------------------------------
 # 6. ONREADY VARIABLES
@@ -135,12 +145,26 @@ func _ready() -> void:
 
 	_create_assembly_buttons()
 	_create_sauce_finish_timer()
+	
+	_profit_label = _gaseste_label_profit(self)
+	
+	if not Global.is_arcade_mode and _profit_label:
+		_profit_label.text = "Profit: $ 0.00"
+	
+	if not Global.day_ended.is_connected(_on_day_ended):
+		Global.day_ended.connect(_on_day_ended)
 
 	# Start on the order station by default.
 	_go_to_order()
 	
 	if _order_station:
 		actualizeaza_text_clienti(_order_station.clienti_serviti, _order_station.total_clienti_zi)
+
+func _process(_delta: float) -> void:
+	# Transformăm eticheta de Profit în Timer dacă suntem în Arcade Mode!
+	if Global.is_arcade_mode and _profit_label:
+		var t = int(Global.day_time_left)
+		_profit_label.text = "Time Left: %02d:%02d" % [t / 60, t % 60]
 
 # ---------------------------------------------------------
 # 8. PUBLIC FUNCTIONS
@@ -262,20 +286,22 @@ func _go_to_wrapping() -> void:
 # 10. SIGNAL CALLBACKS
 # ---------------------------------------------------------
 func _on_day_ended() -> void:
-	# 1. Calculăm tot ce e de calculat și transferăm în Global
-	Global.daily_earnings = profit_ziua_curenta
-	Global.daily_stats["tips_earned"] = profit_ziua_curenta
-	
 	AudioManager.stop_music(1.0)
 	
-	# 2. Îi spunem lui Global să adauge banii la contul total
-	Global.end_day_and_save_earnings()
-	
-	# 3. SETĂM FLAG-UL DE NOAPTE! Astfel, day_transition va ști să afișeze raportul.
-	Global.is_night = true
-	
-	# 4. Schimbăm scena
-	get_tree().change_scene_to_file("res://scenes/day_management/day_transition.tscn")
+	if Global.is_arcade_mode:
+		# Ieșim din Arcade Mode direct în dimineața normală, FĂRĂ BANI SALVAȚI și FĂRĂ NOAPTE
+		Global.is_arcade_mode = false
+		Global.is_night = false
+		get_tree().change_scene_to_file("res://scenes/day_management/day_transition.tscn")
+	else:
+		# Logica originală pentru Campania normală
+		Global.daily_earnings = profit_ziua_curenta
+		Global.daily_stats["tips_earned"] = profit_ziua_curenta
+		
+		Global.end_day_and_save_earnings()
+		Global.is_night = true
+		
+		get_tree().change_scene_to_file("res://scenes/day_management/day_transition.tscn")
 	
 
 func _create_assembly_buttons() -> void:
@@ -472,7 +498,3 @@ func actualizeaza_text_clienti(serviti: int, total: int) -> void:
 		top_bar.update_customer_counter(serviti, total)
 		
 		
-# ok deci am descoperit inca o problema:
-#cand e evaluata o comanda si vine un client nou (in alea 10 secunde), el apare pe ecran cum se misca desi teoretic n ar trebuit sa l vedem
-#
-#cand se termina ziua, nu ar trebui sa ma duca in meniul respectiv, ci intr-un cadru care arata ca afara e noapte si imi arata statisticile de la finalul zilei (total tips, comenzi perfecte etc). nu stiu exact cum se numeste in cod dar aia ar trebui sa imi arate. apoi datele privind scorurile trebuie salvate cumva global si schimbat la day 2 pentru a avea sens meniul de incepere a unei noi zile

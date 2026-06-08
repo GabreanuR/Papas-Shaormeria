@@ -2,7 +2,7 @@ extends Control
 
 enum DayState { MORNING, NIGHT }
 
-const DEFAULT_DAY_DURATION := 180.0  # 3 minutes average
+const DEFAULT_DAY_DURATION := 15.0 
 const GAMEPLAY_SCENE := "res://scenes/gameplay/master/gameplay_master.tscn"
 
 @export var day_music: AudioStream
@@ -26,6 +26,7 @@ var _current_state: DayState = DayState.MORNING
 @onready var _btn_character_overlay: TextureButton = %BtnCharacterOverlay
 @onready var _btn_upgrades: TextureButton = %BtnUpgrades
 @onready var _btn_achievements: TextureButton = %BtnAchievements
+@onready var _btn_arcade: TextureButton = get_node_or_null("%BtnArcade")
 
 # ---------------------------------------------------------
 # BUTOANE NOAPTEA
@@ -90,6 +91,10 @@ func _ready() -> void:
 
 	if _btn_character_overlay:
 		_setup_button_glow(_btn_character_overlay)
+		
+	if _btn_arcade:
+		_btn_arcade.pressed.connect(_on_arcade_pressed)
+		_setup_button_glow(_btn_arcade)
 		
 	# Verificăm starea din Global
 	if Global.is_night:
@@ -159,6 +164,13 @@ func _set_state(new_state: DayState) -> void:
 			_customize_menu.hide()
 			_morning_container.show()
 			_top_bar.show()
+			if _btn_arcade:
+				if Global.arcade_played_today:
+					_btn_arcade.disabled = true
+					_btn_arcade.modulate = Color(0.5, 0.5, 0.5) # Îl facem gri
+				else:
+					_btn_arcade.disabled = false
+					_btn_arcade.modulate = Color(1.0, 1.0, 1.0)
 
 		DayState.NIGHT:
 			_morning_container.hide()
@@ -166,6 +178,8 @@ func _set_state(new_state: DayState) -> void:
 			_summary_menu.show()     # Auto-open summary at end of day
 			_btn_next_day.show()
 			_top_bar.hide()
+			if _upgrades_menu: _upgrades_menu.hide()
+			if _customize_menu: _customize_menu.hide()
 
 # ---------------------------------------------------------
 # SIGNAL CALLBACKS (Fluxul zilelor)
@@ -177,8 +191,14 @@ func _on_start_day_pressed() -> void:
 
 func _on_next_day_pressed() -> void:
 	Global.reset_daily_stats() # Această funcție o ai deja în Global.gd!
+	Global.arcade_played_today = false
 	Global.advance_day()
 	_set_state(DayState.MORNING)
+	
+func _on_arcade_pressed() -> void:
+	AudioManager.stop_music(1.0)
+	Global.start_arcade_mode()
+	get_tree().change_scene_to_file(GAMEPLAY_SCENE)
 
 # ---------------------------------------------------------
 # FUNCȚII PRIVATE DE SISTEM

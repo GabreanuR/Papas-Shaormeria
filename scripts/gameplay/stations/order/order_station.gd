@@ -274,7 +274,7 @@ func _on_customer_a_fost_apasat(comanda, clientul_apasat):
 		_afiseaza_dialog_loyal_customer(clientul_apasat.ai_dialogue_ready_text)
 
 		timp_asteptare_dialog = max(
-			9.0,
+			4.0,
 			float(clientul_apasat.ai_dialogue_ready_text.length()) * 0.055 + 3.0
 		)
 
@@ -282,7 +282,7 @@ func _on_customer_a_fost_apasat(comanda, clientul_apasat):
 		if clientul_apasat.ai_dialogue_ready_text != "":
 			_afiseaza_dialog_loyal_customer(clientul_apasat.ai_dialogue_ready_text)
 
-		timp_asteptare_dialog = 8.0
+		timp_asteptare_dialog = 4.0
 
 	await get_tree().create_timer(timp_asteptare_dialog).timeout
 
@@ -502,24 +502,32 @@ func arata_evaluare_finala(_nota: int, textura_lipie: Texture2D, textura_suc: Te
 
 	# --- 5. AFIȘARE PANOU SCORURI ---
 	if label_scor != null:
-		var text_bonus = ""
-		if are_bonus_fusion:
-			text_bonus = "\n⭐ FUSION MENU BONUS (x2) ⭐"
-			
-		label_scor.text = (
+		var text_final = (
 			"Waiting Score: " + str(s_waiting) + "%\n" +
 			"Cutting Score: " + str(s_cutting) + "%\n" +
 			"Assembly Score: " + str(s_assembly) + "%\n" +
 			"Wrapping Score: " + str(s_wrapping) + "%\n" +
 			"---------------------\n" +
-			"TOTAL: " + str(medie_generala) + "%" +
-			text_bonus + "\n" +
-			"Tip: +$ %.2f" % bacsis_primit
+			"TOTAL: " + str(medie_generala) + "%"
 		)
+		
+		if are_bonus_fusion:
+			text_final += "\n⭐ FUSION MENU BONUS (x2) ⭐"
+			
+		if not Global.is_arcade_mode:
+			text_final += "\nTip: +$ %.2f" % bacsis_primit
+		else:
+			# Adăugăm un rând gol invizibil ca să păstrăm "aerul" (padding-ul) la Arcade Mode
+			text_final += "\n" 
+			
+		label_scor.text = text_final
+		
+		# Forțăm o dimensiune minimă ca să nu se mai turtească niciodată!
+		label_scor.custom_minimum_size = Vector2(250, 180) 
 		
 		label_scor.reset_size()
 		label_scor.show()
-		label_scor.z_index = 200 # Să fie clar deasupra
+		label_scor.z_index = 200 
 		label_scor.global_position = Vector2(300 - (label_scor.size.x / 2.0), 200)
 		
 	# --- 6. FADE IN REFRESHING ---

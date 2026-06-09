@@ -26,7 +26,7 @@ To design a scalable architecture before coding, we used AI to generate our Godo
 ## 3. Code Generation (Godot 4.x & GDScript)
 **Tools Used:** Gemini, Antigravity (Google DeepMind)
 
-**All GDScript code in this project was written by AI.** No manual GDScript was authored; the developer's role was to direct, review, and approve AI-generated implementations. The following are notable examples:
+**All GDScript code in this project was written by AI.** No manual GDScript was authored; the developer's role was to direct, review, and approve AI-generated implementations. Notable examples:
 
 * **Implementation Examples:**
   * **Save/Load System & Data Persistence (`global.gd`):** AI architected a robust 3-slot save system using Godot's `FileAccess` and `DirAccess`. Includes serializing/deserializing default game state (day, money, inventory, upgrades) into local `.json` files. The `load_save_data()` function merges loaded data on top of defaults for forward-compatible saves (old saves missing new keys get sensible defaults).

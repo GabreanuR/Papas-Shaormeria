@@ -20,14 +20,14 @@ This project is a fast-food simulator developed in **Godot Engine 4.3**, created
 The game utilizes a **local LLM (Llama 3.2 via Ollama)** to power three distinct agents that directly influence the gameplay loop:
 
 1. **Agent 1: The Loyal Customer with Memory (`loyal_customer_agent.gd`)**
-   * **Role:** A recurring customer (Papalouie) who is always the first customer of the day and remembers your past interactions.
+   * **Role:** A recurring customer who is always the first customer of the day and remembers your past interactions.
    * **How it works:** The system saves a local JSON history (`customer_history.gd`) of the latest 3 orders, including scores. The prompt sent to the LLM includes this hidden memory. The agent generates contextual dialogue based on past experiences (e.g., complains if the last score was below 70, praises if it was good). If the LLM is unavailable, a deterministic fallback dialogue system kicks in. Additionally, a bad previous order reduces the customer's patience by 10%.
 2. **Agent 2: The Culinary Influencer (`culinary_influencer_agent.gd`)**
    * **Role:** A TikTok food critic who reviews your shaorma and dictates the next day's ingredient trend.
-   * **How it works:** After being served, the agent sends the list of shaorma ingredients (filtered to exclude drinks) to the LLM with a strict JSON output format (`{"review": "...", "trend_ingredient": "..."}`). The returned `trend_ingredient` is stored in `Global.trend_ingredient`, and the next day's customer spawn system (`customer.gd`) applies a 70% probability override so customers request that trending ingredient, forcing the player to adapt their strategy.
+   * **How it works:** After being served, the agent sends the list of shaorma ingredients (filtered to exclude drinks) to the LLM with a strict JSON output format (`{"review": "...", "trend_ingredient": "..."}`). The returned `trend_ingredient` is stored in `Global.trend_ingredient`, and the next day's customer spawn system applies a 70% probability override so customers request that trending ingredient, forcing the player to adapt their strategy.
 3. **Agent 3: Daily Fusion Menu (`daily_menu_agent.gd`)**
    * **Role:** A master chef AI that generates a unique "Fusion Shaorma" recipe each day using available ingredients.
-   * **How it works:** Receives the full list of available ingredients and returns a JSON response with a creative recipe (`fusion_recipe` array). Completing the daily fusion recipe awards double tips. Falls back to a default recipe (`["carne_pui", "cartofi", "varza", "maioneza_usturoi"]`) if the LLM is unavailable.
+   * **How it works:** Receives the full list of available ingredients and returns a JSON response with a creative recipe (`fusion_recipe` array). Completing the daily fusion recipe awards double tips. Falls back to a default recipe if the LLM is unavailable.
 
 ---
 
@@ -40,7 +40,6 @@ We defined over 13 User Stories to cover all game mechanics. Full details can be
 
 * **US1 (Order Intake):** As a player, I want to click on customers to open their order ticket.
 * **US2 (Cutting Station - Mini-game):** As a chef, I want to cut meat with an electric knife.
-  * *Acceptance Criteria:* Clicking in the "Green Zone" = perfect cut. Visual quality feedback reflected in the pita state scoring system.
 * **US3 (Assembly Station):** As a chef, I want to drag and drop ingredients onto the wrap in a specific order.
   * *Scoring:* Correct order = full points, wrong order = −5, missing ingredient = −15, extra ingredient = −10. Weighted 60% ingredients + 40% sauce mini-game.
 * **US4 (Sauce Dispenser):** As a chef, I want to squeeze sauce onto the shaorma by holding the mouse, with a scoring system based on ideal droplet count and mess penalty.

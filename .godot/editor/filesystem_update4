@@ -1,14 +1,8 @@
-res://scenes/day_management/upgrades_menu.tscn
+res://scenes/day_management/day_transition.tscn
 res://assets/theme/global_ui_theme.tres
 res://assets/theme/light_texture.tres
 res://addons/gut/gui/editor_globals.gd
 res://addons/gut/gui/EditorRadioButton.tres
-res://scripts/day_management/upgrades_menu.gd
-res://scripts/day_management/day_transition.gd
 res://scripts/global.gd
-res://scenes/day_management/customization_menu.tscn
 res://scripts/gameplay/master/gameplay_master.gd
-res://scenes/day_management/day_transition.tscn
-res://scenes/ui/top_bar.tscn
-res://scripts/gameplay/stations/order/order_station.gd
 res://scripts/gameplay/stations/wrapping/wrap_station.gd

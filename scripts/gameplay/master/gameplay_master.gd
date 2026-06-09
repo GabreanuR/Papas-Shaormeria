@@ -49,7 +49,7 @@ func update_station_score(station_name: String, score: int) -> void:
 	for station_score in current_pita_state["scores"].values():
 		total += station_score
 
-	current_pita_state["total_score"] = total
+	current_pita_state["total_score"] = int(total / 4.0)
 
 
 func save_current_pita() -> void:

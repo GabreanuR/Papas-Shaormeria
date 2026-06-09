@@ -354,12 +354,17 @@ func _on_send_pressed() -> void:
 			if not item in de_ignorat:
 				cerute.append(item)
 				
+		var puse_filtrate = []
+		for item in ingrediente_pe_masa:
+			if not item in de_ignorat:
+				puse_filtrate.append(item)
+				
 		# 1. Dacă clientul n-a cerut nicio legumă/sos și tu n-ai pus nimic, e perfect.
-		if cerute.is_empty() and ingrediente_pe_masa.is_empty():
+		if cerute.is_empty() and puse_filtrate.is_empty():
 			scor_ingrediente = 100.0
 		else:
 			# 2. Match exact - verificăm ce a pus jucătorul versus ce se cerea
-			var puse_duplicate = ingrediente_pe_masa.duplicate()
+			var puse_duplicate = puse_filtrate.duplicate()
 			var cerute_duplicate = cerute.duplicate()
 			
 			for cerut in cerute_duplicate:
@@ -373,9 +378,6 @@ func _on_send_pressed() -> void:
 			# Ce rămâne în 'puse_duplicate' sunt ingrediente puse în plus!
 			for extra in puse_duplicate:
 				scor_ingrediente -= 15.0
-				
-			# (Opțional: Poți reintroduce logica de "ordine" aici dacă dorești, 
-			# dar verificarea simplă prezență/absență este mult mai stabilă).
 				
 		scor_ingrediente = clamp(scor_ingrediente, 0, 100)
 		

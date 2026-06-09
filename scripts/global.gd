@@ -280,27 +280,37 @@ func register_arcade_order(score: int) -> void:
 		return
 		
 	arcade_customers_served += 1
+	
 	if score >= 80:
 		arcade_perfect_orders += 1
+	else:
+		# EȘEC IMEDIAT: Oprim totul cum a greșit o comandă!
+		_arcade_finished = true 
+		_day_timer.stop()
+		_arata_ecran_final_arcade("CHALLENGE FAILED", "You ruined an order! Score dropped below 80%.", false)
+		return # Ieșim din funcție, nu mai verificăm altceva
 		
 	if arcade_customers_served >= 5:
-		_arcade_finished = true # Oprim orice altă procesare
+		_arcade_finished = true 
 		_day_timer.stop()
 		
-		if arcade_perfect_orders == 5:
-			unlock_achievement("speedrun_champion")
-			current_save["money"] += 100.0
-			money_changed.emit(current_save["money"])
-			save_game_to_disk()
-			_arata_ecran_final_arcade("CHALLENGE COMPLETE!", "You earned the Speed Demon Trophy and $500!", true)
-		else:
-			_arata_ecran_final_arcade("CHALLENGE FAILED", "You served 5 customers, but only %d were perfect." % arcade_perfect_orders, false)
+		unlock_achievement("speedrun_champion")
+		current_save["money"] += 100.0
+		money_changed.emit(current_save["money"])
+		save_game_to_disk()
+		_arata_ecran_final_arcade("CHALLENGE COMPLETE!", "You earned the Speed Demon Trophy and $100!", true)
 
 # Funcția care desenează Pop-up-ul la final de provocare
 func _arata_ecran_final_arcade(titlu: String, mesaj: String, succes: bool) -> void:
 	var canvas = CanvasLayer.new()
 	canvas.layer = 250 # Îl punem peste absolut tot jocul
 	add_child(canvas)
+	
+	var blocker = ColorRect.new()
+	blocker.color = Color(0, 0, 0, 0.6) # Întunecă dramatic ecranul din spate
+	blocker.set_anchors_preset(Control.PRESET_FULL_RECT)
+	blocker.mouse_filter = Control.MOUSE_FILTER_STOP # OPREȘTE complet orice click în joc
+	canvas.add_child(blocker)
 
 	var panel = PanelContainer.new()
 	var stil = StyleBoxFlat.new()
@@ -348,6 +358,7 @@ func advance_day() -> void:
 	current_save["day"] += 1
 	if int(current_save["day"]) % 7 == 0:
 		current_save["money"] += 100
+		money_changed.emit(current_save["money"])
 	is_night = false
 	save_game_to_disk() # Salvăm faptul că am trecut la o zi nouă!
 	day_changed.emit(current_save["day"])

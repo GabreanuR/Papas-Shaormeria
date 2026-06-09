@@ -57,7 +57,7 @@ Every push to `main` triggers the GitHub Actions pipeline which:
 
 ---
 
-## 3. Godot & Art Best Practices
+## 3. Godot & UI Engineering Best Practices
 
 To keep our project clean and scalable, please adhere to the following rules:
 
@@ -72,25 +72,30 @@ Do not drop files randomly in the `res://` root. Use the designated folders:
 * `test/unit/` — For GUT unit tests (prefix: `test_`).
 * `autoloads/` — For autoloaded singletons (`Global`, `AudioManager`).
 
-### B. Art & Canvas Rules (Canva/Assets)
+### B. UI Modals & Popups (CRITICAL)
+When building new menus or popups (like the Customization Menu, Achievements, or End of Day summary), **never just drop them as regular Control children**.
+* **Always use `CanvasLayer`:** Place popups inside a `CanvasLayer` with `layer = 100` (or higher). This tells Godot's UI system to properly intercept mouse events.
+* **Why?** It automatically triggers `mouse_exited` on background buttons (disabling hover glows) and prevents accidental background clicks without needing complex `disabled` states.
+
+### C. Art & Canvas Rules (Canva/Assets)
 * **Base Resolution:** Our game runs at **1920x1080**.
 * **Parallax Assets:** If you are designing layers for a Parallax background, the images MUST be slightly larger than the screen (e.g., 2050x1150) to prevent borders from showing during camera movement.
 * **Transparency:** Always export game assets as `.png` with **Transparent Backgrounds**. White backgrounds will break the 2.5D illusion.
 
-### C. Scene Organization & Architecture
+### D. Scene Organization & Architecture
 * **.gitignore:** Never remove or modify the `.gitignore` file. It prevents the `.godot/` cache folder from being uploaded, which would cause massive merge conflicts.
 * **Modularity:** Do not build the entire game in a single scene. Each User Story (like the Cutting Station or the Wrap Area) should be its own `.tscn` file, which we instance into the `GameplayMaster` scene.
 * **Theme Resources:** All `.tres` theme files are preloaded in `global.gd` to ensure they are included in exports. If you add a new `.tres`, add a corresponding `preload()` constant there.
 
-### D. Autoloads
+### E. Autoloads
 The project uses two autoloads defined in `project.godot`:
 * **`Global`** (`scripts/global.gd`) — Central game state: save/load system, money, day progression, daily stats, signals.
 * **`AudioManager`** (`autoloads/audio_manager.tscn`) — Handles background music (with fade) and SFX. Automatically connects a click sound to every `BaseButton` in the scene tree.
 
-### E. AI Tooling
+### F. AI Tooling
 * Remember our *AI-first* rule. If you use ChatGPT, Copilot, Antigravity, or Cursor to generate a GDScript or a GLSL Shader, save the prompt and add it to our `./docs/AI_USAGE_REPORT.md` file before you open your PR.
 
-### F. Testing
+### G. Testing
 * When adding new game logic (scoring, save data, AI agents), write corresponding GUT tests in `test/unit/`.
 * Test file naming convention: `test_<script_name>.gd`.
 * All test classes must `extend GutTest`.

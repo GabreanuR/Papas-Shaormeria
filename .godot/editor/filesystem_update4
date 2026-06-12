@@ -1,8 +1,8 @@
-res://scenes/day_management/day_transition.tscn
+res://scripts/ai/culinary_influencer_agent.gd
+res://scripts/ai/daily_menu_agent.gd
+res://scripts/gameplay/stations/order/order_station.gd
+res://scenes/menus/main_menu.tscn
 res://assets/theme/global_ui_theme.tres
 res://assets/theme/light_texture.tres
 res://addons/gut/gui/editor_globals.gd
 res://addons/gut/gui/EditorRadioButton.tres
-res://scripts/global.gd
-res://scripts/gameplay/master/gameplay_master.gd
-res://scripts/gameplay/stations/wrapping/wrap_station.gd

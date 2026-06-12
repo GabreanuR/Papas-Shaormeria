@@ -91,6 +91,14 @@ func _ready():
 		]
 		daily_agent.generate_fusion_recipe(toate_ingredientele)
 		
+	get_tree().create_timer(2.0).timeout.connect(func():
+		if culinary_agent:
+			culinary_agent.run_statistical_evaluation()
+		if daily_agent:
+			daily_agent.run_statistical_evaluation()
+		#pass
+	)
+		
 func _process(delta: float):
 	if index_spawn < timpi_spawn.size():
 		timp_scurs += delta
